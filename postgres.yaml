@@ -1,0 +1,103 @@
+---
+# PostgreSQL para Peptídeos Health
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: peptideos-postgres-init
+  namespace: peptideos-clone
+data:
+  init.sql: |
+    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+    CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: peptideos-postgres-secret
+  namespace: peptideos-clone
+type: Opaque
+stringData:
+  POSTGRES_DB: peptideoshealth
+  POSTGRES_USER: peptideos
+  POSTGRES_PASSWORD: P3ptid30sH34lth@2026!
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: peptideos-postgres-pvc
+  namespace: peptideos-clone
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peptideos-postgres
+  namespace: peptideos-clone
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: peptideos-postgres
+  template:
+    metadata:
+      labels:
+        app: peptideos-postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15-alpine
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: peptideos-postgres-secret
+              key: POSTGRES_DB
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: peptideos-postgres-secret
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: peptideos-postgres-secret
+              key: POSTGRES_PASSWORD
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: peptideos-postgres-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: peptideos-postgres
+  namespace: peptideos-clone
+spec:
+  selector:
+    app: peptideos-postgres
+  ports:
+  - port: 5432
+    targetPort: 5432
+  type: ClusterIP

@@ -1,0 +1,63 @@
+--2026-04-11 12:53:19--  https://peptideoshealth.com.br/
+Resolving peptideoshealth.com.br (peptideoshealth.com.br)... 185.158.133.1
+Connecting to peptideoshealth.com.br (peptideoshealth.com.br)|185.158.133.1|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/html]
+Saving to: ‘./site/peptideoshealth.com.br/index.html’
+
+       peptid            0  --.-KB/s                peptideosheal        2.84K  --.-KB/s    in 0s       
+
+Last-modified header missing -- time-stamps turned off.
+2026-04-11 12:53:20 (18.0 MB/s) - ‘./site/peptideoshealth.com.br/index.html’ saved [2909]
+
+Loading robots.txt; please ignore errors.
+--2026-04-11 12:53:21--  https://peptideoshealth.com.br/robots.txt
+Reusing existing connection to peptideoshealth.com.br:443.
+HTTP request sent, awaiting response... 200 OK
+Length: 160 [text/plain]
+Saving to: ‘./site/peptideoshealth.com.br/robots.txt’
+
+       peptid   0%       0  --.-KB/s                peptideosheal 100%     160  --.-KB/s    in 0s       
+
+2026-04-11 12:53:21 (75.4 MB/s) - ‘./site/peptideoshealth.com.br/robots.txt’ saved [160/160]
+
+--2026-04-11 12:53:21--  https://peptideoshealth.com.br/assets/index-DnXuvNvn.js
+Reusing existing connection to peptideoshealth.com.br:443.
+HTTP request sent, awaiting response... 200 OK
+Length: 2955793 (2.8M) [text/javascript]
+Saving to: ‘./site/peptideoshealth.com.br/assets/index-DnXuvNvn.js’
+
+       peptid   0%       0  --.-KB/s                peptideosheal 100%   2.82M  --.-KB/s    in 0.07s    
+
+Last-modified header missing -- time-stamps turned off.
+2026-04-11 12:53:22 (42.0 MB/s) - ‘./site/peptideoshealth.com.br/assets/index-DnXuvNvn.js’ saved [2955793/2955793]
+
+--2026-04-11 12:53:22--  https://peptideoshealth.com.br/assets/index-DI3v0nw3.css
+Reusing existing connection to peptideoshealth.com.br:443.
+HTTP request sent, awaiting response... 200 OK
+Length: 129309 (126K) [text/css]
+Saving to: ‘./site/peptideoshealth.com.br/assets/index-DI3v0nw3.css’
+
+       peptid   0%       0  --.-KB/s                peptideosheal 100% 126.28K  --.-KB/s    in 0.001s   
+
+Last-modified header missing -- time-stamps turned off.
+2026-04-11 12:53:22 (166 MB/s) - ‘./site/peptideoshealth.com.br/assets/index-DI3v0nw3.css’ saved [129309/129309]
+
+--2026-04-11 12:53:23--  https://peptideoshealth.com.br/~flock.js
+Reusing existing connection to peptideoshealth.com.br:443.
+HTTP request sent, awaiting response... 200 OK
+Length: 21296 (21K) [text/javascript]
+Saving to: ‘./site/peptideoshealth.com.br/~flock.js’
+
+       peptid   0%       0  --.-KB/s                peptideosheal 100%  20.80K  --.-KB/s    in 0s       
+
+Last-modified header missing -- time-stamps turned off.
+2026-04-11 12:53:23 (170 MB/s) - ‘./site/peptideoshealth.com.br/~flock.js’ saved [21296/21296]
+
+FINISHED --2026-04-11 12:53:23--
+Total wall clock time: 4.0s
+Downloaded: 5 files, 3.0M in 0.07s (43.6 MB/s)
+Converting links in ./site/peptideoshealth.com.br/index.html... 3.
+3-0
+Converting links in ./site/peptideoshealth.com.br/assets/index-DI3v0nw3.css... nothing to do.
+Converted links in 2 files in 0.002 seconds.

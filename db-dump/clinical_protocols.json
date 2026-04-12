@@ -1,0 +1,357 @@
+[
+  {
+    "id": "40f67a9c-c908-4194-b73b-65014d286216",
+    "name": "Performance Elite Protocol",
+    "objective": "Performance",
+    "description": "Protocolo avançado para otimização de desempenho atlético e recuperação muscular.",
+    "cycle_duration": "12-16 semanas",
+    "application_frequency": "3x por semana",
+    "peptides": [
+      {
+        "days": [
+          "segunda",
+          "quarta",
+          "sexta"
+        ],
+        "name": "BPC-157",
+        "unit": "mcg",
+        "dosage": 500,
+        "frequency": "1x/dia",
+        "mechanism": "Reparação tecidual via angiogênese",
+        "reference": "PMID: 29221736"
+      },
+      {
+        "days": [
+          "terça",
+          "sexta"
+        ],
+        "name": "TB-500",
+        "unit": "mg",
+        "dosage": 2.5,
+        "frequency": "2x/sem",
+        "mechanism": "Migração celular e reparação",
+        "reference": "PMID: 20515516"
+      },
+      {
+        "days": [
+          "segunda",
+          "quarta",
+          "sexta"
+        ],
+        "name": "CJC-1295",
+        "unit": "mcg",
+        "dosage": 100,
+        "frequency": "3x/sem",
+        "mechanism": "Estímulo de GH via GHRH",
+        "reference": "PMID: 16352683"
+      }
+    ],
+    "expected_results": [
+      "Aumento de força",
+      "Recuperação muscular acelerada",
+      "Melhora na composição corporal"
+    ],
+    "target_biomarkers": [
+      "IGF-1",
+      "Testosterone",
+      "GH"
+    ],
+    "contraindications": [
+      "Câncer ativo",
+      "Gravidez",
+      "Menores de 18 anos"
+    ],
+    "side_effects": "Retenção hídrica leve, rubor no local de injeção",
+    "sales_script": "Este protocolo foi desenhado para atletas e pessoas ativas que buscam otimizar performance e acelerar a recuperação.",
+    "is_published": true,
+    "created_at": "2026-03-29T18:30:50.773514+00:00",
+    "updated_at": "2026-03-29T18:30:50.773514+00:00"
+  },
+  {
+    "id": "71024a11-d587-41e0-982e-dc3fcbfa6b1d",
+    "name": "Longevity Core Protocol",
+    "objective": "Longevidade",
+    "description": "Protocolo focado em anti-envelhecimento e otimização da saúde celular.",
+    "cycle_duration": "16-20 semanas",
+    "application_frequency": "2-3x por semana",
+    "peptides": [
+      {
+        "days": [
+          "segunda",
+          "terça",
+          "quarta",
+          "quinta",
+          "sexta"
+        ],
+        "name": "Epithalon",
+        "unit": "mg",
+        "dosage": 5,
+        "frequency": "1x/dia",
+        "mechanism": "Ativação da telomerase",
+        "reference": "PMID: 14523363"
+      },
+      {
+        "days": [
+          "segunda",
+          "quarta",
+          "sexta"
+        ],
+        "name": "BPC-157",
+        "unit": "mcg",
+        "dosage": 250,
+        "frequency": "1x/dia",
+        "mechanism": "Proteção e reparação sistêmica",
+        "reference": "PMID: 29221736"
+      },
+      {
+        "days": [
+          "segunda",
+          "quarta",
+          "sexta"
+        ],
+        "name": "GHK-Cu",
+        "unit": "mcg",
+        "dosage": 200,
+        "frequency": "1x/dia",
+        "mechanism": "Remodelação tecidual e antioxidante",
+        "reference": "PMID: 25916515"
+      }
+    ],
+    "expected_results": [
+      "Melhora na qualidade do sono",
+      "Pele mais firme",
+      "Aumento de energia",
+      "Melhora cognitiva"
+    ],
+    "target_biomarkers": [
+      "IGF-1",
+      "BDNF",
+      "Telomere Length"
+    ],
+    "contraindications": [
+      "Câncer ativo",
+      "Doenças autoimunes não controladas"
+    ],
+    "side_effects": "Mínimos, possível rubor local",
+    "sales_script": "O protocolo Longevity Core atua nas bases celulares do envelhecimento.",
+    "is_published": true,
+    "created_at": "2026-03-29T18:30:50.773514+00:00",
+    "updated_at": "2026-03-29T18:30:50.773514+00:00"
+  },
+  {
+    "id": "ca55b52b-1445-46fa-83cf-6b9dd3c78a3e",
+    "name": "Fat Loss Accelerator",
+    "objective": "Emagrecimento",
+    "description": "Protocolo para otimização metabólica e perda de gordura.",
+    "cycle_duration": "8-12 semanas",
+    "application_frequency": "Diário",
+    "peptides": [
+      {
+        "days": [
+          "segunda"
+        ],
+        "name": "Semaglutida",
+        "unit": "mg",
+        "dosage": 0.5,
+        "frequency": "1x/sem",
+        "mechanism": "Agonista GLP-1, redução de apetite",
+        "reference": "PMID: 33567185"
+      },
+      {
+        "days": [
+          "segunda",
+          "terça",
+          "quarta",
+          "quinta",
+          "sexta",
+          "sábado",
+          "domingo"
+        ],
+        "name": "Tesamorelin",
+        "unit": "mg",
+        "dosage": 2,
+        "frequency": "1x/dia",
+        "mechanism": "Redução de gordura visceral via GH",
+        "reference": "PMID: 20089857"
+      },
+      {
+        "days": [
+          "segunda",
+          "terça",
+          "quarta",
+          "quinta",
+          "sexta"
+        ],
+        "name": "AOD-9604",
+        "unit": "mcg",
+        "dosage": 300,
+        "frequency": "1x/dia",
+        "mechanism": "Lipólise sem efeitos do GH",
+        "reference": "PMID: 11713213"
+      }
+    ],
+    "expected_results": [
+      "Redução de gordura visceral",
+      "Controle de apetite",
+      "Melhora metabólica"
+    ],
+    "target_biomarkers": [
+      "Insulin",
+      "HbA1c",
+      "Leptin"
+    ],
+    "contraindications": [
+      "Diabetes tipo 1",
+      "Pancreatite",
+      "Gravidez"
+    ],
+    "side_effects": "Náusea, constipação, dor abdominal leve",
+    "sales_script": "Este protocolo combina os mais avançados peptídeos para emagrecimento.",
+    "is_published": true,
+    "created_at": "2026-03-29T18:30:50.773514+00:00",
+    "updated_at": "2026-03-29T18:30:50.773514+00:00"
+  },
+  {
+    "id": "de040431-18cb-4cb8-8485-7de9a400dff2",
+    "name": "Cognitive Enhancement Protocol",
+    "objective": "Cognitivo",
+    "description": "Protocolo para otimização cognitiva, foco e neuroproteção.",
+    "cycle_duration": "12-16 semanas",
+    "application_frequency": "Diário",
+    "peptides": [
+      {
+        "days": [
+          "segunda",
+          "terça",
+          "quarta",
+          "quinta",
+          "sexta"
+        ],
+        "name": "Semax",
+        "unit": "mcg",
+        "dosage": 600,
+        "frequency": "1x/dia",
+        "mechanism": "Modulação de BDNF e NGF",
+        "reference": "PMID: 17015040"
+      },
+      {
+        "days": [
+          "segunda",
+          "terça",
+          "quarta",
+          "quinta",
+          "sexta"
+        ],
+        "name": "Selank",
+        "unit": "mcg",
+        "dosage": 400,
+        "frequency": "1x/dia",
+        "mechanism": "Ansiolítico e imunomodulador",
+        "reference": "PMID: 19003366"
+      },
+      {
+        "days": [
+          "segunda",
+          "quarta",
+          "sexta"
+        ],
+        "name": "Dihexa",
+        "unit": "mg",
+        "dosage": 20,
+        "frequency": "1x/dia",
+        "mechanism": "Potenciação sináptica via HGF",
+        "reference": "PMID: 23123685"
+      }
+    ],
+    "expected_results": [
+      "Melhora no foco",
+      "Aumento de memória",
+      "Redução de ansiedade",
+      "Neuroproteção"
+    ],
+    "target_biomarkers": [
+      "BDNF",
+      "Cortisol",
+      "NGF"
+    ],
+    "contraindications": [
+      "Epilepsia não controlada",
+      "Uso de IMAO"
+    ],
+    "side_effects": "Insônia leve, irritação nasal (se intranasal)",
+    "sales_script": "O protocolo Cognitive Enhancement utiliza neuropeptídeos com evidências em melhora de BDNF.",
+    "is_published": true,
+    "created_at": "2026-03-29T18:30:50.773514+00:00",
+    "updated_at": "2026-03-29T18:30:50.773514+00:00"
+  },
+  {
+    "id": "3da981ec-c9f4-4678-b1cd-2ca3273b50f7",
+    "name": "Aesthetic Rejuvenation Protocol",
+    "objective": "Estética",
+    "description": "Protocolo para rejuvenescimento da pele, cabelo e unhas.",
+    "cycle_duration": "12-20 semanas",
+    "application_frequency": "3-5x por semana",
+    "peptides": [
+      {
+        "days": [
+          "segunda",
+          "quarta",
+          "sexta"
+        ],
+        "name": "GHK-Cu",
+        "unit": "mcg",
+        "dosage": 200,
+        "frequency": "1x/dia",
+        "mechanism": "Estímulo de colágeno e elastina",
+        "reference": "PMID: 25916515"
+      },
+      {
+        "days": [
+          "segunda",
+          "quarta",
+          "sexta"
+        ],
+        "name": "Melanotan II",
+        "unit": "mcg",
+        "dosage": 500,
+        "frequency": "3x/sem",
+        "mechanism": "Ativação de melanócitos",
+        "reference": "PMID: 10643668"
+      },
+      {
+        "days": [
+          "segunda",
+          "terça",
+          "quarta",
+          "quinta",
+          "sexta"
+        ],
+        "name": "GH Fragment 176-191",
+        "unit": "mcg",
+        "dosage": 250,
+        "frequency": "1x/dia",
+        "mechanism": "Lipólise localizada",
+        "reference": "PMID: 11713213"
+      }
+    ],
+    "expected_results": [
+      "Pele mais firme",
+      "Redução de rugas",
+      "Melhora na qualidade capilar"
+    ],
+    "target_biomarkers": [
+      "Collagen Type I",
+      "Elastin",
+      "IGF-1"
+    ],
+    "contraindications": [
+      "Melanoma",
+      "Gravidez"
+    ],
+    "side_effects": "Rubor facial, náusea leve com Melanotan",
+    "sales_script": "O protocolo de rejuvenescimento estético combina peptídeos que estimulam colágeno e melanina.",
+    "is_published": true,
+    "created_at": "2026-03-29T18:30:50.773514+00:00",
+    "updated_at": "2026-03-29T18:30:50.773514+00:00"
+  }
+]

@@ -1,0 +1,12 @@
+services:
+  peptideos-clone:
+    build: .
+    container_name: peptideos_clone
+    restart: unless-stopped
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+    name: proxy

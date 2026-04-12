@@ -1,0 +1,97 @@
+---
+# Backend API - Peptídeos Health
+apiVersion: v1
+kind: Secret
+metadata:
+  name: peptideos-api-secret
+  namespace: peptideos-clone
+type: Opaque
+stringData:
+  DATABASE_URL: "postgresql://peptideos:P3ptid30sH34lth@2026!@peptideos-postgres.peptideos-clone.svc:5432/peptideoshealth"
+  JWT_SECRET: "peptideoshealth-jwt-super-secret-2026"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peptideos-api
+  namespace: peptideos-clone
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: peptideos-api
+  template:
+    metadata:
+      labels:
+        app: peptideos-api
+    spec:
+      containers:
+      - name: api
+        image: peptideos-api:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3001
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: peptideos-api-secret
+              key: DATABASE_URL
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: peptideos-api-secret
+              key: JWT_SECRET
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "3001"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 3001
+          initialDelaySeconds: 15
+          periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: peptideos-api
+  namespace: peptideos-clone
+spec:
+  selector:
+    app: peptideos-api
+  ports:
+  - port: 80
+    targetPort: 3001
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: peptideos-api-ingress
+  namespace: peptideos-clone
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: api.peptideos-clone.dw.aiwhatsapp.com.br
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: peptideos-api
+            port:
+              number: 80

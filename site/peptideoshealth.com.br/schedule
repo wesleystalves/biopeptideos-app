@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- TODO: Set the document title to the name of your application -->
+    <title>PeptideosHealth - A Maior Plataforma de Peptídeos do Brasil</title>
+    <meta name="description" content="Explore protocolos de peptídeos para emagrecimento, recuperação e longevidade. Semaglutide, Tirzepatide, BPC-157 e mais. Estudos científicos e ferramentas interativas.">
+    <meta name="author" content="PeptideosHealth" />
+
+    <!-- TODO: Update og:title to match your application name -->
+    
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/55e17aa5-007b-4d40-bb7e-cb4dec1700d9/id-preview-e997c47d--f81c6f52-41b0-4d52-abf2-8f466a5c0625.lovable.app-1772662571706.png">
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@Lovable" />
+    <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/55e17aa5-007b-4d40-bb7e-cb4dec1700d9/id-preview-e997c47d--f81c6f52-41b0-4d52-abf2-8f466a5c0625.lovable.app-1772662571706.png">
+    
+  
+  
+  
+  <meta property="og:title" content="PeptideosHealth - A Maior Plataforma de Peptídeos do Brasil">
+  <meta name="twitter:title" content="PeptideosHealth - A Maior Plataforma de Peptídeos do Brasil">
+  <meta property="og:description" content="Explore protocolos de peptídeos para emagrecimento, recuperação e longevidade. Semaglutide, Tirzepatide, BPC-157 e mais. Estudos científicos e ferramentas interativas.">
+  <meta name="twitter:description" content="Explore protocolos de peptídeos para emagrecimento, recuperação e longevidade. Semaglutide, Tirzepatide, BPC-157 e mais. Estudos científicos e ferramentas interativas.">
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1921945442001896');
+fbq('init', '2137784320027938');
+fbq('track', 'PageView');
+</script>
+<!-- End Meta Pixel Code -->
+  <script type="module" crossorigin src="/assets/index-DnXuvNvn.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DI3v0nw3.css">
+<script defer src="/~flock.js" data-proxy-url="/~api/analytics"></script></head>
+
+  <body>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1921945442001896&ev=PageView&noscript=1"
+    /></noscript>
+    <div id="root"></div>
+  </body>
+</html>
