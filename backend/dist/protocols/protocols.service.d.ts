@@ -3,25 +3,19 @@ export declare class ProtocolsService {
     private readonly prisma;
     constructor(prisma: PrismaService);
     findAll(isPremium?: boolean): import(".prisma/client").Prisma.PrismaPromise<{
-        id: string;
+        name: string;
+        id: number;
         createdAt: Date;
-        description: string | null;
-        isFree: boolean;
         slug: string;
-        peptides: string[];
-        title: string;
-        duration: string | null;
-        objective: string | null;
+        description: string | null;
+        isPro: boolean;
     }[]>;
     findBySlug(slug: string): import(".prisma/client").Prisma.Prisma__ProtocolClient<{
-        id: string;
+        name: string;
+        id: number;
         createdAt: Date;
-        description: string | null;
-        isFree: boolean;
         slug: string;
-        peptides: string[];
-        title: string;
-        duration: string | null;
-        objective: string | null;
+        description: string | null;
+        isPro: boolean;
     }, null, import("@prisma/client/runtime/library").DefaultArgs>;
 }

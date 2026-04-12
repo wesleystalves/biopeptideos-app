@@ -9,15 +9,13 @@ export declare class SubscriptionsService {
         expiresAt: Date;
     }>;
     activate(profileId: string, plan: string): Promise<{
-        id: number;
-        plan: string | null;
+        id: string;
+        plan: string;
         createdAt: Date;
-        updatedAt: Date;
-        userId: string | null;
-        status: string | null;
-        activatedAt: Date | null;
+        userId: string;
+        status: string;
+        gateway: string | null;
+        gatewayId: string | null;
         expiresAt: Date | null;
-        paymentProvider: string | null;
-        externalId: string | null;
     }>;
 }

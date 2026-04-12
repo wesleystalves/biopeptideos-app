@@ -1,0 +1,159 @@
+---
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: biopeptidios
+
+---
+# Secret — variáveis de ambiente do backend
+apiVersion: v1
+kind: Secret
+metadata:
+  name: biopeptidios-api-secrets
+  namespace: biopeptidios
+type: Opaque
+stringData:
+  DATABASE_URL: "postgresql://peptideos:P3ptid30sH34lth@2026!@10.43.137.198:5432/biopeptidios"
+  JWT_SECRET: "biopeptidios-jwt-secret-2026-CHANGE-ME"
+  NODE_ENV: "production"
+  FRONTEND_URL: "https://biopeptidios.dev.aiwhatsapp.com.br"
+  ENABLE_RESTRICTED_PRODUCTS: "false"
+  STRIPE_SECRET_KEY: ""
+  STRIPE_WEBHOOK_SECRET: ""
+  ASAAS_API_KEY: ""
+  ASAAS_API_URL: "https://sandbox.asaas.com/api/v3"
+  OPENAI_API_KEY: ""
+  EVOLUTION_API_URL: ""
+  EVOLUTION_API_KEY: ""
+  TELEGRAM_BOT_TOKEN: ""
+  AI_SERVICE_URL: "http://biopeptidios-ai.biopeptidios.svc.cluster.local:8000"
+
+---
+# Backend API Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: biopeptidios-api
+  namespace: biopeptidios
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: biopeptidios-api
+  template:
+    metadata:
+      labels:
+        app: biopeptidios-api
+    spec:
+      containers:
+        - name: api
+          image: biopeptidios-api:v1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3001
+          envFrom:
+            - secretRef:
+                name: biopeptidios-api-secrets
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3001
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: biopeptidios-api
+  namespace: biopeptidios
+spec:
+  selector:
+    app: biopeptidios-api
+  ports:
+    - port: 3001
+      targetPort: 3001
+
+---
+# Frontend Web Deployment (clone base → será substituído pelo Next.js)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: biopeptidios-web
+  namespace: biopeptidios
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: biopeptidios-web
+  template:
+    metadata:
+      labels:
+        app: biopeptidios-web
+    spec:
+      containers:
+        - name: web
+          image: peptideos-clone:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: biopeptidios-web
+  namespace: biopeptidios
+spec:
+  selector:
+    app: biopeptidios-web
+  ports:
+    - port: 80
+      targetPort: 80
+
+---
+# Ingress — Frontend + API
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: biopeptidios-ingress
+  namespace: biopeptidios
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: biopeptidios.dev.aiwhatsapp.com.br
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: biopeptidios-web
+                port:
+                  number: 80
+    - host: api.biopeptidios.dev.aiwhatsapp.com.br
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: biopeptidios-api
+                port:
+                  number: 3001

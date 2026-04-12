@@ -6,8 +6,8 @@ export declare class ProfilesController {
         email: string;
         name: string;
         id: string;
-        plan: string;
         isAdmin: boolean;
+        plan: string;
         createdAt: Date;
         subscriptions: {
             plan: string;
