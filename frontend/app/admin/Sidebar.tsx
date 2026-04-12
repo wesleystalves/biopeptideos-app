@@ -15,6 +15,7 @@ const navItems = [
     { href: "/admin/products", label: "Produtos", icon: Package },
     { href: "/admin/orders", label: "Pedidos", icon: BarChart3 },
     { href: "/admin/compliance", label: "Compliance", icon: ShieldCheck },
+    { href: "/admin/automations", label: "Automações", icon: Zap },
     { href: "/admin/ai-config", label: "Config IA", icon: Bot },
     { href: "/admin/settings", label: "Configurações", icon: Settings },
 ];

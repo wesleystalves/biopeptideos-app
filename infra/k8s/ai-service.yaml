@@ -1,0 +1,104 @@
+---
+# Deployment do AI Service (Python FastAPI)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: biopeptidios-ai
+  namespace: biopeptidios
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: biopeptidios-ai
+  template:
+    metadata:
+      labels:
+        app: biopeptidios-ai
+    spec:
+      containers:
+        - name: ai
+          image: biopeptidios-ai:v1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: biopeptidios-api-secrets
+                  key: OPENAI_API_KEY
+                  optional: true
+            - name: REDIS_URL
+              value: "redis://biopeptidios-redis.biopeptidios.svc.cluster.local:6379"
+            - name: NESTJS_API_URL
+              value: "http://biopeptidios-api.biopeptidios.svc.cluster.local:3001"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: biopeptidios-ai
+  namespace: biopeptidios
+spec:
+  selector:
+    app: biopeptidios-ai
+  ports:
+    - port: 8000
+      targetPort: 8000
+
+---
+# Redis para memory do AI Service e filas BullMQ
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: biopeptidios-redis
+  namespace: biopeptidios
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: biopeptidios-redis
+  template:
+    metadata:
+      labels:
+        app: biopeptidios-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          args: ["--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: biopeptidios-redis
+  namespace: biopeptidios
+spec:
+  selector:
+    app: biopeptidios-redis
+  ports:
+    - port: 6379
+      targetPort: 6379
