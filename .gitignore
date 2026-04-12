@@ -1,4 +1,8 @@
-*.tar.gz
 node_modules/
+dist/
 .env
-.env.local
+*.log
+wget-log
+.DS_Store
+db-dump/*.sql
+site/
