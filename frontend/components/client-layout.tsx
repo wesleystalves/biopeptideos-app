@@ -49,7 +49,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         pathname === href || (href !== "/painel" && pathname.startsWith(href));
 
     return (
-        <div className="flex min-h-screen" style={{ background: 'linear-gradient(160deg, #071a2c 0%, #0b2d4a 40%, #083a5a 70%, #071a2c 100%)' }}>
+        <div className="flex min-h-screen" style={{ background: 'linear-gradient(160deg, #071a2c 0%, #0b2d4a 40%, #083a5a 70%, #071a2c 100%)', minHeight: '100vh' }}>
             {/* Mobile overlay */}
             {open && (
                 <div
@@ -61,11 +61,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             {/* Sidebar */}
             <aside className={`
                 fixed top-0 left-0 h-full z-30 flex flex-col
-                w-64 border-r border-white/8
+                w-64 border-r border-white/10
                 transition-transform duration-300 ease-in-out
                 ${open ? "translate-x-0" : "-translate-x-full"}
                 lg:translate-x-0 lg:relative lg:flex-shrink-0
-            `} style={{ background: 'linear-gradient(180deg, #08202f 0%, #071826 100%)' }}>
+            `} style={{ background: 'rgba(5, 20, 38, 0.55)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
                 {/* Logo */}
                 <div className="flex items-center gap-2.5 px-5 py-5 border-b border-white/5">
                     <div className="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center shadow-glow flex-shrink-0">
@@ -131,7 +131,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             {/* Main */}
             <div className="flex-1 flex flex-col min-w-0">
                 {/* Mobile header */}
-                <header className="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-white/8" style={{ background: '#08202f' }}>
+                <header className="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-white/10" style={{ background: 'rgba(5, 20, 38, 0.55)', backdropFilter: 'blur(16px)' }}>
                     <button onClick={() => setOpen(true)} className="text-slate-400 hover:text-white">
                         <Menu className="w-5 h-5" />
                     </button>
