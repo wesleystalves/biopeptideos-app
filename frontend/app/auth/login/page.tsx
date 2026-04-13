@@ -38,7 +38,7 @@ export default function LoginPage() {
             if (data.user?.isAdmin) {
                 window.location.href = "/admin";
             } else {
-                window.location.href = "/catalog";
+                window.location.href = "/painel";
             }
         } catch (err: any) {
             setError(err.message);
