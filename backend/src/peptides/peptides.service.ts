@@ -9,7 +9,7 @@ export class PeptidesService {
         // Free users só veem peptídeos marcados como isFree=true
         if (!isPremium) {
             return this.prisma.peptide.findMany({
-                where: { isFree: true },
+                where: { isPro: false },
                 orderBy: { name: 'asc' },
             });
         }

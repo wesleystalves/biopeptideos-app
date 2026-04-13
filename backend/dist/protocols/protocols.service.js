@@ -19,11 +19,11 @@ let ProtocolsService = class ProtocolsService {
     findAll(isPremium = false) {
         if (!isPremium) {
             return this.prisma.protocol.findMany({
-                where: { isFree: true },
-                orderBy: { title: 'asc' },
+                where: { isPro: false },
+                orderBy: { name: 'asc' },
             });
         }
-        return this.prisma.protocol.findMany({ orderBy: { title: 'asc' } });
+        return this.prisma.protocol.findMany({ orderBy: { name: 'asc' } });
     }
     findBySlug(slug) {
         return this.prisma.protocol.findUnique({ where: { slug } });

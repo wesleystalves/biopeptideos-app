@@ -19,7 +19,7 @@ let PeptidesService = class PeptidesService {
     findAll(isPremium = false) {
         if (!isPremium) {
             return this.prisma.peptide.findMany({
-                where: { isFree: true },
+                where: { isPro: false },
                 orderBy: { name: 'asc' },
             });
         }
