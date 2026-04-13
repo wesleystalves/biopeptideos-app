@@ -30,7 +30,10 @@ export default function LoginPage() {
             }
 
             const data = await res.json();
-            localStorage.setItem("token", data.access_token);
+            // API retorna { token, user } — não access_token
+            const jwt = data.token || data.access_token;
+            if (!jwt) throw new Error("Token não recebido. Verifique suas credenciais.");
+            localStorage.setItem("token", jwt);
 
             if (data.user?.isAdmin) {
                 window.location.href = "/admin";

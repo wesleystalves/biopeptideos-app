@@ -6,14 +6,12 @@ import { AppModule } from './app.module';
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
-    // CORS — permite o frontend clonade e futuro domínio próprio
+    // CORS — dev: aceita qualquer origem
     app.enableCors({
-        origin: [
-            'https://peptideos-clone.dw.aiwhatsapp.com.br',
-            'http://localhost:3000',
-        ],
+        origin: true,
         credentials: true,
     });
+
 
     // Validação global de DTOs
     app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
