@@ -6,6 +6,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
   annotations:
     kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
 spec:
   rules:
     - host: {{ .Values.ingress.host }}
@@ -28,6 +31,10 @@ spec:
                 name: {{ .Release.Name }}-frontend
                 port:
                   number: {{ .Values.frontend.service.port }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host }}
+        - www.{{ .Values.ingress.host }}
 
 ---
 apiVersion: networking.k8s.io/v1
@@ -37,6 +44,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
   annotations:
     kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
 spec:
   rules:
     - host: api.{{ .Values.ingress.host }}
@@ -49,4 +59,7 @@ spec:
                 name: {{ .Release.Name }}-backend
                 port:
                   number: {{ .Values.backend.service.port }}
+  tls:
+    - hosts:
+        - api.{{ .Values.ingress.host }}
 {{- end }}
