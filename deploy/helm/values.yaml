@@ -1,24 +1,41 @@
 frontend:
   replicaCount: 1
   image:
-    repository: ghcr.io/wesleystalves/biopeptideos-app
+    repository: ghcr.io/wesleystalves/biopeptideos-frontend
     tag: latest
     pullPolicy: Always
-
   service:
-    port: 80
-
+    port: 3000
   resources:
     requests:
-      cpu: 50m
-      memory: 64Mi
-    limits:
-      cpu: 200m
+      cpu: 100m
       memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+backend:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/wesleystalves/biopeptideos-backend
+    tag: latest
+    pullPolicy: Always
+  service:
+    port: 3001
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  env:
+    NODE_ENV: production
+    PORT: "3001"
+    # DATABASE_URL e JWT_SECRET vêm do Secret db-secret
 
 ingress:
   enabled: true
   host: peptideosbio.com
   annotations:
     kubernetes.io/ingress.class: traefik
-  tls: []
