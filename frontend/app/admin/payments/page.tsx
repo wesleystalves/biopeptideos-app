@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import ClientLayout from "@/components/client-layout";
 import { CheckCircle2, AlertCircle, Loader2, Eye, EyeOff, RefreshCw, Save, Zap } from "lucide-react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dev.aiwhatsapp.com.br";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dw.peptideosbio.com";
 
 /* ── Tipos de campo ─────────────────────────────────────── */
 type FieldDef = {
@@ -31,7 +31,7 @@ const FIELDS: FieldDef[] = [
     },
     {
         key: "asaas.webhook_url", label: "Webhook URL", type: "url",
-        placeholder: "https://api.biopeptidios.dev.aiwhatsapp.com.br/api/payments/webhook/asaas",
+        placeholder: "https://api.biopeptidios.dw.peptideosbio.com/api/payments/webhook/asaas",
         help: "Configure esta URL no painel Asaas → Configurações → Webhooks"
     },
     {

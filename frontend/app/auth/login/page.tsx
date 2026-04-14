@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Zap, ArrowRight } from "lucide-react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dev.aiwhatsapp.com.br";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dw.peptideosbio.com";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -30,10 +30,19 @@ export default function LoginPage() {
             }
 
             const data = await res.json();
-            // API retorna { token, user } — não access_token
+            // API retorna { token, user } — limpar sessão anterior antes de salvar nova
             const jwt = data.token || data.access_token;
             if (!jwt) throw new Error("Token não recebido. Verifique suas credenciais.");
+
+            // ── Limpar TODA sessão anterior antes de gravar a nova ──────────
+            localStorage.clear();
+            sessionStorage.clear();
+            document.cookie.split(';').forEach(c => {
+                document.cookie = c.trim().replace(/=.*/, '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/');
+            });
+
             localStorage.setItem("token", jwt);
+            localStorage.setItem("user", JSON.stringify(data.user));
 
             if (data.user?.isAdmin) {
                 window.location.href = "/admin";

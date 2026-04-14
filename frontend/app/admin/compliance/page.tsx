@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ShieldCheck, Plus, Trash2 } from "lucide-react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dev.aiwhatsapp.com.br";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dw.peptideosbio.com";
 
 const STATUS_OPTS = ["allowed", "restricted", "blocked"];
 const CATEGORIES = ["peptides", "sarms", "hormones", "nootropics", "supplements"];

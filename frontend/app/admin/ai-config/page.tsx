@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Bot, Save, RefreshCw, ChevronDown } from "lucide-react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dev.aiwhatsapp.com.br";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dw.peptideosbio.com";
 
 const DEFAULT_CONFIG = {
     systemPrompt: "",

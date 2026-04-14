@@ -9,7 +9,7 @@ import {
     AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar
 } from "recharts";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dev.aiwhatsapp.com.br";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dw.peptideosbio.com";
 
 const revenueData = [
     { day: "Seg", value: 0 }, { day: "Ter", value: 0 }, { day: "Qua", value: 0 },

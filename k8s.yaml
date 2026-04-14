@@ -52,7 +52,7 @@ metadata:
     kubernetes.io/ingress.class: traefik
 spec:
   rules:
-    - host: biopeptidios.dev.aiwhatsapp.com.br
+    - host: biopeptidios.dw.aiwhatsapp.com.br
       http:
         paths:
           - path: /

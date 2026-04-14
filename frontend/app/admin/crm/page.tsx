@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Users, Search, Filter, MoreHorizontal, Star, Tag } from "lucide-react";
 import { clsx } from "clsx";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dev.aiwhatsapp.com.br";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dw.peptideosbio.com";
 
 const STATUS_LABELS: Record<string, { label: string; badge: string }> = {
     new: { label: "Novo", badge: "badge-blue" },

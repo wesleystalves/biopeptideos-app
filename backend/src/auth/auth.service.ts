@@ -8,6 +8,9 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto, LoginDto } from './auth.dto';
 
+// Hierarquia de planos:  free < basic < premium < admin
+const PLAN_HIERARCHY = ['free', 'basic', 'premium'];
+
 @Injectable()
 export class AuthService {
     constructor(
@@ -28,36 +31,36 @@ export class AuthService {
                 name: dto.name,
                 displayName: dto.name,
                 password: hashed,
+                plan: 'free',
             },
         });
 
-        const token = this.signToken(profile.id, profile.email, profile.isAdmin);
+        const token = this.signToken(profile.id, profile.email, profile.isAdmin, profile.plan);
         return { token, user: this.sanitize(profile) };
     }
 
     async login(dto: LoginDto) {
         const profile = await this.prisma.profile.findUnique({
             where: { email: dto.email },
-            include: { subscriptions: { orderBy: { createdAt: 'desc' }, take: 1 } },
         });
         if (!profile) throw new UnauthorizedException('Credenciais inválidas');
 
-        // Se não tem senha (conta legado Supabase), permite com senha dummy
         if (profile.password) {
             const valid = await bcrypt.compare(dto.password, profile.password);
             if (!valid) throw new UnauthorizedException('Credenciais inválidas');
         }
 
-        const activeSub = profile.subscriptions.find((s) => s.status === 'active');
-        const isPremium = !!activeSub || profile.isAdmin;
+        // Plano real do banco — admin tem acesso total
+        const plan = profile.isAdmin ? 'admin' : profile.plan;
 
-        const token = this.signToken(profile.id, profile.email, profile.isAdmin);
+        const token = this.signToken(profile.id, profile.email, profile.isAdmin, plan);
         return {
             token,
             user: {
                 ...this.sanitize(profile),
-                isPremium,
-                plan: isPremium ? (profile.isAdmin ? 'admin' : 'pro') : 'free',
+                plan,
+                isPremium: profile.isAdmin || ['premium'].includes(profile.plan),
+                isAdmin: profile.isAdmin,
             },
         };
     }
@@ -65,26 +68,26 @@ export class AuthService {
     async me(userId: string) {
         const profile = await this.prisma.profile.findUnique({
             where: { id: userId },
-            include: { subscriptions: { orderBy: { createdAt: 'desc' }, take: 1 } },
         });
         if (!profile) throw new UnauthorizedException();
 
-        const activeSub = profile.subscriptions.find((s) => s.status === 'active');
-        const isPremium = !!activeSub || profile.isAdmin;
+        const plan = profile.isAdmin ? 'admin' : profile.plan;
 
         return {
             ...this.sanitize(profile),
-            isPremium,
-            plan: isPremium ? (profile.isAdmin ? 'admin' : 'pro') : 'free',
+            plan,
+            isPremium: profile.isAdmin || ['premium'].includes(profile.plan),
+            isAdmin: profile.isAdmin,
         };
     }
 
-    private signToken(id: string, email: string, isAdmin: boolean) {
-        return this.jwt.sign({ sub: id, email, isAdmin });
+    private signToken(id: string, email: string, isAdmin: boolean, plan: string) {
+        // plan e isAdmin no JWT → PlanGuard pode verificar sem ir ao banco
+        return this.jwt.sign({ sub: id, email, isAdmin, plan });
     }
 
     private sanitize(profile: any) {
-        const { password, subscriptions, ...rest } = profile;
+        const { password, subscriptions, autoLoginToken, autoLoginExpires, ...rest } = profile;
         return rest;
     }
 }

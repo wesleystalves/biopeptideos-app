@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import ClientLayout from "@/components/client-layout";
 import { Plus, X, GitCompare } from "lucide-react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dev.aiwhatsapp.com.br";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dw.peptideosbio.com";
 
 type Peptide = { id: string; name: string; slug: string; mechanism?: string; dosage?: string; categories?: string[]; summary?: string; };
 

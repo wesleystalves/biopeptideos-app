@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ShoppingBag, Filter } from "lucide-react";
 import { clsx } from "clsx";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dev.aiwhatsapp.com.br";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dw.peptideosbio.com";
 
 const STATUS_BADGE: Record<string, string> = {
     pending: "badge-yellow", paid: "badge-green",

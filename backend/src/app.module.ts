@@ -23,6 +23,8 @@ import { ChannelsModule } from './channels/channels.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { HealthModule } from './health/health.module';
+import { CouponModule } from './coupons/coupon.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
     imports: [
@@ -50,6 +52,8 @@ import { HealthModule } from './health/health.module';
         AnalyticsModule,
         WebhooksModule,
         HealthModule,
+        CouponModule,
+        EmailModule,
     ],
 })
 export class AppModule { }

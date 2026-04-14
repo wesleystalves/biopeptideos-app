@@ -6,7 +6,8 @@ COPY package*.json ./
 RUN npm install --legacy-peer-deps
 
 COPY . .
-ENV NEXT_PUBLIC_API_URL=https://api.biopeptidios.dev.aiwhatsapp.com.br
+ENV NEXT_PUBLIC_API_URL=https://api.biopeptidios.dw.peptideosbio.com
+ENV NEXT_PUBLIC_APP_URL=https://biopeptidios.dw.peptideosbio.com
 RUN npm run build
 
 FROM node:20-alpine AS runner
