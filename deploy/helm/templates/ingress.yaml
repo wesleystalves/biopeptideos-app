@@ -6,9 +6,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
   annotations:
     kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
 spec:
   rules:
     - host: {{ .Values.ingress.host }}
@@ -35,6 +35,7 @@ spec:
     - hosts:
         - {{ .Values.ingress.host }}
         - www.{{ .Values.ingress.host }}
+      secretName: biopeptideos-frontend-tls
 
 ---
 apiVersion: networking.k8s.io/v1
@@ -44,9 +45,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
   annotations:
     kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
 spec:
   rules:
     - host: api.{{ .Values.ingress.host }}
@@ -62,4 +63,5 @@ spec:
   tls:
     - hosts:
         - api.{{ .Values.ingress.host }}
+      secretName: biopeptideos-backend-tls
 {{- end }}
