@@ -1,0 +1,24 @@
+frontend:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/wesleystalves/biopeptideos-app
+    tag: latest
+    pullPolicy: Always
+
+  service:
+    port: 80
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+ingress:
+  enabled: true
+  host: peptideosbio.com
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  tls: []
