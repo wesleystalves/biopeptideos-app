@@ -1,10 +1,11 @@
 import {
     Controller, Get, UseGuards, Request,
-    ForbiddenException, StreamableFile, Header,
+    ForbiddenException, Res,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { PrismaService } from '../prisma/prisma.service';
+import { Response } from 'express';
 
 @ApiTags('admin/backup')
 @Controller('admin/backup')
@@ -19,13 +20,11 @@ export class BackupController {
 
     /**
      * GET /api/admin/backup
-     * Retorna um JSON completo com todos os dados do sistema para download.
+     * Gera backup completo do sistema e retorna como JSON para download.
      */
     @Get()
-    @ApiOperation({ summary: 'Gera backup completo do sistema em JSON (admin)' })
-    @Header('Content-Type', 'application/json')
-    @Header('Content-Disposition', 'attachment; filename="biopeptideos-backup.json"')
-    async generateBackup(@Request() req): Promise<StreamableFile> {
+    @ApiOperation({ summary: 'Backup completo do sistema em JSON (admin)' })
+    async generateBackup(@Request() req: any, @Res() res: Response): Promise<void> {
         this.requireAdmin(req);
 
         const [
@@ -40,6 +39,7 @@ export class BackupController {
             conversations,
             leads,
             complianceRules,
+            ebookPurchases,
         ] = await Promise.all([
             this.prisma.profile.findMany({
                 select: {
@@ -48,23 +48,21 @@ export class BackupController {
                     phone: true, countryCode: true,
                 },
             }),
-            this.prisma.product.findMany().catch(() => []),
-            this.prisma.order.findMany().catch(() => []),
-            this.prisma.guide.findMany().catch(() => []),
-            this.prisma.peptide.findMany().catch(() => []),
-            this.prisma.protocol.findMany().catch(() => []),
-            this.prisma.coupon.findMany().catch(() => []),
+            this.prisma.product.findMany(),
+            this.prisma.order.findMany(),
+            this.prisma.guide.findMany(),
+            this.prisma.peptide.findMany(),
+            this.prisma.protocol.findMany(),
+            this.prisma.coupon.findMany(),
             this.prisma.setting.findMany({
-                // Omitir chaves sensíveis do backup
                 where: {
-                    key: {
-                        notIn: ['asaas.api_key', 'asaas.api_key_prod', 'asaas.webhook_token'],
-                    },
+                    key: { notIn: ['asaas.api_key', 'asaas.api_key_prod', 'asaas.webhook_token'] },
                 },
             }),
-            this.prisma.conversation.findMany().catch(() => []),
-            this.prisma.lead.findMany().catch(() => []),
-            this.prisma.complianceRule.findMany().catch(() => []),
+            this.prisma.conversation.findMany(),
+            this.prisma.lead.findMany(),
+            this.prisma.complianceRule.findMany(),
+            this.prisma.ebookPurchase.findMany(),
         ]);
 
         const backup = {
@@ -82,6 +80,7 @@ export class BackupController {
                     coupons: coupons.length,
                     conversations: conversations.length,
                     leads: leads.length,
+                    ebookPurchases: ebookPurchases.length,
                 },
             },
             data: {
@@ -96,11 +95,13 @@ export class BackupController {
                 conversations,
                 leads,
                 complianceRules,
+                ebookPurchases,
             },
         };
 
-        const json = JSON.stringify(backup, null, 2);
-        const buffer = Buffer.from(json, 'utf-8');
-        return new StreamableFile(buffer);
+        const now = new Date().toISOString().slice(0, 10);
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-Disposition', `attachment; filename="biopeptideos-backup-${now}.json"`);
+        res.send(JSON.stringify(backup, null, 2));
     }
 }
