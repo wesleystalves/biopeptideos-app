@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { Send, Bot, User, Circle } from "lucide-react";
 import { clsx } from "clsx";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dw.peptideosbio.com";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.peptideosbio.com";
 
 const CHANNEL_COLORS: Record<string, string> = {
     whatsapp: "text-green-400",

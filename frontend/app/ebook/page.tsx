@@ -1,7 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://api.peptideosbio.com';
 
 const CHAPTERS = [
     { num: '01', title: 'O que são peptídeos e como funcionam no corpo' },
@@ -20,24 +23,108 @@ const REVIEWS = [
     { name: '@biohacker_rs', role: 'Usuário verificado', text: 'Finalmente um guia prático, sem enrolação. Minha composição corporal mudou.' },
 ];
 
-export default function EbookPage() {
-    const [email, setEmail] = useState('');
-    const [plan, setPlan] = useState<'basic' | 'premium'>('basic');
+type Plan = 'basic' | 'premium';
+type Prices = { basic: { price: number }; premium: { price: number } };
 
-    const handleCheckout = (e: React.FormEvent) => {
+export default function EbookPage() {
+    const router = useRouter();
+    const [plan, setPlan] = useState<Plan>('basic');
+    const [prices, setPrices] = useState<Prices | null>(null);
+    const [form, setForm] = useState({ name: '', email: '', coupon: '' });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    // Carrega preços do backend
+    useEffect(() => {
+        fetch(`${API}/api/checkout/ebook/prices`)
+            .then(r => r.json())
+            .then(setPrices)
+            .catch(() => setPrices({ basic: { price: 9.9 }, premium: { price: 29.9 } }));
+    }, []);
+
+    // Verifica se usuário já tem acesso
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userStr = localStorage.getItem('user');
+        if (token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const userData = userStr ? JSON.parse(userStr) : null;
+                const userPlan = userData?.plan || payload?.plan || 'free';
+                if (['basic', 'premium', 'admin'].includes(userPlan)) {
+                    router.replace('/ebook/reader');
+                    return;
+                }
+            } catch { /* ignore */ }
+            // Logado mas sem plano pago
+            const userData = userStr ? JSON.parse(userStr) : null;
+            setForm(f => ({
+                ...f,
+                name: userData?.name || userData?.displayName || '',
+                email: userData?.email || '',
+            }));
+            setIsLoggedIn(true);
+        }
+    }, [router]);
+
+    function patch(k: string, v: string) {
+        setForm(f => ({ ...f, [k]: v }));
+    }
+
+    async function handleCheckout(e: React.FormEvent) {
         e.preventDefault();
-        // Redireciona para o checkout com o plano selecionado
-        window.location.href = `/checkout?plan=${plan}&email=${encodeURIComponent(email)}&product=ebook`;
-    };
+        if (!form.email) { setError('Informe seu email.'); return; }
+        setLoading(true);
+        setError('');
+
+        try {
+            const res = await fetch(`${API}/api/checkout/ebook`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    plan,
+                    email: form.email,
+                    name: form.name || form.email.split('@')[0],
+                    coupon: form.coupon || undefined,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.message || 'Erro ao criar pedido');
+            }
+
+            if (data.checkoutUrl) {
+                window.location.href = data.checkoutUrl;
+            } else {
+                throw new Error('Link de pagamento não retornado');
+            }
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const currentPrice = prices ? prices[plan].price : (plan === 'basic' ? 9.9 : 29.9);
 
     return (
         <main style={{ background: '#0a0a0a', minHeight: '100vh', color: '#fff', fontFamily: 'system-ui, sans-serif' }}>
             {/* Header */}
             <header style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #1a1a1a' }}>
                 <span style={{ fontSize: '18px', fontWeight: 700, color: '#00d4aa' }}>✦ PeptidiosCode</span>
-                <Link href="/auth/login" style={{ background: '#1a1a1a', color: '#fff', padding: '8px 20px', borderRadius: '8px', textDecoration: 'none', fontSize: '14px' }}>
-                    Entrar
-                </Link>
+                {isLoggedIn ? (
+                    <button onClick={() => router.push('/ebook/reader')}
+                        style={{ background: '#00d4aa', color: '#000', padding: '8px 20px', borderRadius: '8px', border: 'none', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
+                        Acessar Ebook →
+                    </button>
+                ) : (
+                    <Link href="/auth/login?redirect=/ebook/reader" style={{ background: '#1a1a1a', color: '#fff', padding: '8px 20px', borderRadius: '8px', textDecoration: 'none', fontSize: '14px' }}>
+                        Entrar
+                    </Link>
+                )}
             </header>
 
             {/* Hero */}
@@ -104,26 +191,33 @@ export default function EbookPage() {
                     <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px', textAlign: 'center' }}>Escolha seu acesso</h2>
                     <p style={{ color: '#666', textAlign: 'center', marginBottom: '28px', fontSize: '14px' }}>Acesso imediato após o pagamento</p>
 
+                    {/* Seletor de plano */}
                     <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
                         {(['basic', 'premium'] as const).map((p) => (
                             <button
                                 key={p}
                                 onClick={() => setPlan(p)}
                                 style={{
-                                    flex: 1, padding: '16px', borderRadius: '10px', border: `2px solid ${plan === p ? '#00d4aa' : '#2a2a2a'}`,
-                                    background: plan === p ? '#0d3d30' : '#1a1a1a', color: '#fff', cursor: 'pointer', textAlign: 'center'
+                                    flex: 1, padding: '16px', borderRadius: '10px',
+                                    border: `2px solid ${plan === p ? '#00d4aa' : '#2a2a2a'}`,
+                                    background: plan === p ? '#0d3d30' : '#1a1a1a',
+                                    color: '#fff', cursor: 'pointer', textAlign: 'center',
                                 }}
                             >
                                 {p === 'basic' ? (
                                     <>
                                         <div style={{ fontWeight: 700, marginBottom: '4px' }}>📘 Ebook</div>
-                                        <div style={{ color: '#00d4aa', fontWeight: 800, fontSize: '22px' }}>R$ 9,90</div>
+                                        <div style={{ color: '#00d4aa', fontWeight: 800, fontSize: '22px' }}>
+                                            R$ {prices ? prices.basic.price.toFixed(2).replace('.', ',') : '9,90'}
+                                        </div>
                                         <div style={{ color: '#666', fontSize: '12px', marginTop: '4px' }}>Acesso vitalício</div>
                                     </>
                                 ) : (
                                     <>
                                         <div style={{ fontWeight: 700, marginBottom: '4px' }}>🚀 Premium</div>
-                                        <div style={{ color: '#00d4aa', fontWeight: 800, fontSize: '22px' }}>R$ 29,90</div>
+                                        <div style={{ color: '#00d4aa', fontWeight: 800, fontSize: '22px' }}>
+                                            R$ {prices ? prices.premium.price.toFixed(2).replace('.', ',') : '29,90'}
+                                        </div>
                                         <div style={{ color: '#666', fontSize: '12px', marginTop: '4px' }}>Ebook + IA + Plataforma</div>
                                     </>
                                 )}
@@ -131,28 +225,71 @@ export default function EbookPage() {
                         ))}
                     </div>
 
+                    {error && (
+                        <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '8px', padding: '12px 16px', color: '#fca5a5', fontSize: '14px', marginBottom: '16px' }}>
+                            {error}
+                        </div>
+                    )}
+
                     <form onSubmit={handleCheckout} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         <input
+                            type="text"
+                            placeholder="Seu nome completo"
+                            value={form.name}
+                            onChange={e => patch('name', e.target.value)}
+                            style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: '8px', padding: '14px 16px', color: '#fff', fontSize: '15px', outline: 'none' }}
+                        />
+                        <input
                             type="email"
-                            placeholder="Seu melhor e-mail"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Seu melhor e-mail *"
+                            value={form.email}
+                            onChange={e => patch('email', e.target.value)}
                             required
+                            style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: '8px', padding: '14px 16px', color: '#fff', fontSize: '15px', outline: 'none' }}
+                        />
+                        <input
+                            type="text"
+                            placeholder="Cupom de desconto (opcional)"
+                            value={form.coupon}
+                            onChange={e => patch('coupon', e.target.value)}
                             style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: '8px', padding: '14px 16px', color: '#fff', fontSize: '15px', outline: 'none' }}
                         />
                         <button
                             type="submit"
-                            style={{ background: '#00d4aa', color: '#000', padding: '16px', borderRadius: '10px', fontWeight: 700, fontSize: '16px', border: 'none', cursor: 'pointer' }}
+                            disabled={loading}
+                            style={{
+                                background: loading ? '#005540' : '#00d4aa',
+                                color: '#000', padding: '16px', borderRadius: '10px',
+                                fontWeight: 700, fontSize: '16px', border: 'none',
+                                cursor: loading ? 'not-allowed' : 'pointer',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                            }}
                         >
-                            Acessar Agora → R$ {plan === 'basic' ? '9,90' : '29,90'}
+                            {loading ? (
+                                <span style={{ width: '16px', height: '16px', border: '2px solid #000', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />
+                            ) : (
+                                `Acessar Agora → R$ ${currentPrice.toFixed(2).replace('.', ',')}`
+                            )}
                         </button>
                     </form>
 
                     <p style={{ color: '#444', fontSize: '12px', textAlign: 'center', marginTop: '16px' }}>
                         🔒 Pagamento seguro via PIX, Boleto ou Cartão
                     </p>
+
+                    <div style={{ borderTop: '1px solid #1f1f1f', marginTop: '20px', paddingTop: '16px', textAlign: 'center' }}>
+                        <p style={{ color: '#555', fontSize: '13px' }}>
+                            Não tem conta?{' '}
+                            <Link href="/auth/register" style={{ color: '#00d4aa', textDecoration: 'none' }}>
+                                Criar conta grátis
+                            </Link>
+                            {' '}após a compra
+                        </p>
+                    </div>
                 </div>
             </section>
+
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </main>
     );
 }

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import ClientLayout from "@/components/client-layout";
 import { CheckCircle2, AlertCircle, Loader2, Eye, EyeOff, RefreshCw, Save, Zap } from "lucide-react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dw.peptideosbio.com";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.peptideosbio.com";
 
 /* ── Tipos de campo ─────────────────────────────────────── */
 type FieldDef = {
@@ -12,6 +12,17 @@ type FieldDef = {
     placeholder?: string; options?: { value: string; label: string }[];
     help?: string; sensitive?: boolean;
 };
+
+const PRICE_FIELDS: FieldDef[] = [
+    {
+        key: "price.basic", label: "Preço Ebook (Basic)", type: "text",
+        placeholder: "9.90", help: "Preço do plano básico (ebook) em R$. Ex: 9.90"
+    },
+    {
+        key: "price.premium", label: "Preço Premium", type: "text",
+        placeholder: "29.90", help: "Preço do plano premium (ebook + IA + plataforma) em R$. Ex: 29.90"
+    },
+];
 
 const FIELDS: FieldDef[] = [
     {
@@ -31,7 +42,7 @@ const FIELDS: FieldDef[] = [
     },
     {
         key: "asaas.webhook_url", label: "Webhook URL", type: "url",
-        placeholder: "https://api.biopeptidios.dw.peptideosbio.com/api/payments/webhook/asaas",
+        placeholder: "https://api.peptideosbio.com/api/payments/webhook/asaas",
         help: "Configure esta URL no painel Asaas → Configurações → Webhooks"
     },
     {
@@ -206,7 +217,28 @@ export default function AdminPaymentsPage() {
                     </div>
                 </div>
 
-                {/* Form fields */}
+                {/* Preços do Ebook */}
+                <div className="glass-card p-6 space-y-4">
+                    <div className="border-b border-white/5 pb-3">
+                        <h2 className="font-semibold text-white">💰 Preços do Ebook</h2>
+                        <p className="text-xs text-slate-500 mt-1">Estes valores são exibidos na página de vendas e cobrados no pagamento.</p>
+                    </div>
+                    {PRICE_FIELDS.map(field => (
+                        <div key={field.key} className="space-y-1.5">
+                            <label className="block text-sm font-medium text-white">{field.label}</label>
+                            {field.help && <p className="text-xs text-slate-500 mb-2">{field.help}</p>}
+                            <input
+                                type="text"
+                                className="input"
+                                placeholder={field.placeholder}
+                                value={values[field.key] ?? ""}
+                                onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))}
+                            />
+                        </div>
+                    ))}
+                </div>
+
+                {/* Form fields — Asaas */}
                 <div className="glass-card divide-y divide-white/5">
                     {FIELDS.map(field => (
                         <div key={field.key} className="p-5">

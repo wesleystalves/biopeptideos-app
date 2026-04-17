@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { User, ShoppingBag, LogOut, ArrowRight } from "lucide-react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dw.peptideosbio.com";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.peptideosbio.com";
 
 const STATUS_BADGE: Record<string, string> = {
     pending: "badge-yellow", paid: "badge-green",

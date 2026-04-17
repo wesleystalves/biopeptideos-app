@@ -6,49 +6,52 @@ import { Zap, ArrowRight } from "lucide-react";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.peptideosbio.com";
 
-export default function LoginPage() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+export default function RegisterPage() {
+    const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+    function patch(k: string, v: string) {
+        setForm(p => ({ ...p, [k]: v }));
+    }
+
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+        if (form.password !== form.confirm) {
+            setError("As senhas não coincidem.");
+            return;
+        }
+        if (form.password.length < 6) {
+            setError("A senha deve ter pelo menos 6 caracteres.");
+            return;
+        }
+
         setLoading(true);
         setError("");
 
         try {
-            const res = await fetch(`${API}/api/auth/login`, {
+            const res = await fetch(`${API}/api/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ name: form.name, email: form.email, password: form.password }),
             });
 
             if (!res.ok) {
                 const data = await res.json();
-                throw new Error(data.message || "Credenciais inválidas");
+                throw new Error(data.message || "Erro ao criar conta");
             }
 
             const data = await res.json();
-            // API retorna { token, user } — limpar sessão anterior antes de salvar nova
             const jwt = data.token || data.access_token;
-            if (!jwt) throw new Error("Token não recebido. Verifique suas credenciais.");
+            if (!jwt) throw new Error("Token não recebido.");
 
-            // ── Limpar TODA sessão anterior antes de gravar a nova ──────────
             localStorage.clear();
             sessionStorage.clear();
-            document.cookie.split(';').forEach(c => {
-                document.cookie = c.trim().replace(/=.*/, '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/');
-            });
-
             localStorage.setItem("token", jwt);
             localStorage.setItem("user", JSON.stringify(data.user));
 
-            if (data.user?.isAdmin) {
-                window.location.href = "/admin";
-            } else {
-                window.location.href = "/painel";
-            }
+            // Após cadastro, leva para o ebook para concluir a compra
+            window.location.href = "/ebook";
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -71,8 +74,10 @@ export default function LoginPage() {
                 </div>
 
                 <div className="glass-card p-8">
-                    <h1 className="text-xl font-bold text-white mb-1">Entrar</h1>
-                    <p className="text-slate-400 text-sm mb-6">Acesse sua conta ou o painel admin</p>
+                    <h1 className="text-xl font-bold text-white mb-1">Criar conta</h1>
+                    <p className="text-slate-400 text-sm mb-6">
+                        Crie sua conta para acessar o ebook e a plataforma
+                    </p>
 
                     {error && (
                         <div className="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-sm">
@@ -82,13 +87,24 @@ export default function LoginPage() {
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-1.5">
+                            <label className="text-xs text-slate-400 font-medium">Nome completo</label>
+                            <input
+                                type="text"
+                                className="input w-full"
+                                placeholder="João Silva"
+                                value={form.name}
+                                onChange={e => patch("name", e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="space-y-1.5">
                             <label className="text-xs text-slate-400 font-medium">Email</label>
                             <input
                                 type="email"
                                 className="input w-full"
                                 placeholder="seu@email.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                value={form.email}
+                                onChange={e => patch("email", e.target.value)}
                                 required
                             />
                         </div>
@@ -97,9 +113,20 @@ export default function LoginPage() {
                             <input
                                 type="password"
                                 className="input w-full"
+                                placeholder="Mínimo 6 caracteres"
+                                value={form.password}
+                                onChange={e => patch("password", e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="text-xs text-slate-400 font-medium">Confirmar senha</label>
+                            <input
+                                type="password"
+                                className="input w-full"
                                 placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                value={form.confirm}
+                                onChange={e => patch("confirm", e.target.value)}
                                 required
                             />
                         </div>
@@ -111,19 +138,23 @@ export default function LoginPage() {
                             {loading ? (
                                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                             ) : (
-                                <>Entrar <ArrowRight className="w-4 h-4" /></>
+                                <>Criar conta <ArrowRight className="w-4 h-4" /></>
                             )}
                         </button>
                     </form>
 
                     <div className="section-divider" />
                     <p className="text-center text-sm text-slate-500">
-                        Não tem conta?{" "}
-                        <Link href="/auth/register" className="text-brand-400 hover:text-brand-300 transition-colors">
-                            Criar conta
+                        Já tem conta?{" "}
+                        <Link href="/auth/login" className="text-brand-400 hover:text-brand-300 transition-colors">
+                            Entrar
                         </Link>
                     </p>
                 </div>
+
+                <p className="text-center text-xs text-slate-600 mt-6">
+                    🔒 Para se cadastrar é necessário adquirir o ebook
+                </p>
             </div>
         </div>
     );

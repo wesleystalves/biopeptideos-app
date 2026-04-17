@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Plus, Edit2, ToggleLeft, ToggleRight, X, Package } from "lucide-react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dw.peptideosbio.com";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.peptideosbio.com";
 
 const CATEGORIES = ["peptides", "sarms", "hormones", "nootropics", "supplements", "stacks"];
 

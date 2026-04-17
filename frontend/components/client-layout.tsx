@@ -5,12 +5,14 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
     Zap, LayoutDashboard, FlaskConical, Search, GitCompare,
-    BookOpen, Calculator, Layers, AlertTriangle, Map,
+    BookOpen, BookMarked, Calculator, Layers, AlertTriangle, Map,
     CalendarDays, ShoppingBag, User, LogOut, Menu, X, ChevronRight
 } from "lucide-react";
 
 const nav = [
     { href: "/painel", icon: LayoutDashboard, label: "Painel" },
+    { href: "/ebook/reader", icon: BookMarked, label: "📘 Ebook 1 — Fundamentos" },
+    { href: "/ebook2/reader", icon: BookMarked, label: "🧬 Ebook 2 — Era dos Peptídeos" },
     { href: "/library", icon: FlaskConical, label: "Peptídeos" },
     { href: "/finder", icon: Search, label: "Encontre o Seu" },
     { href: "/compare", icon: GitCompare, label: "Comparar" },

@@ -1,6 +1,6 @@
 import {
     Controller,
-    Post,
+    Post, Get,
     Body,
     BadRequestException,
     Logger,
@@ -9,6 +9,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { IsString, IsOptional, IsIn } from 'class-validator';
 import axios from 'axios';
 import { CouponService } from '../coupons/coupon.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 export class EbookCheckoutDto {
     @IsString()
@@ -24,22 +25,22 @@ export class EbookCheckoutDto {
 
     @IsString()
     @IsOptional()
-    cpfCnpj?: string; // Necessário para criar cliente no Asaas
+    cpfCnpj?: string;
 
     @IsString()
     @IsOptional()
     coupon?: string;
 }
 
-// Preços base gerenciados por ENV — muda sem deploy
-const PLANS = {
+// Fallback caso não haja preço no banco
+const PLAN_DEFAULTS = {
     basic: {
         name: 'Ebook — O Código Secreto dos Peptídeos',
-        price: parseFloat(process.env.PRICE_BASIC || '9.90'),
+        fallbackPrice: parseFloat(process.env.PRICE_BASIC || '9.90'),
     },
     premium: {
         name: 'Plano Premium — Ebook + IA + Plataforma BioPeptidios',
-        price: parseFloat(process.env.PRICE_PREMIUM || '29.90'),
+        fallbackPrice: parseFloat(process.env.PRICE_PREMIUM || '29.90'),
     },
 };
 
@@ -48,28 +49,58 @@ const PLANS = {
 export class EbookCheckoutController {
     private readonly logger = new Logger(EbookCheckoutController.name);
 
-    constructor(private readonly couponService: CouponService) { }
+    constructor(
+        private readonly couponService: CouponService,
+        private readonly prisma: PrismaService,
+    ) { }
 
     private readonly asaas = axios.create({
         baseURL: process.env.ASAAS_API_URL || 'https://sandbox.asaas.com/api/v3',
         headers: { access_token: process.env.ASAAS_API_KEY || '' },
     });
 
+    /** Busca preços do banco, com fallback para ENV/padrão */
+    private async getPrices(): Promise<{ basic: number; premium: number }> {
+        const rows = await this.prisma.setting.findMany({
+            where: { key: { in: ['price.basic', 'price.premium'] } },
+        });
+        const map = Object.fromEntries(rows.map(r => [r.key, parseFloat(r.value)]));
+        return {
+            basic: map['price.basic'] || PLAN_DEFAULTS.basic.fallbackPrice,
+            premium: map['price.premium'] || PLAN_DEFAULTS.premium.fallbackPrice,
+        };
+    }
+
+    /**
+     * GET /api/checkout/ebook/prices
+     * Público — retorna preços atuais para o frontend exibir
+     */
+    @Get('prices')
+    @ApiOperation({ summary: 'Retorna preços públicos do ebook (sem auth)' })
+    async getPublicPrices() {
+        const prices = await this.getPrices();
+        return {
+            basic: { price: prices.basic, label: 'Ebook — Acesso vitalício' },
+            premium: { price: prices.premium, label: 'Ebook + IA + Plataforma' },
+        };
+    }
+
     @Post()
     @ApiOperation({ summary: 'Cria cobrança Asaas dinâmica para o ebook' })
     async createCheckout(@Body() dto: EbookCheckoutDto) {
-        const plan = PLANS[dto.plan];
-        let finalPrice = plan.price;
+        const prices = await this.getPrices();
+        const planDef = PLAN_DEFAULTS[dto.plan];
+        let finalPrice = prices[dto.plan];
         let discountApplied = 0;
         let couponId: string | null = null;
 
-        // ── Valida cupom no banco de dados ────────────────────────────────
+        // Valida cupom
         if (dto.coupon?.trim()) {
             try {
                 const result = await this.couponService.validate(
                     dto.coupon,
                     dto.plan,
-                    plan.price,
+                    finalPrice,
                 );
                 finalPrice = result.finalAmount;
                 discountApplied = result.discountApplied;
@@ -79,26 +110,40 @@ export class EbookCheckoutController {
             }
         }
 
-        // ── Cria ou busca cliente no Asaas ────────────────────────────────
+        // Busca API key do banco (ambiente correto)
+        const envRow = await this.prisma.setting.findUnique({ where: { key: 'asaas.env' } });
+        const isProduction = envRow?.value === 'production';
+        const apiKeyRow = await this.prisma.setting.findUnique({
+            where: { key: isProduction ? 'asaas.api_key_prod' : 'asaas.api_key' },
+        });
+
+        const asaasBaseUrl = isProduction
+            ? 'https://api.asaas.com/v3'
+            : 'https://sandbox.asaas.com/api/v3';
+        const asaasKey = apiKeyRow?.value || process.env.ASAAS_API_KEY || '';
+
+        const asaas = axios.create({
+            baseURL: asaasBaseUrl,
+            headers: { access_token: asaasKey },
+        });
+
+        // Cria ou busca cliente no Asaas
         let customerId: string;
         try {
-            const search = await this.asaas.get('/customers', {
+            const search = await asaas.get('/customers', {
                 params: { email: dto.email },
             });
 
             if (search.data.data?.length > 0) {
                 customerId = search.data.data[0].id;
-                // Se cliente existe mas sem CPF, atualiza
                 if (!search.data.data[0].cpfCnpj && dto.cpfCnpj) {
-                    await this.asaas.put(`/customers/${customerId}`, {
-                        cpfCnpj: dto.cpfCnpj,
-                    });
+                    await asaas.put(`/customers/${customerId}`, { cpfCnpj: dto.cpfCnpj });
                 }
             } else {
-                const customer = await this.asaas.post('/customers', {
+                const customer = await asaas.post('/customers', {
                     name: dto.name || dto.email.split('@')[0],
                     email: dto.email,
-                    cpfCnpj: dto.cpfCnpj || '00000000000', // CPF obrigatório no sandbox
+                    cpfCnpj: dto.cpfCnpj || '00000000000',
                     notificationDisabled: false,
                 });
                 customerId = customer.data.id;
@@ -108,28 +153,27 @@ export class EbookCheckoutController {
             throw new BadRequestException('Falha ao criar cliente no gateway de pagamento');
         }
 
-        // ── Cria cobrança (cliente escolhe PIX/Boleto/Cartão) ────────────
+        // Cria cobrança (cliente escolhe PIX/Boleto/Cartão na página do Asaas)
         const dueDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
             .toISOString()
             .split('T')[0];
 
         try {
-            const charge = await this.asaas.post('/payments', {
+            const charge = await asaas.post('/payments', {
                 customer: customerId,
                 billingType: 'UNDEFINED',
                 value: finalPrice,
                 dueDate,
-                description: plan.name,
+                description: planDef.name,
                 externalReference: `${dto.plan}:${dto.email}`,
                 callback: {
-                    successUrl: `${process.env.APP_URL || 'https://biopeptidios.dw.aiwhatsapp.com.br'}/auto-login-redirect?plan=${dto.plan}&email=${encodeURIComponent(dto.email)}`,
+                    successUrl: `${process.env.APP_URL || 'https://peptideosbio.com'}/auto-login-redirect?plan=${dto.plan}&email=${encodeURIComponent(dto.email)}`,
                     autoRedirect: true,
                 },
             });
 
             this.logger.log(`Cobrança criada: ${charge.data.id} — R$${finalPrice} (${dto.plan})`);
 
-            // Incrementa uso do cupom após cobrança criada com sucesso
             if (couponId) {
                 await this.couponService.incrementUsage(couponId);
             }
@@ -138,7 +182,7 @@ export class EbookCheckoutController {
                 checkoutUrl: charge.data.invoiceUrl,
                 plan: dto.plan,
                 amount: finalPrice,
-                originalAmount: plan.price,
+                originalAmount: prices[dto.plan],
                 discount: discountApplied,
                 expiresAt: dueDate,
             };

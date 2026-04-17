@@ -21,6 +21,8 @@ const GATEWAY_KEYS = [
     'asaas.split_enabled',    // "true" | "false"
     'asaas.split_wallet_id',  // Wallet ID para split
     'asaas.notifications_email', // email para receber notificações
+    'price.basic',            // Preço do plano Ebook (default "9.90")
+    'price.premium',          // Preço do plano Premium (default "29.90")
 ];
 
 @ApiTags('admin/gateway')

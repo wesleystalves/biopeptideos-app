@@ -24,7 +24,7 @@ export default function AdminSidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="w-64 min-h-screen flex flex-col border-r border-white/5 bg-dark-900/80 backdrop-blur-sm">
+        <aside className="w-64 min-h-screen flex flex-col border-r border-white/10" style={{ background: 'rgba(5, 20, 38, 0.55)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
             {/* Logo */}
             <div className="px-5 py-5 border-b border-white/5">
                 <div className="flex items-center gap-2.5">

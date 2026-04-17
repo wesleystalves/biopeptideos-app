@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ShieldCheck, Package, ShoppingCart, ChevronLeft, Star } from "lucide-react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dw.peptideosbio.com";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.peptideosbio.com";
 
 export default function ProductPage({ params }: { params: { slug: string } }) {
     const [product, setProduct] = useState<any>(null);

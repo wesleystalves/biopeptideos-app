@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Search, Filter, ShieldCheck, Package, ChevronRight } from "lucide-react";
 import { clsx } from "clsx";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://api.biopeptidios.dw.peptideosbio.com";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.peptideosbio.com";
 
 const CATEGORIES = ["Todos", "peptides", "sarms", "hormones", "nootropics", "supplements", "stacks"];
 
