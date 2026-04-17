@@ -143,7 +143,8 @@ export class EbookCheckoutController {
                 const customer = await asaas.post('/customers', {
                     name: dto.name || dto.email.split('@')[0],
                     email: dto.email,
-                    cpfCnpj: dto.cpfCnpj || '00000000000',
+                    // Asaas Sandbox aceita qualquer CPF válido; prod exige CPF real do comprador
+                    cpfCnpj: dto.cpfCnpj || '24971563792',
                     notificationDisabled: false,
                 });
                 customerId = customer.data.id;
