@@ -4,46 +4,39 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'https://api.peptideosbio.com';
-
 const CHAPTERS = [
-    { num: '01', title: 'O que são peptídeos e como funcionam no corpo' },
-    { num: '02', title: 'Os 12 peptídeos mais pesquisados para performance' },
-    { num: '03', title: 'Emagrecimento acelerado: Semaglutide, BPC-157 e CJC-1295' },
-    { num: '04', title: 'Regeneração muscular e recuperação pós-treino' },
-    { num: '05', title: 'Longevidade e anti-aging: Epitalon e TB-500' },
-    { num: '06', title: 'Protocolos completos de dosagem e aplicação' },
-    { num: '07', title: 'Combinações sinérgicas e stacks avançados' },
-    { num: '08', title: 'Segurança, efeitos colaterais e como evitá-los' },
+    { num: '01', icon: '🧬', title: 'O que são peptídeos e como funcionam no corpo' },
+    { num: '02', icon: '⚡', title: 'Os 12 peptídeos mais pesquisados para performance' },
+    { num: '03', icon: '🔥', title: 'Emagrecimento acelerado: Semaglutide, BPC-157 e CJC-1295' },
+    { num: '04', icon: '💪', title: 'Regeneração muscular e recuperação pós-treino' },
+    { num: '05', icon: '⏳', title: 'Longevidade e anti-aging: Epitalon e TB-500' },
+    { num: '06', icon: '📋', title: 'Protocolos completos de dosagem e aplicação' },
+    { num: '07', icon: '🔗', title: 'Combinações sinérgicas e stacks avançados' },
+    { num: '08', icon: '🛡️', title: 'Segurança, efeitos colaterais e como evitá-los' },
 ];
 
 const REVIEWS = [
-    { name: '@atleta_igor', role: 'Usuário verificado', text: 'Transformou minha recuperação. Em 3 semanas já sentia diferença no treino.' },
-    { name: '@dra_carla_m', role: 'Nutricionista', text: 'O material mais completo e científico que já li sobre o tema. Recomendo.' },
-    { name: '@biohacker_rs', role: 'Usuário verificado', text: 'Finalmente um guia prático, sem enrolação. Minha composição corporal mudou.' },
+    { name: '@atleta_igor', role: 'Usuário verificado', text: 'Transformou minha recuperação. Em 3 semanas já sentia diferença real no treino.', stars: 5 },
+    { name: '@dra_carla_m', role: 'Nutricionista', text: 'O material mais completo e científico que já li sobre o tema. Indispensável.', stars: 5 },
+    { name: '@biohacker_rs', role: 'Usuário verificado', text: 'Finalmente um guia prático, sem enrolação. Minha composição corporal mudou.', stars: 5 },
 ];
 
-type Plan = 'basic' | 'premium';
-type Prices = { basic: { price: number }; premium: { price: number } };
+const BG = 'linear-gradient(135deg, #071a2c 0%, #083a5a 50%, #071a2c 100%)';
+const GLASS = {
+    background: 'rgba(255,255,255,0.04)',
+    backdropFilter: 'blur(12px)',
+    border: '1px solid rgba(255,255,255,0.08)',
+    borderRadius: '16px',
+};
+const BRAND = '#5b8af5';
+const ACCENT = '#00e5cc';
 
 export default function EbookPage() {
     const router = useRouter();
-    const [plan, setPlan] = useState<Plan>('basic');
-    const [prices, setPrices] = useState<Prices | null>(null);
-    const [form, setForm] = useState({ name: '', email: '', coupon: '' });
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
+    const [email, setEmail] = useState('');
+    const [plan, setPlan] = useState<'basic' | 'premium'>('basic');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    // Carrega preços do backend
-    useEffect(() => {
-        fetch(`${API}/api/checkout/ebook/prices`)
-            .then(r => r.json())
-            .then(setPrices)
-            .catch(() => setPrices({ basic: { price: 9.9 }, premium: { price: 29.9 } }));
-    }, []);
-
-    // Verifica se usuário já tem acesso
     useEffect(() => {
         const token = localStorage.getItem('token');
         const userStr = localStorage.getItem('user');
@@ -51,245 +44,185 @@ export default function EbookPage() {
             try {
                 const payload = JSON.parse(atob(token.split('.')[1]));
                 const userData = userStr ? JSON.parse(userStr) : null;
-                const userPlan = userData?.plan || payload?.plan || 'free';
-                if (['basic', 'premium', 'admin'].includes(userPlan)) {
+                const p = userData?.plan || payload?.plan || 'free';
+                if (['basic', 'premium', 'admin'].includes(p)) {
                     router.replace('/ebook/reader');
                     return;
                 }
             } catch { /* ignore */ }
-            // Logado mas sem plano pago
-            const userData = userStr ? JSON.parse(userStr) : null;
-            setForm(f => ({
-                ...f,
-                name: userData?.name || userData?.displayName || '',
-                email: userData?.email || '',
-            }));
             setIsLoggedIn(true);
         }
     }, [router]);
 
-    function patch(k: string, v: string) {
-        setForm(f => ({ ...f, [k]: v }));
-    }
-
-    async function handleCheckout(e: React.FormEvent) {
+    const handleCheckout = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!form.email) { setError('Informe seu email.'); return; }
-        setLoading(true);
-        setError('');
-
-        try {
-            const res = await fetch(`${API}/api/checkout/ebook`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    plan,
-                    email: form.email,
-                    name: form.name || form.email.split('@')[0],
-                    coupon: form.coupon || undefined,
-                }),
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.message || 'Erro ao criar pedido');
-            }
-
-            if (data.checkoutUrl) {
-                window.location.href = data.checkoutUrl;
-            } else {
-                throw new Error('Link de pagamento não retornado');
-            }
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    const currentPrice = prices ? prices[plan].price : (plan === 'basic' ? 9.9 : 29.9);
+        window.location.href = `/checkout?plan=${plan}&email=${encodeURIComponent(email)}&product=ebook`;
+    };
 
     return (
-        <main style={{ background: '#0a0a0a', minHeight: '100vh', color: '#fff', fontFamily: 'system-ui, sans-serif' }}>
-            {/* Header */}
-            <header style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #1a1a1a' }}>
-                <span style={{ fontSize: '18px', fontWeight: 700, color: '#00d4aa' }}>✦ PeptidiosCode</span>
+        <main style={{ background: BG, minHeight: '100vh', color: '#fff', fontFamily: "'Inter', system-ui, sans-serif" }}>
+
+            {/* ── HEADER ── */}
+            <header style={{ padding: '18px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)', position: 'sticky', top: 0, zIndex: 50, background: 'rgba(7,26,44,0.85)' }}>
+                <span style={{ fontSize: '18px', fontWeight: 800, background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    ✦ PeptídeosBio
+                </span>
                 {isLoggedIn ? (
                     <button onClick={() => router.push('/ebook/reader')}
-                        style={{ background: '#00d4aa', color: '#000', padding: '8px 20px', borderRadius: '8px', border: 'none', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
+                        style={{ background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '9px 22px', borderRadius: '10px', border: 'none', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>
                         Acessar Ebook →
                     </button>
                 ) : (
-                    <Link href="/auth/login?redirect=/ebook/reader" style={{ background: '#1a1a1a', color: '#fff', padding: '8px 20px', borderRadius: '8px', textDecoration: 'none', fontSize: '14px' }}>
+                    <Link href="/auth/login?redirect=/ebook/reader"
+                        style={{ ...GLASS, color: '#e2e8f0', padding: '9px 22px', borderRadius: '10px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}>
                         Entrar
                     </Link>
                 )}
             </header>
 
-            {/* Hero */}
-            <section style={{ maxWidth: '720px', margin: '0 auto', padding: '80px 24px 60px', textAlign: 'center' }}>
-                <span style={{ background: '#0d3d30', color: '#00d4aa', padding: '6px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, letterSpacing: '1px', display: 'inline-block', marginBottom: '28px' }}>
+            {/* ── HERO ── */}
+            <section style={{ maxWidth: '760px', margin: '0 auto', padding: '80px 24px 60px', textAlign: 'center' }}>
+                <span style={{ background: 'rgba(91,138,245,0.15)', color: BRAND, padding: '6px 18px', borderRadius: '20px', fontSize: '12px', fontWeight: 700, letterSpacing: '1.5px', display: 'inline-block', marginBottom: '32px', border: '1px solid rgba(91,138,245,0.3)' }}>
                     🧬 BIOHACKING DE ELITE
                 </span>
 
-                <h1 style={{ fontSize: 'clamp(36px, 6vw, 60px)', fontWeight: 800, lineHeight: 1.15, marginBottom: '24px' }}>
-                    O <span style={{ color: '#00d4aa' }}>Código Secreto</span>{' '}
-                    dos Peptídeos
+                <h1 style={{ fontSize: 'clamp(36px, 7vw, 64px)', fontWeight: 900, lineHeight: 1.1, marginBottom: '24px', letterSpacing: '-1px' }}>
+                    O{' '}
+                    <span style={{ background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                        Código Secreto
+                    </span>
+                    {' '}dos Peptídeos
                 </h1>
 
-                <p style={{ fontSize: '18px', color: '#a0a0a0', lineHeight: 1.7, marginBottom: '40px', maxWidth: '560px', margin: '0 auto 40px' }}>
+                <p style={{ fontSize: '18px', color: '#94afc7', lineHeight: 1.75, marginBottom: '44px', maxWidth: '560px', margin: '0 auto 44px' }}>
                     O manual completo de emagrecimento, performance, regeneração e longevidade que médicos não te contam. Leia online, aplique hoje.
                 </p>
 
-                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '24px' }}>
-                    <a href="#checkout" style={{ background: '#00d4aa', color: '#000', padding: '16px 32px', borderRadius: '10px', fontWeight: 700, fontSize: '16px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '28px' }}>
+                    <a href="#checkout"
+                        style={{ background: `linear-gradient(135deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '16px 36px', borderRadius: '12px', fontWeight: 800, fontSize: '16px', textDecoration: 'none', boxShadow: '0 8px 32px rgba(91,138,245,0.35)' }}>
                         Quero Acessar Agora →
                     </a>
-                    <a href="#conteudo" style={{ background: '#1a1a1a', color: '#fff', padding: '16px 28px', borderRadius: '10px', fontWeight: 600, fontSize: '16px', textDecoration: 'none', border: '1px solid #333' }}>
+                    <a href="#conteudo"
+                        style={{ ...GLASS, color: '#cbd5e1', padding: '16px 28px', borderRadius: '12px', fontWeight: 600, fontSize: '15px', textDecoration: 'none' }}>
                         Ver conteúdo
                     </a>
                 </div>
 
-                <p style={{ color: '#555', fontSize: '13px' }}>
+                <p style={{ color: '#4a6580', fontSize: '13px' }}>
                     ✅ Mais de 1.200 pessoas já transformaram o corpo com este material
                 </p>
             </section>
 
-            {/* Conteúdo */}
-            <section id="conteudo" style={{ maxWidth: '720px', margin: '0 auto', padding: '60px 24px' }}>
-                <h2 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '8px', textAlign: 'center' }}>O que você vai aprender</h2>
-                <p style={{ color: '#666', textAlign: 'center', marginBottom: '40px' }}>8 capítulos baseados em evidências científicas</p>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {CHAPTERS.map((c) => (
-                        <div key={c.num} style={{ background: '#111', border: '1px solid #1f1f1f', borderRadius: '12px', padding: '18px 24px', display: 'flex', gap: '20px', alignItems: 'center' }}>
-                            <span style={{ color: '#00d4aa', fontWeight: 800, fontSize: '20px', minWidth: '32px' }}>{c.num}</span>
-                            <span style={{ color: '#e0e0e0', fontSize: '15px' }}>{c.title}</span>
+            {/* ── STATS STRIP ── */}
+            <section style={{ maxWidth: '760px', margin: '0 auto 20px', padding: '0 24px' }}>
+                <div style={{ ...GLASS, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', overflow: 'hidden', borderRadius: '16px' }}>
+                    {[
+                        { value: '1.200+', label: 'Leitores ativos' },
+                        { value: '8', label: 'Capítulos' },
+                        { value: '100%', label: 'Baseado em ciência' },
+                    ].map((s) => (
+                        <div key={s.label} style={{ padding: '22px 16px', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
+                            <div style={{ fontSize: '26px', fontWeight: 900, background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{s.value}</div>
+                            <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>{s.label}</div>
                         </div>
                     ))}
                 </div>
             </section>
 
-            {/* Depoimentos */}
-            <section style={{ maxWidth: '720px', margin: '0 auto', padding: '0 24px 60px' }}>
-                <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '32px', textAlign: 'center' }}>O que dizem os leitores</h2>
-                <div style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+            {/* ── CHAPTERS ── */}
+            <section id="conteudo" style={{ maxWidth: '760px', margin: '0 auto', padding: '60px 24px' }}>
+                <h2 style={{ fontSize: '28px', fontWeight: 800, marginBottom: '8px', textAlign: 'center' }}>O que você vai aprender</h2>
+                <p style={{ color: '#64748b', textAlign: 'center', marginBottom: '40px', fontSize: '15px' }}>8 capítulos baseados em evidências científicas</p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {CHAPTERS.map((c, i) => (
+                        <div key={c.num} style={{ ...GLASS, padding: '18px 22px', display: 'flex', gap: '18px', alignItems: 'center', transition: 'border-color 0.2s' }}>
+                            <span style={{ fontSize: '22px', minWidth: '32px' }}>{c.icon}</span>
+                            <span style={{ color: '#64748b', fontWeight: 700, fontSize: '12px', minWidth: '28px' }}>{String(i + 1).padStart(2, '0')}</span>
+                            <span style={{ color: '#e2e8f0', fontSize: '15px', lineHeight: 1.4 }}>{c.title}</span>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* ── REVIEWS ── */}
+            <section style={{ maxWidth: '760px', margin: '0 auto', padding: '0 24px 60px' }}>
+                <h2 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '32px', textAlign: 'center' }}>O que dizem os leitores</h2>
+                <div style={{ display: 'grid', gap: '14px', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))' }}>
                     {REVIEWS.map((r) => (
-                        <div key={r.name} style={{ background: '#111', border: '1px solid #1f1f1f', borderRadius: '12px', padding: '20px' }}>
-                            <p style={{ color: '#ccc', fontSize: '14px', lineHeight: 1.6, marginBottom: '16px' }}>"{r.text}"</p>
-                            <p style={{ color: '#00d4aa', fontWeight: 600, fontSize: '13px' }}>{r.name}</p>
-                            <p style={{ color: '#555', fontSize: '12px' }}>{r.role}</p>
+                        <div key={r.name} style={{ ...GLASS, padding: '22px' }}>
+                            <div style={{ color: ACCENT, fontSize: '14px', marginBottom: '10px' }}>{'★'.repeat(r.stars)}</div>
+                            <p style={{ color: '#94afc7', fontSize: '14px', lineHeight: 1.65, marginBottom: '16px' }}>"{r.text}"</p>
+                            <p style={{ color: BRAND, fontWeight: 700, fontSize: '13px' }}>{r.name}</p>
+                            <p style={{ color: '#4a6580', fontSize: '12px', marginTop: '2px' }}>{r.role}</p>
                         </div>
                     ))}
                 </div>
             </section>
 
-            {/* Checkout */}
+            {/* ── CHECKOUT ── */}
             <section id="checkout" style={{ maxWidth: '480px', margin: '0 auto', padding: '0 24px 80px' }}>
-                <div style={{ background: '#111', border: '1px solid #1f1f1f', borderRadius: '16px', padding: '40px 32px' }}>
-                    <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px', textAlign: 'center' }}>Escolha seu acesso</h2>
-                    <p style={{ color: '#666', textAlign: 'center', marginBottom: '28px', fontSize: '14px' }}>Acesso imediato após o pagamento</p>
+                <div style={{ ...GLASS, padding: '40px 32px', borderColor: 'rgba(91,138,245,0.2)' }}>
+                    <h2 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '6px', textAlign: 'center' }}>Escolha seu acesso</h2>
+                    <p style={{ color: '#64748b', textAlign: 'center', marginBottom: '28px', fontSize: '14px' }}>Acesso imediato após o pagamento</p>
 
-                    {/* Seletor de plano */}
                     <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
                         {(['basic', 'premium'] as const).map((p) => (
-                            <button
-                                key={p}
-                                onClick={() => setPlan(p)}
+                            <button key={p} onClick={() => setPlan(p)}
                                 style={{
-                                    flex: 1, padding: '16px', borderRadius: '10px',
-                                    border: `2px solid ${plan === p ? '#00d4aa' : '#2a2a2a'}`,
-                                    background: plan === p ? '#0d3d30' : '#1a1a1a',
-                                    color: '#fff', cursor: 'pointer', textAlign: 'center',
-                                }}
-                            >
+                                    flex: 1, padding: '18px 12px', borderRadius: '12px',
+                                    border: `2px solid ${plan === p ? BRAND : 'rgba(255,255,255,0.08)'}`,
+                                    background: plan === p ? 'rgba(91,138,245,0.12)' : 'rgba(255,255,255,0.03)',
+                                    color: '#fff', cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s'
+                                }}>
                                 {p === 'basic' ? (
                                     <>
-                                        <div style={{ fontWeight: 700, marginBottom: '4px' }}>📘 Ebook</div>
-                                        <div style={{ color: '#00d4aa', fontWeight: 800, fontSize: '22px' }}>
-                                            R$ {prices ? prices.basic.price.toFixed(2).replace('.', ',') : '9,90'}
-                                        </div>
-                                        <div style={{ color: '#666', fontSize: '12px', marginTop: '4px' }}>Acesso vitalício</div>
+                                        <div style={{ fontWeight: 800, marginBottom: '6px', fontSize: '15px' }}>📘 Ebook</div>
+                                        <div style={{ background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 900, fontSize: '24px' }}>R$ 9,90</div>
+                                        <div style={{ color: '#4a6580', fontSize: '12px', marginTop: '6px' }}>Acesso vitalício</div>
                                     </>
                                 ) : (
                                     <>
-                                        <div style={{ fontWeight: 700, marginBottom: '4px' }}>🚀 Premium</div>
-                                        <div style={{ color: '#00d4aa', fontWeight: 800, fontSize: '22px' }}>
-                                            R$ {prices ? prices.premium.price.toFixed(2).replace('.', ',') : '29,90'}
-                                        </div>
-                                        <div style={{ color: '#666', fontSize: '12px', marginTop: '4px' }}>Ebook + IA + Plataforma</div>
+                                        <div style={{ fontWeight: 800, marginBottom: '6px', fontSize: '15px' }}>🚀 Premium</div>
+                                        <div style={{ background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 900, fontSize: '24px' }}>R$ 29,90</div>
+                                        <div style={{ color: '#4a6580', fontSize: '12px', marginTop: '6px' }}>Ebook + IA + Plataforma</div>
                                     </>
                                 )}
                             </button>
                         ))}
                     </div>
 
-                    {error && (
-                        <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '8px', padding: '12px 16px', color: '#fca5a5', fontSize: '14px', marginBottom: '16px' }}>
-                            {error}
-                        </div>
-                    )}
-
                     <form onSubmit={handleCheckout} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         <input
-                            type="text"
-                            placeholder="Seu nome completo"
-                            value={form.name}
-                            onChange={e => patch('name', e.target.value)}
-                            style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: '8px', padding: '14px 16px', color: '#fff', fontSize: '15px', outline: 'none' }}
-                        />
-                        <input
                             type="email"
-                            placeholder="Seu melhor e-mail *"
-                            value={form.email}
-                            onChange={e => patch('email', e.target.value)}
+                            placeholder="Seu melhor e-mail"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
-                            style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: '8px', padding: '14px 16px', color: '#fff', fontSize: '15px', outline: 'none' }}
+                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '14px 16px', color: '#fff', fontSize: '15px', outline: 'none' }}
                         />
-                        <input
-                            type="text"
-                            placeholder="Cupom de desconto (opcional)"
-                            value={form.coupon}
-                            onChange={e => patch('coupon', e.target.value)}
-                            style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: '8px', padding: '14px 16px', color: '#fff', fontSize: '15px', outline: 'none' }}
-                        />
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            style={{
-                                background: loading ? '#005540' : '#00d4aa',
-                                color: '#000', padding: '16px', borderRadius: '10px',
-                                fontWeight: 700, fontSize: '16px', border: 'none',
-                                cursor: loading ? 'not-allowed' : 'pointer',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                            }}
-                        >
-                            {loading ? (
-                                <span style={{ width: '16px', height: '16px', border: '2px solid #000', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />
-                            ) : (
-                                `Acessar Agora → R$ ${currentPrice.toFixed(2).replace('.', ',')}`
-                            )}
+                        <button type="submit"
+                            style={{ background: `linear-gradient(135deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '16px', borderRadius: '12px', fontWeight: 800, fontSize: '16px', border: 'none', cursor: 'pointer', boxShadow: '0 6px 24px rgba(91,138,245,0.35)' }}>
+                            Acessar Agora → R$ {plan === 'basic' ? '9,90' : '29,90'}
                         </button>
                     </form>
 
-                    <p style={{ color: '#444', fontSize: '12px', textAlign: 'center', marginTop: '16px' }}>
+                    <p style={{ color: '#334155', fontSize: '12px', textAlign: 'center', marginTop: '18px' }}>
                         🔒 Pagamento seguro via PIX, Boleto ou Cartão
                     </p>
-
-                    <div style={{ borderTop: '1px solid #1f1f1f', marginTop: '20px', paddingTop: '16px', textAlign: 'center' }}>
-                        <p style={{ color: '#555', fontSize: '13px' }}>
-                            Não tem conta?{' '}
-                            <Link href="/auth/register" style={{ color: '#00d4aa', textDecoration: 'none' }}>
-                                Criar conta grátis
-                            </Link>
-                            {' '}após a compra
-                        </p>
-                    </div>
                 </div>
             </section>
 
-            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            {/* ── FOOTER ── */}
+            <footer style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '24px', textAlign: 'center' }}>
+                <span style={{ fontSize: '14px', fontWeight: 700, background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    ✦ PeptídeosBio
+                </span>
+                <p style={{ color: '#334155', fontSize: '12px', marginTop: '8px' }}>
+                    © 2025 PeptídeosBio · <Link href="/auth/login" style={{ color: '#4a6580', textDecoration: 'none' }}>Já tenho acesso</Link>
+                </p>
+            </footer>
         </main>
     );
 }

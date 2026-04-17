@@ -47,18 +47,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install & Build backend
-        working-directory: ./backend
-        run: |
-          npm install --legacy-peer-deps
-          npx prisma generate
-          npm run build
-
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
