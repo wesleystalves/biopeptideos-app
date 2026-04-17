@@ -11,6 +11,8 @@ import { PaymentsController } from './payments.controller';
 import { GatewayConfigController } from './gateway-config.controller';
 import { EbookWebhookController } from './ebook-webhook.controller';
 import { EbookCheckoutController } from './ebook-checkout.controller';
+import { BackupController } from './backup.controller';
+
 
 @Module({
     imports: [
@@ -21,7 +23,7 @@ import { EbookCheckoutController } from './ebook-checkout.controller';
         JwtModule.register({ secret: process.env.JWT_SECRET }),
     ],
     providers: [PaymentRouterService, StripeProvider, AsaasProvider],
-    controllers: [PaymentsController, GatewayConfigController, EbookWebhookController, EbookCheckoutController],
+    controllers: [PaymentsController, GatewayConfigController, EbookWebhookController, EbookCheckoutController, BackupController],
     exports: [PaymentRouterService],
 })
 export class PaymentsModule { }
