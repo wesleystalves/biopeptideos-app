@@ -238,7 +238,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: biopeptidios-web:v6    # Atualizar tag na release
+        image: biopeptidios-web:v7    # Atualizar tag na release
         imagePullPolicy: Never         # Mudar para IfNotPresent em registry externo
         ports:
         - containerPort: 3000
