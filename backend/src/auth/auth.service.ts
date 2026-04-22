@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto, LoginDto } from './auth.dto';
+import { EmailService } from '../notifications/email.service';
 
 // Hierarquia de planos:  free < basic < premium < admin
 const PLAN_HIERARCHY = ['free', 'basic', 'premium'];
@@ -16,6 +17,7 @@ export class AuthService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly jwt: JwtService,
+        private readonly email: EmailService,
     ) { }
 
     async register(dto: RegisterDto) {
@@ -36,6 +38,10 @@ export class AuthService {
         });
 
         const token = this.signToken(profile.id, profile.email, profile.isAdmin, profile.plan);
+
+        // Envia email de boas-vindas (não bloqueia o cadastro se falhar)
+        this.email.sendWelcome(profile.email, profile.name || profile.displayName || '');
+
         return { token, user: this.sanitize(profile) };
     }
 

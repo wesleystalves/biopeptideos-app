@@ -30,6 +30,21 @@ export class EbookCheckoutDto {
     @IsString()
     @IsOptional()
     coupon?: string;
+
+    /** pix | credit_card | debit_card — padrão: pix */
+    @IsString()
+    @IsOptional()
+    paymentMethod?: 'pix' | 'credit_card' | 'debit_card';
+
+    // Dados do cartão (obrigatório se paymentMethod !== 'pix')
+    @IsString() @IsOptional() cardNumber?: string;
+    @IsString() @IsOptional() cardHolder?: string;
+    @IsString() @IsOptional() cardExpiryMonth?: string;
+    @IsString() @IsOptional() cardExpiryYear?: string;
+    @IsString() @IsOptional() cardCvv?: string;
+    @IsString() @IsOptional() postalCode?: string;
+    @IsString() @IsOptional() addressNumber?: string;
+    @IsString() @IsOptional() phone?: string;
 }
 
 // Fallback caso não haja preço no banco
@@ -154,42 +169,108 @@ export class EbookCheckoutController {
             throw new BadRequestException('Falha ao criar cliente no gateway de pagamento');
         }
 
-        // Cria cobrança (cliente escolhe PIX/Boleto/Cartão na página do Asaas)
+        // Cria cobrança — tipo depende do método escolhido
         const dueDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
             .toISOString()
             .split('T')[0];
 
+        const method = dto.paymentMethod || 'pix';
+
         try {
+            // ── PIX ──────────────────────────────────────────────────────
+            if (method === 'pix') {
+                const charge = await asaas.post('/payments', {
+                    customer: customerId,
+                    billingType: 'PIX',
+                    value: finalPrice,
+                    dueDate,
+                    description: planDef.name,
+                    externalReference: `${dto.plan}:${dto.email}`,
+                });
+
+                const paymentId = charge.data.id;
+                this.logger.log(`PIX criado: ${paymentId} — R$${finalPrice} (${dto.plan})`);
+
+                let pixQrCode = '';
+                let pixQrCodeUrl = '';
+                try {
+                    const pix = await asaas.get(`/payments/${paymentId}/pixQrCode`);
+                    pixQrCode = pix.data.payload || '';
+                    pixQrCodeUrl = pix.data.encodedImage || '';
+                } catch (e) {
+                    this.logger.warn('Não foi possível buscar PIX QR Code', e?.message);
+                }
+
+                if (couponId) await this.couponService.incrementUsage(couponId);
+
+                return {
+                    paymentMethod: 'pix',
+                    paymentId,
+                    pixQrCode,
+                    pixQrCodeUrl,
+                    plan: dto.plan,
+                    amount: finalPrice,
+                    originalAmount: prices[dto.plan],
+                    discount: discountApplied,
+                    expiresAt: dueDate,
+                    checkoutUrl: charge.data.invoiceUrl || null,
+                };
+            }
+
+            // ── CARTÃO DE CRÉDITO / DÉBITO ────────────────────────────────
+            if (!dto.cardNumber || !dto.cardHolder || !dto.cardExpiryMonth || !dto.cardExpiryYear || !dto.cardCvv) {
+                throw new BadRequestException('Dados do cartão são obrigatórios.');
+            }
+
+            const billingType = method === 'debit_card' ? 'DEBIT_CARD' : 'CREDIT_CARD';
+            const [expMonth, expYearRaw] = [dto.cardExpiryMonth.padStart(2, '0'), dto.cardExpiryYear];
+            const expYear = expYearRaw.length === 2 ? `20${expYearRaw}` : expYearRaw;
+
             const charge = await asaas.post('/payments', {
                 customer: customerId,
-                billingType: 'UNDEFINED',
+                billingType,
                 value: finalPrice,
                 dueDate,
                 description: planDef.name,
                 externalReference: `${dto.plan}:${dto.email}`,
-                callback: {
-                    successUrl: `${process.env.APP_URL || 'https://peptideosbio.com'}/auto-login-redirect?plan=${dto.plan}&email=${encodeURIComponent(dto.email)}`,
-                    autoRedirect: true,
+                creditCard: {
+                    holderName: dto.cardHolder,
+                    number: dto.cardNumber.replace(/\s/g, ''),
+                    expiryMonth: expMonth,
+                    expiryYear: expYear,
+                    ccv: dto.cardCvv,
+                },
+                creditCardHolderInfo: {
+                    name: dto.name || dto.cardHolder,
+                    email: dto.email,
+                    cpfCnpj: dto.cpfCnpj || '24971563792',
+                    postalCode: dto.postalCode || '01310100',
+                    addressNumber: dto.addressNumber || 'S/N',
+                    phone: dto.phone || '11999999999',
                 },
             });
 
-            this.logger.log(`Cobrança criada: ${charge.data.id} — R$${finalPrice} (${dto.plan})`);
+            const paymentId = charge.data.id;
+            const status = charge.data.status; // CONFIRMED, PENDING, etc.
+            this.logger.log(`Cartão ${billingType} criado: ${paymentId} status=${status} — R$${finalPrice} (${dto.plan})`);
 
-            if (couponId) {
-                await this.couponService.incrementUsage(couponId);
-            }
+            if (couponId) await this.couponService.incrementUsage(couponId);
 
             return {
-                checkoutUrl: charge.data.invoiceUrl,
+                paymentMethod: method,
+                paymentId,
+                status,
                 plan: dto.plan,
                 amount: finalPrice,
                 originalAmount: prices[dto.plan],
                 discount: discountApplied,
                 expiresAt: dueDate,
             };
+
         } catch (err) {
+            const asaasError = err?.response?.data?.errors?.[0]?.description || err?.message;
             this.logger.error('Erro ao criar cobrança Asaas', err?.response?.data);
-            throw new BadRequestException('Falha ao criar cobrança no gateway de pagamento');
+            throw new BadRequestException(asaasError || 'Falha ao criar cobrança no gateway de pagamento');
         }
     }
 }

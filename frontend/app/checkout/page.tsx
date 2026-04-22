@@ -7,14 +7,44 @@ import { ShieldCheck, CreditCard, ArrowRight, Loader2 } from "lucide-react";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.peptideosbio.com";
 
-const EBOOK_PRICES: Record<string, number> = {
-    basic: 9.90,
-    premium: 29.90,
-};
+const EBOOK_PRICES: Record<string, number> = { basic: 9.90, premium: 29.90 };
 const EBOOK_NAMES: Record<string, string> = {
     basic: "📘 Ebook — O Código Secreto dos Peptídeos",
     premium: "🚀 Plano Premium — Ebook + IA + Plataforma",
 };
+
+/* ── Máscaras puras em JS ──────────────────────────────────── */
+function maskCPF(value: string) {
+    return value
+        .replace(/\D/g, "")
+        .slice(0, 11)
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+}
+
+function maskPhone(value: string) {
+    const digits = value.replace(/\D/g, "").slice(0, 11);
+    if (digits.length <= 10) {
+        return digits
+            .replace(/(\d{2})(\d)/, "($1) $2")
+            .replace(/(\d{4})(\d)/, "$1-$2");
+    }
+    return digits
+        .replace(/(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{5})(\d)/, "$1-$2");
+}
+
+function unmaskCPF(value: string) { return value.replace(/\D/g, ""); }
+function unmaskPhone(value: string) { return value.replace(/\D/g, ""); }
+
+function maskCardNumber(v: string) {
+    return v.replace(/\D/g, "").slice(0, 16).replace(/(\d{4})(?=\d)/g, "$1 ");
+}
+function maskExpiry(v: string) {
+    const d = v.replace(/\D/g, "").slice(0, 4);
+    return d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d;
+}
 
 function CheckoutInner() {
     const searchParams = useSearchParams();
@@ -24,10 +54,17 @@ function CheckoutInner() {
     const isEbookFlow = productParam === "ebook" && !!planParam;
 
     const [form, setForm] = useState({
-        name: "", email: emailParam, phone: "", country: "BR", address: "",
+        name: "", email: emailParam, phone: "", cpf: "", country: "BR",
     });
+    const [phoneMasked, setPhoneMasked] = useState("");
+    const [cpfMasked, setCpfMasked] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [pixData, setPixData] = useState<{ qrCode: string; qrCodeImg: string; amount: number; expiresAt: string } | null>(null);
+    const [cardSuccess, setCardSuccess] = useState<{ amount: number; method: string } | null>(null);
+    const [copied, setCopied] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState<'pix' | 'credit_card' | 'debit_card'>('pix');
+    const [card, setCard] = useState({ number: '', holder: '', expiry: '', cvv: '', postalCode: '', addressNumber: '' });
     const [prices, setPrices] = useState<Record<string, number>>(EBOOK_PRICES);
 
     // Carregar preços editáveis do backend
@@ -44,38 +81,67 @@ function CheckoutInner() {
 
     // Pré-preencher com dados do usuário logado
     useEffect(() => {
-        const token = localStorage.getItem("token");
         const userStr = localStorage.getItem("user");
+        const token = localStorage.getItem("token");
         if (userStr) {
             try {
                 const u = JSON.parse(userStr);
+                const phone = u.phone || "";
+                const cpf = u.cpfCnpj || u.cpf || "";
                 setForm(p => ({
                     ...p,
                     name: u.name || u.displayName || p.name,
                     email: u.email || emailParam,
-                    phone: u.phone || p.phone,
+                    phone,
+                    cpf,
                 }));
+                if (phone) setPhoneMasked(maskPhone(phone));
+                if (cpf) setCpfMasked(maskCPF(cpf));
             } catch { }
-        }
-        if (token && !userStr) {
+        } else if (token) {
             fetch(`${API}/api/profiles/me`, { headers: { Authorization: `Bearer ${token}` } })
                 .then(r => r.json())
                 .then(data => {
+                    const phone = data.phone || "";
+                    const cpf = data.cpfCnpj || data.cpf || "";
                     setForm(p => ({
                         ...p,
                         name: data.name || p.name,
                         email: data.email || p.email,
-                        phone: data.phone || p.phone,
+                        phone,
+                        cpf,
                     }));
+                    if (phone) setPhoneMasked(maskPhone(phone));
+                    if (cpf) setCpfMasked(maskCPF(cpf));
                 }).catch(() => { });
         }
     }, [emailParam]);
 
     function patch(k: string, v: string) { setForm(p => ({ ...p, [k]: v })); }
 
-    // ── Fluxo ebook: chama POST /api/checkout/ebook diretamente ──────
+    function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const masked = maskPhone(e.target.value);
+        setPhoneMasked(masked);
+        patch("phone", unmaskPhone(masked));
+    }
+
+    function handleCPFChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const masked = maskCPF(e.target.value);
+        setCpfMasked(masked);
+        patch("cpf", unmaskCPF(masked));
+    }
+
+    function validate() {
+        if (!form.name.trim()) { setError("Nome completo é obrigatório."); return false; }
+        if (!form.email.trim()) { setError("E-mail é obrigatório."); return false; }
+        if (form.cpf.length !== 11) { setError("CPF inválido. Informe os 11 dígitos."); return false; }
+        if (form.phone.length < 10) { setError("Telefone inválido."); return false; }
+        return true;
+    }
+
+    // ── Fluxo ebook ─────────────────────────────────────────
     async function checkoutEbook() {
-        if (!form.email) { setError("Informe seu email."); return; }
+        if (!validate()) return;
         setLoading(true);
         setError("");
         try {
@@ -85,16 +151,29 @@ function CheckoutInner() {
                 body: JSON.stringify({
                     plan: planParam,
                     email: form.email,
-                    name: form.name || form.email.split("@")[0],
+                    name: form.name,
+                    cpfCnpj: form.cpf,
+                    phone: form.phone,
                 }),
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Erro ao criar pedido");
+            // Se tiver checkout URL (prod/domínio configurado), redireciona
             if (data.checkoutUrl) {
                 window.location.href = data.checkoutUrl;
-            } else {
-                throw new Error("Link de pagamento não retornado");
+                return;
             }
+            // PIX: exibe QR code inline
+            if (data.pixQrCode) {
+                setPixData({
+                    qrCode: data.pixQrCode,
+                    qrCodeImg: data.pixQrCodeUrl ? `data:image/png;base64,${data.pixQrCodeUrl}` : '',
+                    amount: data.amount,
+                    expiresAt: data.expiresAt,
+                });
+                return;
+            }
+            throw new Error("Não foi possível gerar o pagamento. Tente novamente.");
         } catch (e: any) {
             setError(e.message);
         } finally {
@@ -102,7 +181,14 @@ function CheckoutInner() {
         }
     }
 
-    // ── Fluxo genérico (carrinho) ─────────────────────────────────────
+    function copyPix() {
+        if (!pixData) return;
+        navigator.clipboard.writeText(pixData.qrCode);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 3000);
+    }
+
+    // ── Fluxo genérico (carrinho) ────────────────────────────
     const [cart, setCart] = useState<any[]>([]);
     useEffect(() => {
         if (!isEbookFlow) {
@@ -112,7 +198,7 @@ function CheckoutInner() {
     }, [isEbookFlow]);
 
     async function checkoutCart() {
-        if (!form.name || !form.email) { setError("Nome e email são obrigatórios."); return; }
+        if (!validate()) return;
         if (cart.length === 0) { setError("Carrinho vazio."); return; }
         setLoading(true);
         setError("");
@@ -126,8 +212,8 @@ function CheckoutInner() {
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({
                     items: cart, customerName: form.name, customerEmail: form.email,
-                    customerPhone: form.phone, countryCode: form.country,
-                    currency, gateway, totalAmount: subtotal,
+                    customerPhone: form.phone, cpfCnpj: form.cpf,
+                    countryCode: form.country, currency, gateway, totalAmount: subtotal,
                 }),
             });
             if (!res.ok) {
@@ -153,6 +239,13 @@ function CheckoutInner() {
     const currency = form.country === "BR" ? "BRL" : "USD";
     const gateway = form.country === "BR" ? "asaas" : "stripe";
 
+    const inputStyle: React.CSSProperties = {
+        width: "100%", background: "rgba(255,255,255,0.05)",
+        border: "1px solid rgba(255,255,255,0.1)", borderRadius: "10px",
+        padding: "11px 14px", color: "#fff", fontSize: "14px", outline: "none",
+        boxSizing: "border-box",
+    };
+
     return (
         <div className="min-h-screen" style={{ background: "#050d1a" }}>
             <nav className="border-b border-white/5 backdrop-blur-md sticky top-0 z-40" style={{ background: "rgba(5,13,26,0.8)" }}>
@@ -164,35 +257,215 @@ function CheckoutInner() {
                 </div>
             </nav>
 
-            <div className="max-w-4xl mx-auto px-6 py-10">
-                <div className="grid md:grid-cols-5 gap-8">
-                    {/* Formulário */}
-                    <div className="md:col-span-3 space-y-5">
-                        <div className="glass-card p-6 space-y-4">
-                            <h2 className="font-semibold text-white text-sm">Dados do cliente</h2>
-                            {error && (
-                                <div className="px-4 py-3 rounded-xl text-sm" style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.25)", color: "#fca5a5" }}>
-                                    {error}
-                                </div>
-                            )}
-                            <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label className="text-xs block mb-1.5" style={{ color: "#64748b" }}>Nome completo *</label>
-                                    <input className="input" value={form.name} onChange={e => patch("name", e.target.value)} placeholder="João Silva" />
-                                </div>
-                                <div>
-                                    <label className="text-xs block mb-1.5" style={{ color: "#64748b" }}>Email *</label>
-                                    <input type="email" className="input" value={form.email} onChange={e => patch("email", e.target.value)} placeholder="joao@email.com" />
-                                </div>
+            {/* ── Tela PIX ─────────────────────────────────────────────── */}
+            {pixData ? (
+                <div className="max-w-lg mx-auto px-6 py-14 text-center">
+                    <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "18px", padding: "36px 28px" }}>
+                        <div style={{ fontSize: "40px", marginBottom: "12px" }}>📲</div>
+                        <h2 style={{ color: "#fff", fontWeight: 800, fontSize: "20px", marginBottom: "6px" }}>Pague via PIX</h2>
+                        <p style={{ color: "#64748b", fontSize: "14px", marginBottom: "24px" }}>
+                            Valor: <strong style={{ color: "#34d399" }}>R$ {pixData.amount.toFixed(2)}</strong> — Vence em {pixData.expiresAt}
+                        </p>
+
+                        {/* QR code imagem */}
+                        {pixData.qrCodeImg ? (
+                            <img src={pixData.qrCodeImg} alt="QR Code PIX" style={{ width: "200px", height: "200px", margin: "0 auto 20px", borderRadius: "12px", background: "#fff", padding: "8px" }} />
+                        ) : (
+                            <div style={{ width: "200px", height: "200px", margin: "0 auto 20px", borderRadius: "12px", background: "rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center", color: "#475569", fontSize: "13px" }}>
+                                QR Code indisponível
                             </div>
-                            <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label className="text-xs block mb-1.5" style={{ color: "#64748b" }}>Telefone / WhatsApp</label>
-                                    <input className="input" value={form.phone} onChange={e => patch("phone", e.target.value)} placeholder="+55 11 99999-9999" />
+                        )}
+
+                        {/* Código copia-e-cola */}
+                        <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "10px", padding: "12px 14px", marginBottom: "14px", wordBreak: "break-all", color: "#94a3b8", fontSize: "11px", textAlign: "left", maxHeight: "80px", overflowY: "auto" }}>
+                            {pixData.qrCode}
+                        </div>
+                        <button onClick={copyPix} style={{
+                            width: "100%", background: copied ? "rgba(52,211,153,0.2)" : "linear-gradient(135deg,#5b8af5,#00e5cc)",
+                            color: copied ? "#34d399" : "#fff", border: copied ? "1px solid #34d399" : "none",
+                            borderRadius: "10px", padding: "13px", fontWeight: 800, cursor: "pointer", fontSize: "15px", marginBottom: "20px",
+                        }}>
+                            {copied ? "✅ Copiado!" : "📋 Copiar código PIX"}
+                        </button>
+
+                        <div style={{ background: "rgba(91,138,245,0.08)", border: "1px solid rgba(91,138,245,0.2)", borderRadius: "12px", padding: "16px", textAlign: "left" }}>
+                            <p style={{ color: "#e2e8f0", fontWeight: 700, fontSize: "13px", marginBottom: "8px" }}>🔓 Após o pagamento:</p>
+                            <ol style={{ color: "#64748b", fontSize: "12px", paddingLeft: "16px", lineHeight: 1.8, margin: 0 }}>
+                                <li>Aguarde a confirmação (geralmente instantânea)</li>
+                                <li>Faça login com o e-mail <strong style={{ color: "#94a3b8" }}>{form.email}</strong></li>
+                                <li>Acesse o reader com conteúdo completo</li>
+                            </ol>
+                        </div>
+
+                        <Link href="/auth/login" style={{ display: "block", marginTop: "20px", color: "#5b8af5", fontSize: "13px", textDecoration: "none" }}>
+                            Já paguei — fazer login →
+                        </Link>
+                    </div>
+                </div>
+            ) : cardSuccess ? (
+                <div className="max-w-lg mx-auto px-6 py-14 text-center">
+                    <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "18px", padding: "36px 28px" }}>
+                        <div style={{ fontSize: "48px", marginBottom: "12px" }}>✅</div>
+                        <h2 style={{ color: "#fff", fontWeight: 800, fontSize: "20px", marginBottom: "8px" }}>Pagamento aprovado!</h2>
+                        <p style={{ color: "#64748b", fontSize: "14px", marginBottom: "24px" }}>
+                            {cardSuccess.method === 'debit_card' ? '💳 Débito' : '💳 Crédito'} — <strong style={{ color: "#34d399" }}>R$ {cardSuccess.amount.toFixed(2)}</strong>
+                        </p>
+                        <div style={{ background: "rgba(91,138,245,0.08)", border: "1px solid rgba(91,138,245,0.2)", borderRadius: "12px", padding: "16px", textAlign: "left", marginBottom: "20px" }}>
+                            <p style={{ color: "#e2e8f0", fontWeight: 700, fontSize: "13px", marginBottom: "8px" }}>🔓 Próximos passos:</p>
+                            <ol style={{ color: "#64748b", fontSize: "12px", paddingLeft: "16px", lineHeight: 1.8, margin: 0 }}>
+                                <li>Faça login com <strong style={{ color: "#94a3b8" }}>{form.email}</strong></li>
+                                <li>Acesse o reader com conteúdo completo</li>
+                            </ol>
+                        </div>
+                        <Link href="/auth/login" style={{ display: "block", background: "linear-gradient(135deg,#5b8af5,#00e5cc)", color: "#fff", borderRadius: "10px", padding: "13px", fontWeight: 800, textDecoration: "none" }}>
+                            Fazer login →
+                        </Link>
+                    </div>
+                </div>
+            ) : (
+                <div className="max-w-4xl mx-auto px-6 py-10">
+                    <div className="grid md:grid-cols-5 gap-8">
+                        {/* Formulário */}
+                        <div className="md:col-span-3 space-y-5">
+                            <div className="glass-card p-6 space-y-4">
+                                <h2 className="font-semibold text-white text-sm">Dados do cliente</h2>
+
+                                {error && (
+                                    <div className="px-4 py-3 rounded-xl text-sm"
+                                        style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.25)", color: "#fca5a5" }}>
+                                        {error}
+                                    </div>
+                                )}
+
+                                {/* Nome + Email */}
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label className="text-xs block mb-1.5" style={{ color: "#64748b" }}>Nome completo *</label>
+                                        <input
+                                            style={inputStyle}
+                                            value={form.name}
+                                            onChange={e => patch("name", e.target.value)}
+                                            placeholder="João Silva"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs block mb-1.5" style={{ color: "#64748b" }}>E-mail *</label>
+                                        <input
+                                            type="email"
+                                            style={inputStyle}
+                                            value={form.email}
+                                            onChange={e => patch("email", e.target.value)}
+                                            placeholder="joao@email.com"
+                                            required
+                                        />
+                                    </div>
                                 </div>
+
+                                {/* CPF + Telefone */}
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label className="text-xs block mb-1.5" style={{ color: "#64748b" }}>CPF *</label>
+                                        <input
+                                            style={inputStyle}
+                                            value={cpfMasked}
+                                            onChange={handleCPFChange}
+                                            placeholder="000.000.000-00"
+                                            inputMode="numeric"
+                                            maxLength={14}
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs block mb-1.5" style={{ color: "#64748b" }}>Telefone / WhatsApp *</label>
+                                        <input
+                                            style={inputStyle}
+                                            value={phoneMasked}
+                                            onChange={handlePhoneChange}
+                                            placeholder="(00) 00000-0000"
+                                            inputMode="numeric"
+                                            maxLength={15}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* ── Método de pagamento ──────────────────────── */}
+                                {isEbookFlow && (
+                                    <div>
+                                        <label className="text-xs block mb-2" style={{ color: "#64748b" }}>Forma de pagamento</label>
+                                        <div className="grid grid-cols-3 gap-2" style={{ marginBottom: "16px" }}>
+                                            {([
+                                                { key: 'pix', label: '⚡ PIX', sub: 'Instântaneo' },
+                                                { key: 'credit_card', label: '💳 Crédito', sub: 'À vista' },
+                                                { key: 'debit_card', label: '🏦 Débito', sub: 'À vista' },
+                                            ] as const).map(opt => (
+                                                <button key={opt.key} type="button" onClick={() => setPaymentMethod(opt.key)}
+                                                    style={{
+                                                        padding: "10px 8px", borderRadius: "10px", cursor: "pointer", transition: "all .2s",
+                                                        background: paymentMethod === opt.key ? "rgba(91,138,245,0.15)" : "rgba(255,255,255,0.03)",
+                                                        border: paymentMethod === opt.key ? "1px solid #5b8af5" : "1px solid rgba(255,255,255,0.08)",
+                                                        color: paymentMethod === opt.key ? "#e2e8f0" : "#64748b",
+                                                        fontWeight: 700, fontSize: "12px", textAlign: "center",
+                                                    }}>
+                                                    <div>{opt.label}</div>
+                                                    <div style={{ fontSize: "10px", fontWeight: 400, opacity: .7 }}>{opt.sub}</div>
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        {/* Campos do cartão */}
+                                        {paymentMethod !== 'pix' && (
+                                            <div className="space-y-3" style={{ padding: "16px", background: "rgba(255,255,255,0.03)", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                                                <div>
+                                                    <label className="text-xs block mb-1.5" style={{ color: "#64748b" }}>Número do cartão *</label>
+                                                    <input style={inputStyle} value={card.number}
+                                                        onChange={e => setCard(c => ({ ...c, number: maskCardNumber(e.target.value) }))}
+                                                        placeholder="0000 0000 0000 0000" inputMode="numeric" maxLength={19} />
+                                                </div>
+                                                <div>
+                                                    <label className="text-xs block mb-1.5" style={{ color: "#64748b" }}>Nome no cartão *</label>
+                                                    <input style={inputStyle} value={card.holder}
+                                                        onChange={e => setCard(c => ({ ...c, holder: e.target.value.toUpperCase() }))}
+                                                        placeholder="NOME COMO NO CARTÃO" />
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <div>
+                                                        <label className="text-xs block mb-1.5" style={{ color: "#64748b" }}>Validade *</label>
+                                                        <input style={inputStyle} value={card.expiry}
+                                                            onChange={e => setCard(c => ({ ...c, expiry: maskExpiry(e.target.value) }))}
+                                                            placeholder="MM/AA" inputMode="numeric" maxLength={5} />
+                                                    </div>
+                                                    <div>
+                                                        <label className="text-xs block mb-1.5" style={{ color: "#64748b" }}>CVV *</label>
+                                                        <input style={inputStyle} value={card.cvv}
+                                                            onChange={e => setCard(c => ({ ...c, cvv: e.target.value.replace(/\D/g, '').slice(0, 4) }))}
+                                                            placeholder="123" inputMode="numeric" maxLength={4} />
+                                                    </div>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <div>
+                                                        <label className="text-xs block mb-1.5" style={{ color: "#64748b" }}>CEP</label>
+                                                        <input style={inputStyle} value={card.postalCode}
+                                                            onChange={e => setCard(c => ({ ...c, postalCode: e.target.value.replace(/\D/g, '').slice(0, 8) }))}
+                                                            placeholder="00000-000" inputMode="numeric" />
+                                                    </div>
+                                                    <div>
+                                                        <label className="text-xs block mb-1.5" style={{ color: "#64748b" }}>Nº / Compl.</label>
+                                                        <input style={inputStyle} value={card.addressNumber}
+                                                            onChange={e => setCard(c => ({ ...c, addressNumber: e.target.value }))}
+                                                            placeholder="Ex: 42 / Apto 3" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* País */}
                                 <div>
                                     <label className="text-xs block mb-1.5" style={{ color: "#64748b" }}>País</label>
-                                    <select className="input" value={form.country} onChange={e => patch("country", e.target.value)}>
+                                    <select style={inputStyle} value={form.country} onChange={e => patch("country", e.target.value)}>
                                         <option value="BR">🇧🇷 Brasil (PIX)</option>
                                         <option value="US">🇺🇸 Estados Unidos</option>
                                         <option value="PT">🇵🇹 Portugal</option>
@@ -202,68 +475,68 @@ function CheckoutInner() {
                                     </select>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Gateway info */}
-                        <div className="glass-card p-4 flex items-center gap-3" style={{ border: "1px solid rgba(14,165,233,0.15)" }}>
-                            <CreditCard className="w-5 h-5 shrink-0" style={{ color: "#0ea5e9" }} />
-                            <div>
-                                <div className="text-sm font-medium text-white">
-                                    {gateway === "asaas" ? "PIX + Boleto + Cartão (Asaas)" : "Cartão de Crédito (Stripe)"}
-                                </div>
-                                <div className="text-xs mt-0.5" style={{ color: "#64748b" }}>
-                                    {gateway === "asaas"
-                                        ? "Escolha PIX, Boleto ou Cartão na próxima página"
-                                        : "Cartão de crédito internacional — processado pelo Stripe"}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Resumo */}
-                    <div className="md:col-span-2">
-                        <div className="glass-card p-5 sticky top-20 space-y-4">
-                            <h2 className="font-semibold text-white">Resumo do pedido</h2>
-
-                            {isEbookFlow ? (
-                                <div className="flex justify-between text-sm">
-                                    <span style={{ color: "#94a3b8" }}>{EBOOK_NAMES[planParam] || "Ebook"}</span>
-                                    <span className="text-white">{currency} {ebookPrice.toFixed(2)}</span>
-                                </div>
-                            ) : (
-                                cart.map(item => (
-                                    <div key={item.id} className="flex justify-between text-sm">
-                                        <span style={{ color: "#94a3b8" }}>{item.name} × {item.qty}</span>
-                                        <span className="text-white">{currency} {(item.price * item.qty).toFixed(2)}</span>
+                            {/* Gateway info */}
+                            <div className="glass-card p-4 flex items-center gap-3" style={{ border: "1px solid rgba(14,165,233,0.15)" }}>
+                                <CreditCard className="w-5 h-5 shrink-0" style={{ color: "#0ea5e9" }} />
+                                <div>
+                                    <div className="text-sm font-medium text-white">
+                                        {gateway === "asaas" ? "PIX + Boleto + Cartão (Asaas)" : "Cartão de Crédito (Stripe)"}
                                     </div>
-                                ))
-                            )}
-
-                            <div className="section-divider" />
-                            <div className="flex justify-between font-bold">
-                                <span className="text-white">Total</span>
-                                <span style={{ color: "#34d399" }}>
-                                    {currency} {isEbookFlow ? ebookPrice.toFixed(2) : cartSubtotal.toFixed(2)}
-                                </span>
+                                    <div className="text-xs mt-0.5" style={{ color: "#64748b" }}>
+                                        {gateway === "asaas"
+                                            ? "Escolha PIX, Boleto ou Cartão na próxima página"
+                                            : "Cartão de crédito internacional — processado pelo Stripe"}
+                                    </div>
+                                </div>
                             </div>
+                        </div>
 
-                            <button
-                                onClick={isEbookFlow ? checkoutEbook : checkoutCart}
-                                disabled={loading || (!isEbookFlow && cart.length === 0)}
-                                className="btn-success w-full justify-center flex items-center gap-2 py-3"
-                            >
-                                {loading
-                                    ? <Loader2 className="w-4 h-4 animate-spin" />
-                                    : <>Pagar agora <ArrowRight className="w-4 h-4" /></>}
-                            </button>
+                        {/* Resumo */}
+                        <div className="md:col-span-2">
+                            <div className="glass-card p-5 sticky top-20 space-y-4">
+                                <h2 className="font-semibold text-white">Resumo do pedido</h2>
 
-                            <div className="flex items-center justify-center gap-1.5 text-xs" style={{ color: "#475569" }}>
-                                <ShieldCheck className="w-3.5 h-3.5" /> Pagamento 100% seguro
+                                {isEbookFlow ? (
+                                    <div className="flex justify-between text-sm">
+                                        <span style={{ color: "#94a3b8" }}>{EBOOK_NAMES[planParam] || "Ebook"}</span>
+                                        <span className="text-white">{currency} {ebookPrice.toFixed(2)}</span>
+                                    </div>
+                                ) : (
+                                    cart.map(item => (
+                                        <div key={item.id} className="flex justify-between text-sm">
+                                            <span style={{ color: "#94a3b8" }}>{item.name} × {item.qty}</span>
+                                            <span className="text-white">{currency} {(item.price * item.qty).toFixed(2)}</span>
+                                        </div>
+                                    ))
+                                )}
+
+                                <div className="section-divider" />
+                                <div className="flex justify-between font-bold">
+                                    <span className="text-white">Total</span>
+                                    <span style={{ color: "#34d399" }}>
+                                        {currency} {isEbookFlow ? ebookPrice.toFixed(2) : cartSubtotal.toFixed(2)}
+                                    </span>
+                                </div>
+
+                                <button
+                                    onClick={isEbookFlow ? checkoutEbook : checkoutCart}
+                                    disabled={loading || (!isEbookFlow && cart.length === 0)}
+                                    className="btn-success w-full justify-center flex items-center gap-2 py-3"
+                                >
+                                    {loading
+                                        ? <Loader2 className="w-4 h-4 animate-spin" />
+                                        : <>Pagar agora <ArrowRight className="w-4 h-4" /></>}
+                                </button>
+
+                                <div className="flex items-center justify-center gap-1.5 text-xs" style={{ color: "#475569" }}>
+                                    <ShieldCheck className="w-3.5 h-3.5" /> Pagamento 100% seguro
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }

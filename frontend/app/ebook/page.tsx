@@ -4,6 +4,12 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://api.peptideosbio.com';
+
+function fmtPrice(val: number) {
+    return val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 const CHAPTERS = [
     { num: '01', icon: '🧬', title: 'O que são peptídeos e como funcionam no corpo' },
     { num: '02', icon: '⚡', title: 'Os 12 peptídeos mais pesquisados para performance' },
@@ -33,9 +39,26 @@ const ACCENT = '#00e5cc';
 
 export default function EbookPage() {
     const router = useRouter();
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [coupon, setCoupon] = useState('');
     const [plan, setPlan] = useState<'basic' | 'premium'>('basic');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [prices, setPrices] = useState<{ basic: number; premium: number }>({ basic: 9.9, premium: 29.9 });
+
+    // Carrega preços do banco
+    useEffect(() => {
+        fetch(`${API}/api/checkout/ebook/prices`)
+            .then(r => r.json())
+            .then(data => {
+                if (data?.basic?.price && data?.premium?.price) {
+                    setPrices({ basic: data.basic.price, premium: data.premium.price });
+                }
+            })
+            .catch(() => { /* fallback mantido */ });
+    }, []);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -49,15 +72,29 @@ export default function EbookPage() {
                     router.replace('/ebook/reader');
                     return;
                 }
+                // free: fica na página mas logado
             } catch { /* ignore */ }
             setIsLoggedIn(true);
+            // pré-preenche email do usuário logado
+            try {
+                const userData = userStr ? JSON.parse(userStr) : null;
+                if (userData?.email) setEmail(userData.email);
+                if (userData?.name) setName(userData.name);
+            } catch { }
         }
     }, [router]);
 
+    // Redireciona para /checkout com os dados preenchidos
     const handleCheckout = (e: React.FormEvent) => {
         e.preventDefault();
-        window.location.href = `/checkout?plan=${plan}&email=${encodeURIComponent(email)}&product=ebook`;
+        const params = new URLSearchParams({
+            plan,
+            product: 'ebook',
+            email: email || '',
+        });
+        router.push(`/checkout?${params.toString()}`);
     };
+
 
     return (
         <main style={{ background: BG, minHeight: '100vh', color: '#fff', fontFamily: "'Inter', system-ui, sans-serif" }}>
@@ -179,13 +216,13 @@ export default function EbookPage() {
                                 {p === 'basic' ? (
                                     <>
                                         <div style={{ fontWeight: 800, marginBottom: '6px', fontSize: '15px' }}>📘 Ebook</div>
-                                        <div style={{ background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 900, fontSize: '24px' }}>R$ 9,90</div>
+                                        <div style={{ background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 900, fontSize: '24px' }}>R$ {fmtPrice(prices.basic)}</div>
                                         <div style={{ color: '#4a6580', fontSize: '12px', marginTop: '6px' }}>Acesso vitalício</div>
                                     </>
                                 ) : (
                                     <>
                                         <div style={{ fontWeight: 800, marginBottom: '6px', fontSize: '15px' }}>🚀 Premium</div>
-                                        <div style={{ background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 900, fontSize: '24px' }}>R$ 29,90</div>
+                                        <div style={{ background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 900, fontSize: '24px' }}>R$ {fmtPrice(prices.premium)}</div>
                                         <div style={{ color: '#4a6580', fontSize: '12px', marginTop: '6px' }}>Ebook + IA + Plataforma</div>
                                     </>
                                 )}
@@ -195,6 +232,14 @@ export default function EbookPage() {
 
                     <form onSubmit={handleCheckout} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         <input
+                            type="text"
+                            placeholder="Seu nome completo"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '14px 16px', color: '#fff', fontSize: '15px', outline: 'none' }}
+                        />
+                        <input
                             type="email"
                             placeholder="Seu melhor e-mail"
                             value={email}
@@ -202,9 +247,23 @@ export default function EbookPage() {
                             required
                             style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '14px 16px', color: '#fff', fontSize: '15px', outline: 'none' }}
                         />
-                        <button type="submit"
-                            style={{ background: `linear-gradient(135deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '16px', borderRadius: '12px', fontWeight: 800, fontSize: '16px', border: 'none', cursor: 'pointer', boxShadow: '0 6px 24px rgba(91,138,245,0.35)' }}>
-                            Acessar Agora → R$ {plan === 'basic' ? '9,90' : '29,90'}
+                        <input
+                            type="text"
+                            placeholder="Cupom de desconto (opcional)"
+                            value={coupon}
+                            onChange={(e) => setCoupon(e.target.value)}
+                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '12px 16px', color: '#fff', fontSize: '14px', outline: 'none' }}
+                        />
+                        {error && (
+                            <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: '10px', padding: '12px 16px', color: '#f87171', fontSize: '14px' }}>
+                                {error}
+                            </div>
+                        )}
+                        <button type="submit" disabled={loading}
+                            style={{ background: `linear-gradient(135deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '16px', borderRadius: '12px', fontWeight: 800, fontSize: '16px', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, boxShadow: '0 6px 24px rgba(91,138,245,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                            {loading
+                                ? <><span style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} /> Processando...</>
+                                : <>Acessar Agora → R$ {fmtPrice(prices[plan])}</>}
                         </button>
                     </form>
 
@@ -223,6 +282,7 @@ export default function EbookPage() {
                     © 2025 PeptídeosBio · <Link href="/auth/login" style={{ color: '#4a6580', textDecoration: 'none' }}>Já tenho acesso</Link>
                 </p>
             </footer>
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </main>
     );
 }

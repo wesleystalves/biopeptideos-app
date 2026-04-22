@@ -46,6 +46,9 @@ export default function LoginPage() {
 
             if (data.user?.isAdmin) {
                 window.location.href = "/admin";
+            } else if (data.user?.plan === "free" || !data.user?.plan) {
+                // Usuário ainda não adquiriu um plano — leva para comprar
+                window.location.href = "/ebook";
             } else {
                 window.location.href = "/painel";
             }
