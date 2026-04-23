@@ -74,22 +74,27 @@ jobs:
       packages: read
 
     steps:
-      - name: Checkout
+      - name: Checkout latest main
         uses: actions/checkout@v4
         with:
+          ref: main
+          fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update image tags in values.yaml
         run: |
           sed -i "s|tag: .*|tag: ${{ github.sha }}|g" deploy/helm/values.yaml
-          echo "Updated tags to: ${{ github.sha }}"
+          echo "=== Updated values.yaml ==="
           cat deploy/helm/values.yaml
 
       - name: Commit and push updated values.yaml
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin main
           git add deploy/helm/values.yaml
-          git diff --staged --quiet && echo "No changes to commit" || git commit -m "ci: bump image tags to ${{ github.sha }}"
-          git push
+          if git diff --staged --quiet; then
+            echo "No changes to commit — values.yaml already up to date"
+          else
+            git commit -m "ci: bump image tags to ${{ github.sha }}"
+            git push origin main
+          fi
