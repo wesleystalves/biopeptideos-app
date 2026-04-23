@@ -54,8 +54,8 @@ export default function LibraryPage() {
                             key={cat}
                             onClick={() => setFilter(cat)}
                             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${filter === cat
-                                    ? "bg-brand-600 text-white border-brand-500 shadow-glow"
-                                    : "bg-transparent text-slate-400 border-white/10 hover:border-white/20 hover:text-white"
+                                ? "bg-brand-600 text-white border-brand-500 shadow-glow"
+                                : "bg-transparent text-slate-400 border-white/10 hover:border-white/20 hover:text-white"
                                 }`}
                         >
                             {cat}
