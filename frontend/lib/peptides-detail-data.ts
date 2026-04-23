@@ -30,6 +30,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Potencializa a queima de gordura e a perda de peso.", "Preserva a massa muscular magra durante a perda de peso.", "Aumenta os níveis intracelulares de NAD+.", "Melhora a sensibilidade à insulina.", "Reduz a inflamação."],
     mechanism: ["Inibe a enzima Nicotinamida N-metiltransferase (NNMT).", "Aumenta os níveis de S-adenosilmetionina (SAM) e NAD+.", "Ativa as sirtuínas (SIRT1), que regulam o metabolismo energético.", "Modula a expressão gênica relacionada ao metabolismo de lipídios e glicose."],
     mechanismDetailed: "A NNMT é uma enzima que metila a nicotinamida, consumindo SAM (S-adenosilmetionina) no processo. Em tecidos adiposos de indivíduos obesos, a NNMT é superexpressa, o que reduz os níveis de SAM e NAD+, comprometendo o metabolismo energético celular. O 5-Amino-1MQ inibe seletivamente essa enzima, restaurando os níveis de SAM e NAD+. Com mais NAD+ disponível, as sirtuínas (especialmente SIRT1) são ativadas, promovendo a oxidação de ácidos graxos, a biogênese mitocondrial e a termogênese. Este mecani",
+    timeline: [
+      { period: "Semana 1-2", description: "Redução inicial do apetite e aumento do metabolismo basal." },
+      { period: "Semana 3-6", description: "Perda de gordura perceptível e melhora da composição corporal." },
+      { period: "Mês 2-3", description: "Otimização metabólica consolidada e manutenção de massa magra." },
+    ],
+
   },
   2: {
     peptideId: 2,
@@ -42,6 +48,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Melhora da função cognitiva, incluindo memória e aprendizado.", "Aumento da neuroproteção contra danos oxidativos e inflamatórios.", "Potencial para reduzir a ansiedade e o estresse.", "Aprimoramento do foco e da atenção.", "Possível melhora do humor e bem-estar geral."],
     mechanism: ["Modulação da atividade de neurotransmissores como dopamina e serotonina.", "Aumento da expressão de fatores neurotróficos, como o BDNF (fator neurotrófico derivado do cérebro).", "Regulação da plasticidade sináptica e formação de novas conexões neuronais.", "Redução da neuroinflamação e do estresse oxidativo no cérebro.", "Interação com receptores específicos no sistema nervoso central para exercer seus efeitos."],
     mechanismDetailed: "O Adamax atua como um análogo aprimorado do Semax, com a adição de um grupo adamantano que confere maior lipofilia e estabilidade metabólica. Isso permite uma melhor penetração na barreira hematoencefálica, resultando em maior biodisponibilidade cerebral. Uma vez no SNC, modula múltiplos sistemas de neurotransmissores, incluindo dopaminérgico e serotoninérgico, além de estimular a expressão de BDNF, um fator essencial para a sobrevivência neuronal, plasticidade sináptica e neurogênese. A combina",
+    timeline: [
+      { period: "Dias 1-7", description: "Melhora inicial do foco e clareza mental." },
+      { period: "Semana 2-4", description: "Ganhos de memória e velocidade de aprendizado." },
+      { period: "Mês 1-2+", description: "Neuroproteção consolidada e cognição superior." },
+    ],
+
   },
   3: {
     peptideId: 3,
@@ -54,6 +66,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Aumento da resistência e desempenho físico.", "Potencial para melhorar a função metabólica em condições de repouso.", "Redução da gordura corporal e melhora da composição corporal.", "Proteção contra danos isquêmicos em órgãos.", "Possível aplicação no tratamento de doenças metabólicas como diabetes tipo 2."],
     mechanism: ["Ativação direta da AMPK, uma enzima chave na regulação do metabolismo energético celular.", "Mimetiza o estado de baixo nível de energia celular, induzindo vias metabólicas associadas ao exercício.", "Aumento da captação de glicose e oxidação de ácidos graxos nos músculos.", "Modulação da expressão gênica de enzimas envolvidas no metabolismo energético."],
     mechanismDetailed: "O AICAR é convertido intracelularmente em ZMP (AICA ribotídeo), um análogo do AMP que ativa diretamente a AMPK (proteína quinase ativada por AMP). A AMPK é um sensor energético master que, quando ativado, desencadeia uma cascata de respostas metabólicas: aumento da captação de glicose (independente de insulina), oxidação de ácidos graxos, biogênese mitocondrial e inibição de vias anabólicas energeticamente custosas. Essencialmente, o AICAR 'engana' a célula fazendo-a acreditar que está em um est",
+    timeline: [
+      { period: "Semana 1-2", description: "Aumento da resistência e melhora do metabolismo energético." },
+      { period: "Semana 3-6", description: "Melhora da composição corporal e captação de glicose." },
+      { period: "Mês 2-3", description: "Adaptações metabólicas consistentes e resistência física elevada." },
+    ],
+
   },
   4: {
     peptideId: 4,
@@ -66,6 +84,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Redução da gordura corporal", "Potencial para melhorar o perfil lipídico", "Ausência de efeitos adversos comuns de GH, como elevação de IGF-1", "Não causa resistência à insulina", "Perfil de segurança favorável em estudos clínicos"],
     mechanism: ["Mimetiza a ação do hormônio do crescimento na regulação do metabolismo lipídico", "Atua especificamente no metabolismo da gordura, sem afetar o crescimento ou o metabolismo da glicose", "Estimula a liberação de ácidos graxos de adipócitos", "Inibe a conversão de nutrientes em gordura de armazenamento"],
     mechanismDetailed: "O AOD-9604 é um fragmento modificado do hGH que retém a atividade lipolítica do hormônio do crescimento sem seus efeitos anabólicos e diabetogênicos. Ele se liga a receptores específicos nos adipócitos, ativando a lipólise (quebra de triglicerídeos em ácidos graxos livres e glicerol) e simultaneamente inibindo a lipogênese (formação de novas moléculas de gordura). Diferentemente do hGH completo, o AOD-9604 não estimula a produção de IGF-1 nem afeta o metabolismo da glicose, o que confere um perf",
+    timeline: [
+      { period: "Semana 1-2", description: "Início da mobilização de gordura e aumento da lipólise." },
+      { period: "Semana 3-6", description: "Redução perceptível da gordura corporal, especialmente abdominal." },
+      { period: "Mês 2-3", description: "Melhora consolidada da composição corporal." },
+    ],
+
   },
   5: {
     peptideId: 5,
@@ -78,6 +102,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Redução da dor neuropática", "Melhora da função nervosa em neuropatias", "Proteção contra danos teciduais", "Potencial tratamento para doenças autoimunes", "Efeitos anti-inflamatórios localizados"],
     mechanism: ["Ativação do receptor de reparo inato (IRR)", "Modulação de vias de sinalização intracelulares", "Redução da inflamação e apoptose celular", "Promoção da reparação tecidual", "Diferenciação de células progenitoras"],
     mechanismDetailed: "O Ara-290 é derivado da helix-B da eritropoietina e ativa seletivamente o receptor de reparo inato (IRR), um heterodímero composto pelo receptor de EPO e pelo receptor beta comum (CD131). Diferentemente da EPO, o Ara-290 não se liga ao receptor homodimérico de EPO responsável pela eritropoiese, evitando efeitos hematopoiéticos. A ativação do IRR desencadeia vias de sinalização anti-apoptóticas e anti-inflamatórias, incluindo JAK2/STAT5, PI3K/Akt e NF-κB, promovendo sobrevivência celular, redução",
+    timeline: [
+      { period: "Semana 1-2", description: "Início da redução da dor neuropática." },
+      { period: "Semana 3-6", description: "Melhora perceptível da função nervosa e bem-estar." },
+      { period: "Mês 2-3", description: "Neuroproteção e redução da dor consolidadas." },
+    ],
+
   },
   6: {
     peptideId: 6,
@@ -90,6 +120,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Acelera a cicatrização de tendões, ligamentos, músculos e ossos.", "Reduz a inflamação e a dor em lesões musculoesqueléticas.", "Promove a angiogênese (formação de novos vasos sanguíneos).", "Protege o trato gastrointestinal contra úlceras e inflamações.", "Pode melhorar a recuperação de lesões nervosas."],
     mechanism: ["Modula a expressão de fatores de crescimento, como o VEGF e o FGF-2.", "Aumenta a produção de óxido nítrico, melhorando o fluxo sanguíneo.", "Interage com o sistema de óxido nítrico para promover a angiogênese.", "Exibe efeitos anti-inflamatórios através da modulação de citocinas.", "Protege as células endoteliais e promove a sua proliferação."],
     mechanismDetailed: "",
+    timeline: [
+      { period: "Dias 3-7", description: "Redução da inflamação e início da cicatrização tecidual." },
+      { period: "Semana 2-4", description: "Melhora perceptível da lesão e redução da dor." },
+      { period: "Mês 1-2", description: "Recuperação funcional completa e cicatrização consolidada." },
+    ],
+
   },
   7: {
     peptideId: 7,
@@ -102,6 +138,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Proteção contra danos cerebrais", "Melhora do humor e motivação", "Recuperação de lesões no SNC", "Potencial contra neurodegeneração", "Melhora do eixo intestino-cérebro"],
     mechanism: ["Modula o sistema dopaminérgico e serotoninérgico", "Promove angiogênese cerebral", "Protege contra neurotoxicidade", "Ativa vias de sinalização de crescimento neuronal"],
     mechanismDetailed: "O BPC-157 exerce seus efeitos neuroprotetores através da modulação dos sistemas dopaminérgico e serotoninérgico no SNC. Ele protege contra a neurotoxicidade induzida por diversas substâncias, incluindo metanfetaminas, álcool e organofosforados. Promove a angiogênese cerebral, aumentando o suprimento sanguíneo para áreas lesionadas, e ativa vias de sinalização de crescimento neuronal como JAK-2/STAT-3 e Akt. Sua ação no eixo intestino-cérebro, mediada pela modulação do nervo vago e do sistema ent",
+    timeline: [
+      { period: "Dias 3-7", description: "Melhora do humor e redução da neuroinflamação." },
+      { period: "Semana 2-4", description: "Melhora do eixo intestino-cérebro e clareza mental." },
+      { period: "Mês 1-2", description: "Neuroproteção consolidada e bem-estar sustentado." },
+    ],
+
   },
   8: {
     peptideId: 8,
@@ -114,6 +156,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Promove perda de peso significativa e sustentada.", "Melhora o controle glicêmico em pacientes com diabetes tipo 2.", "Reduz o apetite e a ingestão calórica.", "Potencial para tratamento da obesidade e sobrepeso.", "Administração semanal conveniente."],
     mechanism: ["Ativa os receptores de amilina (AMY1, AMY2, AMY3) no sistema nervoso central.", "Aumenta a sensação de saciedade e plenitude.", "Retarda o esvaziamento gástrico, prolongando a sensação de saciedade.", "Modula a liberação de glucagon."],
     mechanismDetailed: "A Cagrilintide é um análogo da amilina humana com modificações químicas (acilação com ácido graxo C18) que prolongam drasticamente sua meia-vida, permitindo dosagem semanal. Ela ativa os receptores de amilina (AMY1-3), que são heterodímeros do receptor de calcitonina com proteínas RAMP. No SNC, particularmente na área postrema e núcleo do trato solitário, a ativação desses receptores reduz o apetite e promove saciedade. Perifericamente, retarda o esvaziamento gástrico e suprime a secreção de glu",
+    timeline: [
+      { period: "Semana 1-4", description: "Redução do apetite e início da perda de peso." },
+      { period: "Mês 2-3", description: "Perda de peso de 5-10% do peso corporal." },
+      { period: "Mês 4-6+", description: "Perda de peso sustentada e melhora metabólica." },
+    ],
+
   },
   9: {
     peptideId: 9,
@@ -126,6 +174,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Suporte à função cardíaca em condições de estresse.", "Potencial para melhorar a recuperação após lesão isquêmica.", "Redução da inflamação em tecido cardíaco.", "Otimização da bioenergética celular cardíaca.", "Proteção contra danos oxidativos no miocárdio."],
     mechanism: ["Modulação da expressão gênica de proteínas envolvidas na integridade celular.", "Ativação de vias de sinalização anti-apoptóticas.", "Estabilização da membrana celular e do citoesqueleto.", "Regulação da homeostase de cálcio intracelular.", "Aumento da atividade de enzimas antioxidantes endógenas."],
     mechanismDetailed: "O Cardiogen, como outros peptídeos biorreguladores desenvolvidos pelo Prof. Khavinson, atua ao nível da regulação epigenética da expressão gênica. O tetrapeptídeo Ala-Glu-Asp-Arg se liga ao DNA em regiões promotoras específicas de genes relacionados à função cardíaca, modulando a transcrição de proteínas essenciais para a integridade do cardiomiócito. Isso inclui proteínas anti-apoptóticas (Bcl-2), enzimas antioxidantes (SOD, catalase), e componentes do citoesqueleto. Além disso, regula a homeos",
+    timeline: [
+      { period: "Semana 1-2", description: "Melhora do metabolismo energético cardíaco." },
+      { period: "Semana 3-6", description: "Redução da inflamação cardíaca e proteção celular." },
+      { period: "Mês 2-3", description: "Cardioproteção consolidada e melhora da função cardíaca." },
+    ],
+
   },
   10: {
     peptideId: 10,
@@ -138,6 +192,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Proteção e regeneração da cartilagem articular", "Melhora da função articular e mobilidade", "Propriedades anti-aging celulares", "Modulação da expressão gênica em condrócitos", "Suporte à saúde musculoesquelética"],
     mechanism: ["Modulação da expressão gênica em condrócitos", "Estímulo à síntese de colágeno tipo II e agrecan", "Supressão de sinais pró-degenerativos", "Regulação epigenética da homeostase cartilaginosa"],
     mechanismDetailed: "O Cartalax (AED) é um citomédino que atua modulando a expressão gênica em células cartilaginosas. Ele estimula a síntese de componentes da matriz extracelular como colágeno tipo II e agrecan, enquanto suprime vias de sinalização pró-degenerativas. Também pode atuar como agente senomórfico, suprimindo o fenótipo secretório associado à senescência (SASP) em condrócitos envelhecidos.",
+    timeline: [
+      { period: "Semana 1-2", description: "Redução inicial da inflamação articular." },
+      { period: "Semana 3-6", description: "Melhora da mobilidade e redução da dor articular." },
+      { period: "Mês 2-3", description: "Regeneração cartilaginosa e proteção articular consolidadas." },
+    ],
+
   },
   12: {
     peptideId: 12,
@@ -150,6 +210,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Acelera recuperação pós-AVC e traumatismo craniano", "Melhora memória, atenção e cognição em idosos", "Protege contra declínio neurodegenerativo", "Melhora humor e clareza mental", "Estimula regeneração de nervos periféricos"],
     mechanism: ["Proteção contra estresse oxidativo e excitotoxicidade do glutamato", "Estimulação da neuroplasticidade e sinaptogênese", "Melhora do metabolismo energético cerebral", "Inibição da formação de placas amiloides"],
     mechanismDetailed: "A Cerebrolysina atua através de um mecanismo multimodal: protege neurônios contra estresse oxidativo e excitotoxicidade do glutamato; estimula neuroplasticidade e formação de novas sinapses; melhora metabolismo energético cerebral; e inibe formação de placas amiloides e emaranhados neurofibrilares. Seus neuropeptídeos mimetizam a ação de fatores neurotróficos endógenos.",
+    timeline: [
+      { period: "Dias 1-7", description: "Melhora progressiva na clareza mental e humor." },
+      { period: "Semana 2-4", description: "Melhora perceptível na memória de trabalho." },
+      { period: "Mês 2-3", description: "Ganhos cognitivos e neuroproteção consolidados." },
+    ],
+
   },
   14: {
     peptideId: 14,
@@ -162,6 +228,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Liberação sustentada e elevada de GH", "Aumento significativo de IGF-1", "Melhora da composição corporal", "Recuperação muscular acelerada", "Melhora da qualidade do sono"],
     mechanism: ["Ativação sustentada do receptor GHRH na hipófise", "Ligação reversível à albumina via DAC prolongando meia-vida", "Estímulo à liberação pulsátil de GH", "Aumento dos níveis de IGF-1 sistêmico"],
     mechanismDetailed: "O CJC-1295 DAC contém o peptídeo Mod GRF 1-29 conjugado a um Drug Affinity Complex (DAC) que se liga reversivelmente à albumina sérica. Essa modificação estende a meia-vida de ~30 minutos para 6-8 dias, mantendo elevação contínua de GH e IGF-1.",
+    timeline: [
+      { period: "Semana 1-2", description: "Aumento gradual de GH e IGF-1 circulante." },
+      { period: "Semana 3-6", description: "Melhora do sono e composição corporal inicial." },
+      { period: "Mês 2-3", description: "Ganho de massa magra e redução de gordura consolidados." },
+    ],
+
   },
   15: {
     peptideId: 15,
@@ -174,6 +246,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Pulsos naturais e fisiológicos de GH", "Menos retenção hídrica que versão com DAC", "Melhora da recuperação muscular", "Melhora da qualidade do sono", "Melhor perfil de efeitos colaterais"],
     mechanism: ["Ativação do receptor GHRH na hipófise anterior", "Estímulo à liberação pulsátil de GH", "Meia-vida curta permite padrão fisiológico de GH", "Quatro substituições estabilizantes (D-Ala2, Gln8, Ala15, Leu27)"],
     mechanismDetailed: "O Mod GRF 1-29 é um análogo do GHRH com quatro substituições de aminoácidos que aumentam sua estabilidade contra degradação enzimática. Sem o DAC, mantém meia-vida curta (~30 min), gerando pulsos agudos de GH similares ao padrão fisiológico.",
+    timeline: [
+      { period: "Semana 1-2", description: "Melhora do sono profundo pela liberação pulsátil de GH." },
+      { period: "Semana 3-6", description: "Recuperação muscular melhorada e aumento de IGF-1." },
+      { period: "Mês 2-3", description: "Mudança na composição corporal consolidada." },
+    ],
+
   },
   18: {
     peptideId: 18,
@@ -186,6 +264,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Potencial de reverter danos cognitivos e perda de memória", "Estimula criação massiva de novas conexões neurais", "Melhora drástica do aprendizado e retenção", "Neuroproteção contra doenças degenerativas", "Melhora da coordenação motora e função executiva"],
     mechanism: ["Agonismo do Fator de Crescimento de Hepatócitos (HGF)", "Ativação do receptor c-Met no cérebro", "Estimulação da formação de espinhas dendríticas", "Fortalecimento de conexões sinápticas existentes"],
     mechanismDetailed: "O Dihexa atua como agonista do HGF e seu receptor c-Met. No cérebro, a sinalização HGF/c-Met é fundamental para desenvolvimento sináptico, sobrevivência neuronal e plasticidade. Estudos demonstraram que é 7 ordens de magnitude mais potente que o BDNF na formação de sinapses, tornando-o o nootrópico mais potente conhecido.",
+    timeline: [
+      { period: "Semana 1-2", description: "Melhora inicial do foco e velocidade de raciocínio." },
+      { period: "Semana 3-6", description: "Ganhos significativos de memória e aprendizado." },
+      { period: "Mês 2-3", description: "Neuroproteção máxima e melhorias cognitivas consolidadas." },
+    ],
+
   },
   20: {
     peptideId: 20,
@@ -198,6 +282,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Ativação da telomerase e extensão de telômeros", "Regulação do ciclo circadiano e melatonina", "Propriedades antioxidantes celulares", "Modulação epigenética do envelhecimento", "Melhora da qualidade do sono"],
     mechanism: ["Ativação direta da telomerase (hTERT)", "Extensão dos telômeros em células somáticas", "Modulação da produção de melatonina pela glândula pineal", "Regulação epigenética via interação com promotores gênicos", "Proteção contra estresse oxidativo celular"],
     mechanismDetailed: "O Epithalon ativa a telomerase interagindo diretamente com regiões promotoras do gene hTERT, a subunidade catalítica da telomerase. Isso resulta em extensão dos telômeros além do limite de Hayflick. Também modula a produção de melatonina pela glândula pineal e atua na remodelação da cromatina.",
+    timeline: [
+      { period: "Semana 1-4", description: "Melhora do sono e regulação circadiana." },
+      { period: "Mês 1-3", description: "Ativação da telomerase e efeitos antioxidantes." },
+      { period: "Mês 3-6+", description: "Efeitos anti-aging e epigenéticos de longo prazo." },
+    ],
+
   },
   21: {
     peptideId: 21,
@@ -210,6 +300,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Eliminação de células senescentes em todo o corpo", "Redução da inflamação sistêmica crônica (inflammaging)", "Melhora da função dos órgãos (rins, fígado)", "Reversão de sinais físicos de envelhecimento", "Aumento da vitalidade física e resistência"],
     mechanism: ["Interrupção da interação FOXO4-p53", "Liberação de p53 para induzir apoptose em células senescentes", "Seletividade: células saudáveis não são afetadas", "Redução do fenótipo secretório associado à senescência (SASP)"],
     mechanismDetailed: "O FOXO4-DRI atua interrompendo a interação entre FOXO4 e p53 em células senescentes. Normalmente, FOXO4 mantém p53 sequestrada no núcleo, impedindo apoptose. O peptídeo compete com FOXO4, liberando p53 para sinalizar morte celular programada. Células saudáveis, que não dependem dessa interação para sobrevivência, não são afetadas.",
+    timeline: [
+      { period: "Dias 1-14", description: "Início da eliminação de células senescentes." },
+      { period: "Semana 3-6", description: "Redução da inflammaging e melhora da vitalidade." },
+      { period: "Mês 2-3", description: "Reversão de sinais de envelhecimento e função orgânica melhorada." },
+    ],
+
   },
   22: {
     peptideId: 22,
@@ -222,6 +318,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Estimula a síntese de colágeno e elastina na pele.", "Promove crescimento capilar e reduz queda de cabelo.", "Acelera a cicatrização de feridas e lesões.", "Possui propriedades antioxidantes e anti-inflamatórias.", "Reduz linhas finas e rugas, melhorando a textura da pele."],
     mechanism: ["Ativa vias de sinalização de remodelação de matriz extracelular.", "Estimula a produção de metaloproteinases (MMPs) e TIMPs.", "Modula a expressão de mais de 4000 genes humanos.", "Promove angiogênese e atração de células-tronco mesenquimais."],
     mechanismDetailed: "",
+    timeline: [
+      { period: "Semana 1-2", description: "Melhora da textura e hidratação da pele." },
+      { period: "Semana 3-6", description: "Aumento de colágeno, redução de linhas finas." },
+      { period: "Mês 2-3", description: "Melhora consolidada da aparência e crescimento capilar." },
+    ],
+
   },
   23: {
     peptideId: 23,
@@ -234,6 +336,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Forte liberação de GH pela hipófise", "Aumento do apetite e ingestão calórica", "Recuperação muscular acelerada", "Melhora da qualidade do sono", "Aumento da densidade óssea"],
     mechanism: ["Agonismo do receptor de grelina (GHS-R1a) na hipófise", "Estímulo à liberação pulsátil de GH", "Aumento moderado de cortisol e prolactina", "Sinergismo com GHRH endógeno ou exógeno"],
     mechanismDetailed: "O GHRP-2 se liga ao receptor de secretagogos de GH (GHS-R1a) na hipófise anterior, desencadeando liberação aguda de GH. Possui maior potência na liberação de GH com menos estímulo de apetite que GHRP-6. Quando combinado com GHRH (como CJC-1295), produz liberação sinérgica significativamente maior.",
+    timeline: [
+      { period: "Semana 1-2", description: "Aumento do apetite e melhora da qualidade do sono." },
+      { period: "Semana 3-4", description: "Melhora da recuperação muscular e aumento de IGF-1." },
+      { period: "Mês 2-3", description: "Melhora da composição corporal e densidade óssea." },
+    ],
+
   },
   31: {
     peptideId: 31,
@@ -246,6 +354,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Liberação seletiva de GH sem elevar cortisol ou prolactina", "Melhora significativa da qualidade do sono", "Recuperação muscular acelerada", "Melhora da composição corporal", "Perfil de segurança superior entre os GHRPs"],
     mechanism: ["Agonismo seletivo do receptor de grelina (GHS-R1a)", "Liberação de GH sem afetar cortisol, prolactina ou aldosterona", "Preservação do padrão pulsátil natural de GH", "Sinergismo com GHRH exógeno"],
     mechanismDetailed: "O Ipamorelin se liga seletivamente ao receptor GHS-R1a na hipófise, estimulando a liberação de GH de forma dose-dependente. Sua alta seletividade significa que não causa elevações de cortisol ou prolactina em doses terapêuticas. Quando combinado com CJC-1295, produz liberação sinérgica de GH 3-5x maior.",
+    timeline: [
+      { period: "Semana 1-2", description: "Melhora significativa do sono profundo." },
+      { period: "Semana 3-6", description: "Aumento de GH e IGF-1, melhora da recuperação." },
+      { period: "Mês 2-3", description: "Melhora da composição corporal sem elevação de cortisol." },
+    ],
+
   },
   34: {
     peptideId: 34,
@@ -258,6 +372,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Redução potente da inflamação intestinal (Colite, Crohn)", "Melhora de psoríase, eczema e acne", "Acelera cicatrização e reduz cicatrizes", "Propriedades antimicrobianas naturais", "Reduz inchaço e edema tecidual"],
     mechanism: ["Inibição da ativação do NF-κB", "Bloqueio da produção de citocinas pró-inflamatórias", "Propriedades antimicrobianas contra S. aureus e Candida", "Modulação direta intracelular de vias inflamatórias"],
     mechanismDetailed: "O KPV atua principalmente inibindo a ativação do NF-kappaB, o complexo proteico que controla a transcrição de genes inflamatórios. Ele entra nas células e bloqueia a sinalização que leva à produção de citocinas pró-inflamatórias. Além disso, possui propriedades antimicrobianas diretas contra Staphylococcus aureus e Candida albicans.",
+    timeline: [
+      { period: "Dias 3-7", description: "Redução da inflamação intestinal e cutânea." },
+      { period: "Semana 2-4", description: "Melhora dos sintomas GI e pele." },
+      { period: "Mês 1-2", description: "Controle inflamatório consolidado." },
+    ],
+
   },
   37: {
     peptideId: 37,
@@ -270,6 +390,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Atividade antibacteriana de amplo espectro (incluindo resistentes)", "Ação antiviral e antifúngica potente", "Acelera cicatrização de feridas crônicas", "Modula e fortalece resposta imunológica inata", "Ajuda na reparação de tecidos infectados"],
     mechanism: ["Estrutura anfipática que perfura membranas de microrganismos", "Quimiotaxia — atrai células imunes para o local da infecção", "Neutralização de LPS bacteriano (prevenção de sepse)", "Promoção de angiogênese e reepitelização"],
     mechanismDetailed: "O LL-37 possui uma estrutura anfipática que permite inserção e perfuração de membranas de microrganismos carregados negativamente, levando à lise celular. Como imunomodulador, liga-se a receptores FPR2 para estimular migração celular e liberação de citocinas protetoras, além de neutralizar lipopolissacarídeo bacteriano para prevenir sepse.",
+    timeline: [
+      { period: "Dias 1-5", description: "Atividade antimicrobiana e redução da infecção local." },
+      { period: "Semana 2-3", description: "Melhora da cicatrização e modulação imune." },
+      { period: "Semana 4-6", description: "Função imune restaurada e lesões curadas." },
+    ],
+
   },
   41: {
     peptideId: 41,
@@ -282,6 +408,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Aumenta sensibilidade à insulina e metabolismo da glicose", "Promove perda de peso e queima de gordura", "Aumenta resistência física e performance atlética", "Melhora função mitocondrial e biogênese", "Efeitos anti-envelhecimento sistêmicos"],
     mechanism: ["Ativação da via AMPK (sensor de energia celular)", "Aumento da captação de glicose nos músculos", "Aumento da oxidação de ácidos graxos", "Regulação do metabolismo do folato", "Síntese de novos transportadores de glicose (GLUT)"],
     mechanismDetailed: "O MOTS-c ativa a via da proteína quinase ativada por AMP (AMPK), o 'sensor de energia' da célula. Isso aumenta captação de glicose nos músculos e oxidação de ácidos graxos. Também regula metabolismo do folato e aumenta síntese de transportadores de glicose. Com o envelhecimento, os níveis naturais de MOTS-c diminuem, associados à resistência à insulina.",
+    timeline: [
+      { period: "Semana 1-2", description: "Aumento da sensibilidade à insulina e energia celular." },
+      { period: "Semana 3-6", description: "Melhora da performance atlética e composição corporal." },
+      { period: "Mês 2-3", description: "Efeitos anti-aging e metabólicos consolidados." },
+    ],
+
   },
   50: {
     peptideId: 50,
@@ -294,6 +426,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Aumento do desejo sexual em homens e mulheres", "Aprovado pela FDA para HSDD", "Ação central no SNC (não apenas vascular)", "Eficaz em casos refratários a PDE5i", "Melhora da excitação e satisfação sexual"],
     mechanism: ["Agonismo de receptores de melanocortina (MC4R principal)", "Ativação de vias de sinalização no hipotálamo", "Liberação de neuropeptídeos relacionados ao desejo", "Aumento do fluxo sanguíneo genital via mecanismos centrais"],
     mechanismDetailed: "O PT-141 ativa receptores de melanocortina, particularmente MC4R, no hipotálamo e tronco cerebral, modulando neurotransmissores como dopamina e oxitocina para aumentar desejo e excitação sexual. Aprovado pela FDA em 2019 como Vyleesi® na dose de 1.75 mg SC.",
+    timeline: [
+      { period: "Minutos 30-90", description: "Aumento do desejo sexual após administração." },
+      { period: "Dias 1-3", description: "Engorgimento genital e excitação aprimorada." },
+      { period: "Semana 1-2+", description: "Melhora consistente da função sexual." },
+    ],
+
   },
   51: {
     peptideId: 51,
@@ -306,6 +444,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Perda de peso significativa (até 24% em estudos clínicos)", "Melhora do controle glicêmico", "Redução da gordura hepática", "Melhora dos marcadores cardiovasculares", "Supressão do apetite e aumento da saciedade", "Potencial para tratamento de MAFLD (doença hepática gordurosa)"],
     mechanism: ["Ativação do receptor GLP-1: promove secreção de insulina e suprime glucagon de forma glicose-dependente", "Ativação do receptor GIP: potencializa a secreção de insulina e melhora a sensibilidade à insulina", "Ativação do receptor de Glucagon: aumenta o gasto energético e a oxidação de gordura", "Retardo do esvaziamento gástrico, contribuindo para saciedade", "Efeitos centrais na regulação do apetite"],
     mechanismDetailed: "Retatrutide é o primeiro agonista triplo dos receptores GIP, GLP-1 e glucagon em desenvolvimento clínico avançado. A ativação do GLP-1R promove secreção de insulina glicose-dependente, suprime glucagon e retarda o esvaziamento gástrico. A ativação do GIPR potencializa a secreção de insulina e melhora a sensibilidade periférica. A ativação do receptor de glucagon aumenta o gasto energético hepático e a oxidação de ácidos graxos, contribuindo para uma perda de peso superior à observada com agonist",
+    timeline: [
+      { period: "Semana 1-4", description: "Supressão do apetite e início da perda de peso." },
+      { period: "Mês 2-3", description: "Perda de 10-15% do peso corporal." },
+      { period: "Mês 4-6+", description: "Perda de até 24% com protocolo contínuo." },
+    ],
+
   },
   53: {
     peptideId: 53,
@@ -318,6 +462,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Redução da ansiedade sem sedação", "Melhora do humor e estabilidade emocional", "Efeitos nootrópicos (memória e aprendizado)", "Propriedades imunomoduladoras", "Sem potencial de dependência"],
     mechanism: ["Modulação alostérica de receptores GABA-A", "Aumento dos níveis de BDNF", "Regulação de serotonina, dopamina e norepinefrina", "Modulação da expressão gênica de encefalinas", "Propriedades imunomoduladoras via tuftsin"],
     mechanismDetailed: "O Selank modula alostericamente os receptores GABA-A de forma similar a benzodiazepínicos de baixa dose, mas sem sedação ou dependência. Aumenta BDNF, regulando neuroplasticidade. Sua porção tuftsin confere propriedades imunomoduladoras.",
+    timeline: [
+      { period: "Minutos 15-30", description: "Efeito ansiolítico agudo após dose intranasal." },
+      { period: "Dias 1-7", description: "Redução progressiva da ansiedade e melhora do humor." },
+      { period: "Semana 2-4+", description: "Estabilidade emocional e efeitos cognitivos consolidados." },
+    ],
+
   },
   54: {
     peptideId: 54,
@@ -330,6 +480,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Redução significativa do peso corporal", "Melhora do controle glicêmico em pacientes com diabetes tipo 2", "Diminuição do risco de eventos cardiovasculares adversos maiores em pacientes com diabetes tipo 2 e doença cardiovascular estabelecida", "Supressão do apetite e aumento da saciedade", "Conveniência de dosagem semanal"],
     mechanism: ["Ativação do receptor de GLP-1, resultando em aumento da secreção de insulina dependente de glicose", "Supressão da secreção de glucagon de forma dependente de glicose", "Retardo do esvaziamento gástrico, contribuindo para a saciedade", "Efeitos diretos no sistema nervoso central, reduzindo o apetite e a ingestão alimentar"],
     mechanismDetailed: "O Semaglutide é um análogo do GLP-1 com 94% de homologia ao GLP-1 humano, modificado com uma cadeia lateral de ácido graxo C18 que se liga à albumina sérica, prolongando sua meia-vida para aproximadamente 7 dias. Ele ativa o receptor GLP-1 (GLP-1R) nas células beta pancreáticas, estimulando a secreção de insulina de forma glicose-dependente e suprimindo a secreção de glucagon. No sistema nervoso central, atua nos núcleos hipotalâmicos e no tronco cerebral para reduzir o apetite e a ingestão alim",
+    timeline: [
+      { period: "Semana 1-4", description: "Redução do apetite e início da perda de peso." },
+      { period: "Mês 2-3", description: "Perda de 5-10% do peso corporal." },
+      { period: "Mês 4-12", description: "Perda sustentada de 15-20% com protocolo completo." },
+    ],
+
   },
   56: {
     peptideId: 56,
@@ -342,6 +498,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Melhora da memória e velocidade de processamento", "Neuroproteção contra danos isquêmicos", "Aumento do BDNF cerebral", "Melhora do foco e atenção", "Sem efeitos hormonais (não eleva cortisol)"],
     mechanism: ["Aumento da expressão de BDNF", "Modulação dopaminérgica e serotoninérgica", "Proteção contra excitotoxicidade", "Melhora da microcirculação cerebral", "Regulação da expressão gênica neuronal"],
     mechanismDetailed: "O Semax retém propriedades neurotrópicas do ACTH sem efeitos endócrinos. Aumenta BDNF, promove neuroplasticidade e modula sistemas dopaminérgico e serotoninérgico. Doses intranasais de 0.25-1.0 mg produzem efeitos nootrópicos sustentados por 20-24h.",
+    timeline: [
+      { period: "Minutos 15-30", description: "Aumento imediato do foco após dose intranasal." },
+      { period: "Dias 1-7", description: "Melhora progressiva de memória e processamento." },
+      { period: "Semana 2-4+", description: "Neuroproteção e ganhos cognitivos consolidados." },
+    ],
+
   },
   60: {
     peptideId: 60,
@@ -354,6 +516,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Melhora significativa da função e energia mitocondrial", "Proteção potente do coração e rins contra danos oxidativos", "Aumento da resistência física e recuperação muscular", "Efeitos neuroprotetores e melhora da clareza mental", "Redução da inflamação de origem mitocondrial"],
     mechanism: ["Ligação seletiva à cardiolipina mitocondrial", "Otimização da cadeia de transporte de elétrons", "Redução do vazamento de elétrons (radicais livres)", "Aumento da produção de ATP", "Manutenção da estrutura física mitocondrial"],
     mechanismDetailed: "O SS-31 liga-se seletivamente à cardiolipina, um fosfolipídio único da membrana mitocondrial interna. Ao estabilizar a cardiolipina, otimiza a cadeia de transporte de elétrons, reduz vazamento de elétrons e aumenta eficiência na produção de ATP. Também ajuda a manter a estrutura física das cristas mitocondriais.",
+    timeline: [
+      { period: "Semana 1-2", description: "Início da mobilização de gordura visceral e subcutânea." },
+      { period: "Semana 3-6", description: "Redução perceptível de gordura corporal sem retenção hídrica." },
+      { period: "Mês 2-3", description: "Mudança na composição corporal consolidada e metabolismo acelerado." },
+    ],
+
   },
   61: {
     peptideId: 61,
@@ -366,6 +534,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Promove perda de peso significativa e sustentada.", "Melhora o controle glicêmico em pacientes com diabetes tipo 2.", "Reduz a esteatose hepática e a inflamação em NAFLD/NASH.", "Potencial para reverter a fibrose hepática em NASH.", "Melhora parâmetros metabólicos como colesterol e triglicerídeos."],
     mechanism: ["Agonismo do receptor do peptídeo-1 semelhante ao glucagon (GLP-1R), aumentando a secreção de insulina dependente de glicose e suprimindo o glucagon.", "Agonismo do receptor do glucagon (GCGR), promovendo a lipólise e a oxidação de ácidos graxos no fígado.", "Ação sinérgica GLP-1/GCGR para otimizar a perda de peso e melhorar a sensibilidade à insulina.", "Redução do apetite e aumento da saciedade via GLP-1R no sistema nervoso central.", "Modulação do metabolismo lipídico e hepático através da ativação do GCGR."],
     mechanismDetailed: "O Survodutide é um agonista dual que combina a ativação do receptor GLP-1 e do receptor de glucagon em uma única molécula peptídica. A ativação do GLP-1R promove secreção de insulina glicose-dependente, suprime glucagon pós-prandial, retarda o esvaziamento gástrico e reduz o apetite via SNC. A ativação do GCGR estimula a lipólise hepática, aumenta a oxidação de ácidos graxos e o gasto energético, e reduz a esteatose hepática. A combinação desses dois mecanismos resulta em perda de peso superior ",
+    timeline: [
+      { period: "Semana 1-4", description: "Redução do apetite e início da perda de peso." },
+      { period: "Mês 2-3", description: "Perda de peso progressiva e melhora dos lipídeos hepáticos." },
+      { period: "Mês 4-6", description: "Perda de peso consolidada e reversão da esteatose hepática." },
+    ],
+
   },
   62: {
     peptideId: 62,
@@ -378,6 +552,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Cicatrização acelerada de feridas e lesões", "Redução da inflamação", "Angiogênese (novos vasos sanguíneos)", "Melhora da flexibilidade e mobilidade", "Recuperação muscular e tendínea"],
     mechanism: ["Regulação da actina e motilidade celular", "Promoção de migração celular e angiogênese", "Redução da inflamação via modulação de citocinas", "Regulação de metaloproteinases (MMPs)", "Ação sistêmica"],
     mechanismDetailed: "O TB-500 reproduz o domínio de ligação à actina da Tβ4, regulando polimerização de actina e promovendo migração celular. Estimula angiogênese e reduz inflamação. Estudos demonstraram aumento de 42-61% na re-epitelização de feridas.",
+    timeline: [
+      { period: "Dias 3-7", description: "Redução da inflamação e início da cicatrização." },
+      { period: "Semana 2-4", description: "Melhora perceptível da flexibilidade e lesões." },
+      { period: "Mês 1-2", description: "Recuperação funcional completa e cicatrização consolidada." },
+    ],
+
   },
   63: {
     peptideId: 63,
@@ -390,6 +570,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Redução drástica da gordura abdominal visceral", "Aumento dos níveis naturais de GH e IGF-1", "Melhora do perfil lipídico", "Melhora da cognição em idosos", "Não causa aumento significativo da fome"],
     mechanism: ["Ligação aos receptores de GHRH na hipófise anterior", "Estímulo à síntese e liberação pulsátil de GH", "GH atua no fígado para produzir IGF-1", "Ação direta nos adipócitos para lipólise visceral"],
     mechanismDetailed: "A Tesamorelina liga-se aos receptores de GHRH na hipófise anterior, estimulando síntese e liberação pulsátil de GH. O GH atua no fígado para produzir IGF-1 e diretamente nos adipócitos para estimular lipólise, com afinidade particular pelo tecido adiposo visceral. Diferente dos GHRPs, não estimula significativamente o apetite.",
+    timeline: [
+      { period: "Semana 1-4", description: "Aumento de GH e IGF-1 e início da lipólise visceral." },
+      { period: "Mês 2-3", description: "Redução significativa da gordura abdominal visceral." },
+      { period: "Mês 4-6", description: "Melhora da cognição e composição corporal consolidadas." },
+    ],
+
   },
   65: {
     peptideId: 65,
@@ -402,6 +588,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Fortalecimento da resposta imune", "Atividade antiviral", "Maturação de células T e ativação de NK", "Adjuvante em vacinas e imunoterapia", "Modulação da inflamação crônica"],
     mechanism: ["Estimulação da maturação de células T via TLR9", "Ativação de células dendríticas", "Aumento da atividade citotóxica de NK", "Modulação de citocinas (IL-2, IFN-γ, IL-12)", "Ação anti-inflamatória"],
     mechanismDetailed: "A Tα1 ativa receptores Toll-like (TLR2, TLR9) em células dendríticas, promovendo maturação e apresentação de antígenos. Estimula diferenciação de células T e produção de citocinas Th1. Aprovada em 30+ países como Zadaxin®.",
+    timeline: [
+      { period: "Semana 1-2", description: "Ativação de células dendríticas e células T." },
+      { period: "Semana 3-6", description: "Melhora da resposta imune e atividade antiviral." },
+      { period: "Mês 2-3", description: "Imunidade fortalecida e modulação da inflamação consolidadas." },
+    ],
+
   },
   66: {
     peptideId: 66,
@@ -414,6 +606,12 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     benefits: ["Redução significativa do peso corporal em pacientes com sobrepeso ou obesidade.", "Melhoria do controle glicêmico em pacientes com diabetes tipo 2.", "Diminuição da hemoglobina glicada (HbA1c).", "Potencial para redução do risco cardiovascular.", "Efeitos benéficos na pressão arterial e perfil lipídico."],
     mechanism: ["Ativação dos receptores do peptídeo insulinotrópico dependente de glicose (GIP).", "Ativação dos receptores do peptídeo semelhante ao glucagon 1 (GLP-1).", "Aumento da secreção de insulina dependente de glicose.", "Supressão da secreção de glucagon.", "Retardo do esvaziamento gástrico e aumento da saciedade."],
     mechanismDetailed: "",
+    timeline: [
+      { period: "Semana 1-4", description: "Redução do apetite e início da perda de peso." },
+      { period: "Mês 2-3", description: "Perda de 10-15% do peso corporal." },
+      { period: "Mês 4-12", description: "Perda de até 22% com protocolo completo." },
+    ],
+
   },
   11: {
     peptideId: 11,
