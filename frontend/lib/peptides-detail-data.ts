@@ -36,6 +36,29 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Otimização metabólica consolidada e manutenção de massa magra." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso de 5-Amino-1MQ",
+      route: "Via oral (cápsulas)",
+      phases: [
+        { phase: "Fase Inicial", dose: "50-100mg/dia", units: "1x ao dia" },
+        { phase: "Manutenção", dose: "100-200mg/dia", units: "Ciclos de 8-12 semanas" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Perda de gordura", dose: "100mg", frequency: "1x/dia", duration: "8-12 semanas" },
+      { indication: "Composição corporal", dose: "200mg", frequency: "1x/dia", duration: "12 semanas" },
+    ],
+    reconstitution: [
+      "Disponível em cápsula — não requer reconstituição.",
+      "Ingerir com água preferencialmente em jejum ou antes do treino.",
+    ],
+    interactions: [
+      { name: "Semaglutide / GLP-1", type: "synergic", description: "Combinação sinérgica: inibe NNMT (5-Amino-1MQ) + reduce apetite (GLP-1)→ maior perda de gordura." },
+      { name: "IGF-1 LR3", type: "compatible", description: "Compatível: IGF-1 preserva massa magra enquanto 5-Amino-1MQ queima gordura." },
+    ],
+    stacks: [
+      { name: "Stack Queima de Gordura", peptides: ["5-Amino-1MQ", "AOD-9604", "Semaglutide"], goal: "Perda de gordura máxima", description: "Triple stack metabólico: inibição de NNMT + ação lipocito-seletiva + supressão de apetite." },
+    ],
   },
   2: {
     peptideId: 2,
@@ -54,6 +77,32 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 1-2+", description: "Neuroproteção consolidada e cognição superior." },
     ],
 
+    protocol: {
+      title: "Protocolo Adamax (BPC-157 + TB-500)",
+      route: "Subcutâneo ou intramuscular",
+      phases: [
+        { phase: "Fase Aguda (Lesão)", dose: "500mcg BPC-157 + 1mg TB-500", units: "5x/semana por 2 semanas" },
+        { phase: "Manutenção", dose: "250mcg BPC-157 + 500mcg TB-500", units: "2-3x/semana por 4-6 semanas" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Lesão articular aguda", dose: "1mg blend", frequency: "Diária", duration: "2-4 semanas" },
+      { indication: "Recuperação pós-cirurgia", dose: "500mcg blend", frequency: "3x/semana", duration: "6-8 semanas" },
+    ],
+    reconstitution: [
+      "Reconstituir BPC-157 com 2mL de água bacteriostática.",
+      "Reconstituir TB-500 com 1mL de água bacteriostática.",
+      "Combinar conforme protocolo. Armazenar refrigerado 2-8°C.",
+      "Usar dentro de 30 dias após a reconstituição.",
+    ],
+    interactions: [
+      { name: "BPC-157", type: "synergic", description: "Adamax já contém BPC-157 — stack pré-formulado com ação combinada." },
+      { name: "IGF-1 / MGF", type: "synergic", description: "Adicionar IGF-1 ou MGF amplifica os efeitos anabólicos e de reparo." },
+      { name: "Anticoagulantes", type: "monitor", description: "Monitorar se em uso de anticoagulantes — BPC-157 pode modular a coagulação." },
+    ],
+    stacks: [
+      { name: "Stack Ultimate Recovery", peptides: ["BPC-157", "TB-500", "GHK-Cu"], goal: "Recuperação máxima de lesões", description: "Triplo stack de recuperação: reparo tecidual sistêmico + regeneração local + remodelação de colágeno." },
+    ],
   },
   3: {
     peptideId: 3,
@@ -72,6 +121,31 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Adaptações metabólicas consistentes e resistência física elevada." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso de AICAR",
+      route: "Subcutâneo ou intravenoso",
+      phases: [
+        { phase: "Fase de Uso", dose: "50-100mg", units: "Diária por 14-21 dias" },
+        { phase: "Off", dose: "—", units: "2-4 semanas de pausa" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Performance atlética", dose: "50-100mg/dia", frequency: "Diária", duration: "2-3 semanas" },
+      { indication: "Sensibilidade à insulina", dose: "50mg", frequency: "5x/semana", duration: "4 semanas" },
+    ],
+    reconstitution: [
+      "Reconstituir com água bacteriostática ou solução salina.",
+      "Concentração típica: 10mg/mL.",
+      "Armazenar a 2-8°C. Usar dentro de 30 dias.",
+    ],
+    interactions: [
+      { name: "Metformina", type: "synergic", description: "Ação complementar na ativação de AMPK e melhora metabólica." },
+      { name: "GH / IGF-1", type: "compatible", description: "Compatível: AICAR melhora sensibilidade enquanto GH/IGF-1 promovem crescimento." },
+      { name: "Anticoagulantes", type: "monitor", description: "AICAR pode ter efeitos no metabolismo — monitorar com cuidado." },
+    ],
+    stacks: [
+      { name: "Stack Performance Endurance", peptides: ["AICAR", "SLU-PP-332", "TB-500"], goal: "Resistência e performance atlética", description: "Combinação de ativadores de AMPK e ERRγ para maximizar endurance + recuperação." },
+    ],
   },
   4: {
     peptideId: 4,
@@ -90,6 +164,33 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Melhora consolidada da composição corporal." },
     ],
 
+    protocol: {
+      title: "Protocolo AOD-9604",
+      route: "Subcutâneo (SC)",
+      phases: [
+        { phase: "Fase Principal", dose: "300-500mcg/dia", units: "Em jejum matinal por 12 semanas" },
+        { phase: "Manutenção", dose: "250mcg/dia", units: "3-4x/semana" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Perda de gordura (geral)", dose: "300mcg", frequency: "1x/dia em jejum", duration: "12 semanas" },
+      { indication: "Gordura abdominal", dose: "500mcg", frequency: "1x/dia", duration: "8-12 semanas" },
+    ],
+    reconstitution: [
+      "Reconstituir com 2mL de água bacteriostática.",
+      "Agitar suavemente. NÃO agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Aplicar subcutâneo 30min antes do café da manhã.",
+    ],
+    interactions: [
+      { name: "Semaglutide / GLP-1", type: "synergic", description: "Sinergia potente: AOD-9604 queima gordura localmente + GLP-1 reduz apetite." },
+      { name: "5-Amino-1MQ", type: "synergic", description: "Ambos atuam no metabolismo lipídico por vias diferentes → efeito aditivo." },
+      { name: "HGH / GH exógeno", type: "compatible", description: "AOD-9604 não interfere com GH exógeno, pode ser usado junto com segurança." },
+    ],
+    stacks: [
+      { name: "Stack Fat Loss Premium", peptides: ["AOD-9604", "5-Amino-1MQ", "Semaglutide"], goal: "Queima de gordura máxima", description: "Triple stack metabólico para composição corporal avançada." },
+      { name: "Stack Corpo", peptides: ["AOD-9604", "Ipamorelin", "CJC-1295"], goal: "Queima de gordura + massa magra", description: "AOD-9604 queima gordura sem elevar GH; peptídeos GH preservam e constroem músculo." },
+    ],
   },
   5: {
     peptideId: 5,
@@ -108,6 +209,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Neuroproteção e redução da dor consolidadas." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "2mg", units: "2x/sem" },
+        { phase: "Duração do Ciclo", dose: "8-12 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "2mg", frequency: "2x/sem", duration: "8-12 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "BPC-157", type: "synergic", description: "Reparo neural complementar" },
+      { name: "NAD+", type: "compatible", description: "Energia celular apoia neuroproteção" },
+    ],
+    stacks: [
+      { name: "Stack Neuro", peptides: ["Ara-290", "NAD+"], goal: "Saúde neural", description: "Neuropeptídeo + coenzima vital" },
+    ],
   },
   6: {
     peptideId: 6,
@@ -126,6 +251,35 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 1-2", description: "Recuperação funcional completa e cicatrização consolidada." },
     ],
 
+    protocol: {
+      title: "Protocolo BPC-157",
+      route: "SC, IM ou oral (comprimido)",
+      phases: [
+        { phase: "Fase Aguda", dose: "500mcg 2x/dia", units: "Local à lesão — 2 semanas" },
+        { phase: "Manutenção", dose: "250-500mcg/dia", units: "1x/dia por 4-6 semanas" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Lesão tendinosa/muscular", dose: "500mcg", frequency: "2x/dia", duration: "2-4 semanas" },
+      { indication: "Recuperação GI", dose: "500mcg", frequency: "1x/dia oral", duration: "4-8 semanas" },
+      { indication: "Saúde geral preventiva", dose: "250mcg", frequency: "1x/dia", duration: "Ciclos de 12 semanas" },
+    ],
+    reconstitution: [
+      "Reconstituir 5mg com 2mL de água bacteriostática (2500mcg/mL).",
+      "Para 500mcg, usar 0.2mL da solução reconstituída.",
+      "Armazenar a 2-8°C. Usar dentro de 30 dias.",
+      "Aplicar próximo à área lesada para efeito local máximo.",
+    ],
+    interactions: [
+      { name: "TB-500", type: "synergic", description: "Stack clássico de recuperação: BPC-157 (reparo local) + TB-500 (sistêmico)." },
+      { name: "GHK-Cu", type: "synergic", description: "GHK-Cu amplifica a remodelação de colágeno gerada pelo BPC-157." },
+      { name: "NSAIDS / AINEs", type: "monitor", description: "AINEs podem reduzir eficácia de BPC-157. Preferir paracetamol se necessário." },
+      { name: "KPV", type: "synergic", description: "KPV amplifica ação anti-inflamatória intestinal do BPC-157 oral." },
+    ],
+    stacks: [
+      { name: "Stack Recuperação Total", peptides: ["BPC-157", "TB-500", "GHK-Cu"], goal: "Recuperação máxima de lesões", description: "O stack mais estudado para recuperação: reparo local + sistêmico + colágeno." },
+      { name: "Stack GI Health", peptides: ["BPC-157", "KPV"], goal: "Saúde intestinal", description: "BPC-157 (sistêmico) + KPV (anti-inflamatório GI) para saúde do trato gastrointestinal." },
+    ],
   },
   7: {
     peptideId: 7,
@@ -144,6 +298,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 1-2", description: "Neuroproteção consolidada e bem-estar sustentado." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC/Oral",
+      phases: [
+        { phase: "Dose Principal", dose: "250mcg", units: "1x/dia" },
+        { phase: "Duração do Ciclo", dose: "4-8 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "250mcg", frequency: "1x/dia", duration: "4-8 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC/Oral.",
+    ],
+    interactions: [
+      { name: "BPC-157", type: "synergic", description: "Variante neuro + original GI = reparo total" },
+      { name: "KPV", type: "synergic", description: "Anti-inflamatório intestinal adicional" },
+    ],
+    stacks: [
+      { name: "Stack GI+Brain", peptides: ["BPC-157", "KPV"], goal: "Intestino e cérebro", description: "Reparo GI e neuroproteção simultâneos" },
+    ],
   },
   8: {
     peptideId: 8,
@@ -162,6 +340,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 4-6+", description: "Perda de peso sustentada e melhora metabólica." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "0.3-1mg", units: "1x/sem" },
+        { phase: "Duração do Ciclo", dose: "24 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "0.3-1mg", frequency: "1x/sem", duration: "24 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "Semaglutide", type: "synergic", description: "Mecanismos complementares de saciedade" },
+      { name: "Metformina", type: "compatible", description: "Controle glicêmico aditivo" },
+    ],
+    stacks: [
+      { name: "Stack Saciedade", peptides: ["Cagrilintide", "Semaglutide"], goal: "Saciedade máxima", description: "Amilina + GLP-1 = combo de saciedade premium" },
+    ],
   },
   9: {
     peptideId: 9,
@@ -180,6 +382,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Cardioproteção consolidada e melhora da função cardíaca." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "1mg", units: "2x/sem" },
+        { phase: "Duração do Ciclo", dose: "8 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "1mg", frequency: "2x/sem", duration: "8 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "BPC-157", type: "synergic", description: "Reparo + proteção cardíaca sinérgica" },
+      { name: "SS-31", type: "synergic", description: "Saúde mitocondrial cardíaca" },
+    ],
+    stacks: [
+      { name: "Stack Cardio", peptides: ["Cardiogen", "SS-31", "NAD+"], goal: "Saúde cardíaca", description: "Proteção cardíaca + mitocôndria + energia" },
+    ],
   },
   10: {
     peptideId: 10,
@@ -198,6 +424,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Regeneração cartilaginosa e proteção articular consolidadas." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "1mg", units: "2x/sem" },
+        { phase: "Duração do Ciclo", dose: "8-12 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "1mg", frequency: "2x/sem", duration: "8-12 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "BPC-157", type: "synergic", description: "Reparo tecidual total inclui articulações" },
+      { name: "TB-500", type: "synergic", description: "Recuperação sistêmica amplificada" },
+    ],
+    stacks: [
+      { name: "Stack Articular", peptides: ["Cartalax", "BPC-157", "TB-500"], goal: "Recuperação articular", description: "Cartilagem + reparo local + sistêmico" },
+    ],
   },
   12: {
     peptideId: 12,
@@ -216,6 +466,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Ganhos cognitivos e neuroproteção consolidados." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "IV/IM",
+      phases: [
+        { phase: "Dose Principal", dose: "5-10mL", units: "1x/dia" },
+        { phase: "Duração do Ciclo", dose: "10-20 dias", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "5-10mL", frequency: "1x/dia", duration: "10-20 dias" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: IV/IM.",
+    ],
+    interactions: [
+      { name: "Semax", type: "synergic", description: "Neuroproteção + nootrópico potenciada" },
+      { name: "NAD+", type: "synergic", description: "Energia celular para função neural otimizada" },
+    ],
+    stacks: [
+      { name: "Stack Brain", peptides: ["Cerebrolysin", "Semax", "NAD+"], goal: "Cognição máxima", description: "Fator trófico + nootrópico + energia" },
+    ],
   },
   14: {
     peptideId: 14,
@@ -234,6 +508,33 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Ganho de massa magra e redução de gordura consolidados." },
     ],
 
+    protocol: {
+      title: "Protocolo CJC-1295 com DAC",
+      route: "Subcutâneo (SC)",
+      phases: [
+        { phase: "Fase Principal", dose: "1-2mg/semana", units: "1 injeção por semana" },
+        { phase: "Manutenção", dose: "1mg/semana", units: "Ciclos de 12-16 semanas" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Composição corporal (avançado)", dose: "2mg", frequency: "1x/semana", duration: "12-16 semanas" },
+      { indication: "Anti-aging / longevidade", dose: "1mg", frequency: "1x/semana", duration: "Ciclos de 16 semanas" },
+    ],
+    reconstitution: [
+      "Reconstituir 2mg com 2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver completamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias.",
+      "Aplicar subcutâneo no abdômen, coxa ou glúteo.",
+    ],
+    interactions: [
+      { name: "Ipamorelin", type: "synergic", description: "Stack clássico: CJC-1295 DAC (eleva pool de GH) + Ipamorelin (libera seletivamente) = liberação máxima." },
+      { name: "GHK-Cu", type: "compatible", description: "GHK-Cu complementa os efeitos anti-aging de CJC-1295 com regeneração de colágeno." },
+      { name: "Insulina", type: "monitor", description: "CJC-1295 eleva GH/IGF-1 — monitorar glicemia se diabético ou em uso de insulina." },
+    ],
+    stacks: [
+      { name: "Stack GH Premium", peptides: ["CJC-1295 DAC", "Ipamorelin"], goal: "Liberação máxima de GH", description: "Stack mais popular de GH: GHRH + GHRP seletivo. Libera GH 3-5x mais que isolado." },
+      { name: "Stack Anti-Aging", peptides: ["CJC-1295 DAC", "Epithalon", "GHK-Cu"], goal: "Longevidade e anti-aging", description: "Longevidade completa: GH restaurado + telômeros protegidos + pele regenerada." },
+    ],
   },
   15: {
     peptideId: 15,
@@ -252,6 +553,31 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Mudança na composição corporal consolidada." },
     ],
 
+    protocol: {
+      title: "Protocolo CJC-1295 sem DAC (Mod GRF)",
+      route: "Subcutâneo (SC)",
+      phases: [
+        { phase: "Diário", dose: "100mcg 2-3x/dia", units: "Antes de dormir — pico fisiológico de GH" },
+        { phase: "Ciclo de 12 semanas", dose: "100mcg", units: "Seguido de 4 semanas off" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Composição corporal", dose: "100mcg 2x/dia", frequency: "2x/dia", duration: "12 semanas" },
+      { indication: "Anti-aging", dose: "100mcg", frequency: "1x à noite", duration: "Uso contínuo com ciclos" },
+    ],
+    reconstitution: [
+      "Reconstituir 2mg com 2mL de água bacteriostática.",
+      "Concentração: 1mg/mL (1000mcg/mL).",
+      "Para 100mcg, usar 0.1mL.",
+      "Aplicar 30-60 min antes de dormir para sincronizar com pico natural de GH.",
+    ],
+    interactions: [
+      { name: "Ipamorelin", type: "synergic", description: "Combinação clássica: NON-DAC (liberação aguda) + Ipamorelin (GHRP seletivo) = pico de GH fisiológico." },
+      { name: "GHRP-6", type: "compatible", description: "GHRP-6 potencia a liberação de GH, apesar de aumentar fome — usar em cutting evitar." },
+    ],
+    stacks: [
+      { name: "Stack GH Noturno", peptides: ["CJC-1295 no DAC", "Ipamorelin"], goal: "Recuperação e GH noturno", description: "Aplicar juntos 30min antes de dormir para maximizar o pico noturno fisiológico de GH." },
+    ],
   },
   18: {
     peptideId: 18,
@@ -270,6 +596,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Neuroproteção máxima e melhorias cognitivas consolidadas." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC/IN",
+      phases: [
+        { phase: "Dose Principal", dose: "1-4mg", units: "1x/dia" },
+        { phase: "Duração do Ciclo", dose: "4-6 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "1-4mg", frequency: "1x/dia", duration: "4-6 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC/IN.",
+    ],
+    interactions: [
+      { name: "Semax", type: "synergic", description: "Dihexa + Semax = neurogênese máxima" },
+      { name: "NAD+", type: "synergic", description: "Energia celular potencia cognição" },
+    ],
+    stacks: [
+      { name: "Stack Cognitivo", peptides: ["Dihexa", "Semax", "NAD+"], goal: "Cognição máxima", description: "O stack nootrópico mais potente disponível" },
+    ],
   },
   20: {
     peptideId: 20,
@@ -288,6 +638,32 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 3-6+", description: "Efeitos anti-aging e epigenéticos de longo prazo." },
     ],
 
+    protocol: {
+      title: "Protocolo Epithalon",
+      route: "SC ou IV (padrão russo)",
+      phases: [
+        { phase: "Ciclo Anual", dose: "10mg total", units: "5-10 injeções de 1-2mg — 1 ciclo/ano" },
+        { phase: "Protocolo Intensivo", dose: "20mg total", units: "20 dias consecutivos de 1mg/dia" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Anti-aging geral", dose: "1-2mg/dia", frequency: "Diária por 10-20 dias", duration: "1-2 ciclos/ano" },
+      { indication: "Regulação do sono", dose: "1mg/dia", frequency: "Antes de dormir", duration: "10-15 dias" },
+    ],
+    reconstitution: [
+      "Reconstituir 10mg com 2mL de água bacteriostática.",
+      "Concentração: 5mg/mL. Para 1mg, usar 0.2mL.",
+      "Aplicar SC ou IV. Armazenar a 2-8°C.",
+      "Protocolo russo clássico: 1mg/dia por 10 dias, 1-2x/ano.",
+    ],
+    interactions: [
+      { name: "GHK-Cu", type: "synergic", description: "Epithalon (telômeros) + GHK-Cu (colágeno/pele) = anti-aging completo." },
+      { name: "Pinealon", type: "synergic", description: "Pinealon complementa a regulação pineal e do sono que Epithalon inicia." },
+      { name: "NAD+", type: "compatible", description: "NAD+ IV + Epithalon = stack de longevidade potente." },
+    ],
+    stacks: [
+      { name: "Stack Longevidade Premium", peptides: ["Epithalon", "NAD+", "GHK-Cu", "SS-31"], goal: "Anti-aging máximo", description: "Telômeros + coenzima vital + regeneração de pele + mitocôndrias = longevidade completa." },
+    ],
   },
   21: {
     peptideId: 21,
@@ -306,6 +682,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Reversão de sinais de envelhecimento e função orgânica melhorada." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "1.5mg", units: "3x/sem" },
+        { phase: "Duração do Ciclo", dose: "3 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "1.5mg", frequency: "3x/sem", duration: "3 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "NAD+", type: "synergic", description: "Senólise + energia celular restaurada" },
+      { name: "Quercetin", type: "compatible", description: "Senolítico natural complementar" },
+    ],
+    stacks: [
+      { name: "Stack Senolítico", peptides: ["FOXO4-DRI", "NAD+"], goal: "Eliminação de senescência", description: "Células zumbi + energia = rejuvenescimento" },
+    ],
   },
   22: {
     peptideId: 22,
@@ -324,6 +724,33 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Melhora consolidada da aparência e crescimento capilar." },
     ],
 
+    protocol: {
+      title: "Protocolo GHK-Cu",
+      route: "Tópico, SC ou injetável sistêmico",
+      phases: [
+        { phase: "Tópico (cosmético)", dose: "Aplicação 2x/dia", units: "Sobre pele limpa — uso contínuo" },
+        { phase: "Injetável SC", dose: "1-2mg 2x/semana", units: "Ciclos de 8-12 semanas" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Anti-aging cutâneo", dose: "Creme 3-5%", frequency: "2x/dia tópico", duration: "Uso contínuo" },
+      { indication: "Reparo sistêmico tecidual", dose: "1-2mg SC", frequency: "2x/semana", duration: "8-12 semanas" },
+      { indication: "Crescimento capilar", dose: "Solução capilar 1-5%", frequency: "1x/dia", duration: "12-24 semanas" },
+    ],
+    reconstitution: [
+      "Para uso injetável: reconstituir com 2mL de água bacteriostática.",
+      "Concentração: 500mcg/mL.",
+      "Para cosmético tópico: já disponível em formulações prontas.",
+      "Armazenar a 2-8°C. Proteger da luz.",
+    ],
+    interactions: [
+      { name: "BPC-157", type: "synergic", description: "BPC-157 promove cicatrização enquanto GHK-Cu aumenta qualidade do colágeno formado." },
+      { name: "Epithalon", type: "synergic", description: "Epithalon + GHK-Cu = stack anti-aging completo: nível genético + tecidual." },
+      { name: "Retinol (tópico)", type: "monitor", description: "Usar GHK-Cu e retinol em turnos (manhã/noite) para evitar irritação." },
+    ],
+    stacks: [
+      { name: "Stack Anti-Aging Skin", peptides: ["GHK-Cu", "Epithalon", "SNAP-8"], goal: "Rejuvenescimento cutâneo", description: "Colágeno + telômeros + relaxamento muscular = protocolo completo de anti-aging facial." },
+    ],
   },
   23: {
     peptideId: 23,
@@ -342,6 +769,33 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Melhora da composição corporal e densidade óssea." },
     ],
 
+    protocol: {
+      title: "Protocolo GHRP-2",
+      route: "Subcutâneo (SC)",
+      phases: [
+        { phase: "Fase Bulking", dose: "200-300mcg 3x/dia", units: "Em jejum — antes das refeições e ao dormir" },
+        { phase: "Manutenção", dose: "100-200mcg 2x/dia", units: "Manhã em jejum + noite" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Ganho de massa muscular", dose: "200-300mcg", frequency: "3x/dia", duration: "8-12 semanas" },
+      { indication: "Anti-aging / GH geral", dose: "100mcg", frequency: "2x/dia", duration: "12-16 semanas" },
+    ],
+    reconstitution: [
+      "Reconstituir 5mg com 2mL de água bacteriostática (2500mcg/mL).",
+      "Para 200mcg, usar 0.08mL (80 unidades em seringa U-100).",
+      "Armazenar a 2-8°C. Usar dentro de 30 dias.",
+      "Aplicar sempre em jejum (mínimo 2h sem comer antes).",
+    ],
+    interactions: [
+      { name: "CJC-1295", type: "synergic", description: "Stack GHRH + GHRP: CJC-1295 eleva pool de GH e GHRP-2 dispara a liberação — sinergia máxima." },
+      { name: "Ipamorelin", type: "synergic", description: "Alternativa sinérgica: GHRP-2 + Ipamorelin é mais potente que cada um isolado." },
+      { name: "Insulina", type: "monitor", description: "GHRP-2 aumenta GH/IGF-1 — monitorar glicemia em diabéticos." },
+      { name: "Cortisol alto", type: "monitor", description: "GHRP-2 pode elevar cortisol e prolactina em doses altas — monitorar labs." },
+    ],
+    stacks: [
+      { name: "Stack GH Intensivo", peptides: ["GHRP-2", "CJC-1295 no DAC"], goal: "Liberação máxima de GH", description: "Stack clássico de GH: GHRH + GHRP. Aplicar juntos em jejum para pico sinérgico." },
+    ],
   },
   31: {
     peptideId: 31,
@@ -360,6 +814,33 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Melhora da composição corporal sem elevação de cortisol." },
     ],
 
+    protocol: {
+      title: "Protocolo Ipamorelin",
+      route: "Subcutâneo (SC)",
+      phases: [
+        { phase: "Fase Inicial", dose: "200-300mcg 2-3x/dia", units: "Em jejum — manhã e noite" },
+        { phase: "Manutenção", dose: "200mcg 2x/dia", units: "Ciclos de 12-16 semanas" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Composição corporal", dose: "200-300mcg", frequency: "2-3x/dia", duration: "12 semanas" },
+      { indication: "Melhora do sono", dose: "200mcg", frequency: "1x à noite", duration: "Uso contínuo" },
+    ],
+    reconstitution: [
+      "Reconstituir 5mg com 2mL de água bacteriostática (2500mcg/mL).",
+      "Para 200mcg, usar 0.08mL.",
+      "Armazenar a 2-8°C. Usar dentro de 30 dias.",
+      "Aplicar em jejum 30-60 min antes de dormir.",
+    ],
+    interactions: [
+      { name: "CJC-1295", type: "synergic", description: "O stack mais popular: CJC-1295 eleva GH e Ipamorelin libera seletivamente sem cortisol/prolactina." },
+      { name: "Sermorelin", type: "synergic", description: "Sermorelin (GHRH) + Ipamorelin (GHRP) = stack de GH semelhante ao CJC-1295/Ipamorelin." },
+      { name: "GHRP-2 / GHRP-6", type: "monitor", description: "Não empilhar múltiplos GHRPs — não adição de benefício, pode aumentar efeitos colaterais." },
+    ],
+    stacks: [
+      { name: "Stack GH Padrão Ouro", peptides: ["Ipamorelin", "CJC-1295 DAC"], goal: "GH ótimo sem efeitos colaterais", description: "O stack de GH mais seguro e eficaz: sem elevação de cortisol, prolactina ou cortisol." },
+      { name: "Stack Anti-Aging GH", peptides: ["Ipamorelin", "Sermorelin"], goal: "Restauração de GH endógeno", description: "GH restaurado por dupla via fisiológica — indicado para longevidade e anti-aging." },
+    ],
   },
   34: {
     peptideId: 34,
@@ -378,6 +859,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 1-2", description: "Controle inflamatório consolidado." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC/Oral",
+      phases: [
+        { phase: "Dose Principal", dose: "500mcg", units: "1-2x/dia" },
+        { phase: "Duração do Ciclo", dose: "4-8 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "500mcg", frequency: "1-2x/dia", duration: "4-8 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC/Oral.",
+    ],
+    interactions: [
+      { name: "BPC-157", type: "synergic", description: "KPV + BPC = GI anti-inflamatório completo" },
+      { name: "Semaglutide", type: "monitor", description: "KPV pode modular absorção de Semaglutide" },
+    ],
+    stacks: [
+      { name: "Stack GI", peptides: ["KPV", "BPC-157"], goal: "Saúde intestinal", description: "Anti-inflamatório intestinal dual" },
+    ],
   },
   37: {
     peptideId: 37,
@@ -396,6 +901,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 4-6", description: "Função imune restaurada e lesões curadas." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "Tópico/SC",
+      phases: [
+        { phase: "Dose Principal", dose: "100mcg", units: "1-2x/dia" },
+        { phase: "Duração do Ciclo", dose: "4-8 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "100mcg", frequency: "1-2x/dia", duration: "4-8 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: Tópico/SC.",
+    ],
+    interactions: [
+      { name: "BPC-157", type: "synergic", description: "LL-37 antimicrobiano + BPC cicatrizante" },
+      { name: "GHK-Cu", type: "synergic", description: "Colágeno + cicatrização premium" },
+    ],
+    stacks: [
+      { name: "Stack Wound", peptides: ["LL-37", "BPC-157", "GHK-Cu"], goal: "Cicatrização e imunidade", description: "Antimicrobiano + reparo + colágeno" },
+    ],
   },
   41: {
     peptideId: 41,
@@ -414,6 +943,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Efeitos anti-aging e metabólicos consolidados." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "5mg", units: "2x/sem" },
+        { phase: "Duração do Ciclo", dose: "4-6 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "5mg", frequency: "2x/sem", duration: "4-6 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "NAD+", type: "synergic", description: "MOTS-C metabólico + NAD+ energético" },
+      { name: "Metformina", type: "compatible", description: "Ativação de AMPK complementar" },
+    ],
+    stacks: [
+      { name: "Stack Longev Metab", peptides: ["MOTS-C", "NAD+", "Epithalon"], goal: "Anti-aging metabólico", description: "Metabolismo + energia + telômeros" },
+    ],
   },
   50: {
     peptideId: 50,
@@ -432,6 +985,32 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 1-2+", description: "Melhora consistente da função sexual." },
     ],
 
+    protocol: {
+      title: "Protocolo PT-141 (Bremelanotide)",
+      route: "Subcutâneo (SC) ou intranasal",
+      phases: [
+        { phase: "Dose Inicial", dose: "500mcg-1mg SC", units: "1-2h antes da atividade sexual" },
+        { phase: "Dose Padrão", dose: "1-2mg SC", units: "Conforme necessidade — máx. 1x/72h" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Disfunção erétil / libido masculina", dose: "1-2mg", frequency: "Conforme necessidade", duration: "Máx. 1x/72h" },
+      { indication: "Disfunção sexual feminina", dose: "500mcg-1mg", frequency: "Conforme necessidade", duration: "Máx. 1x/72h" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Concentração típica: 1mg/mL.",
+      "Armazenar a 2-8°C. Usar dentro de 30 dias.",
+      "Aplicar 1-2h antes da atividade sexual. Pode causar náusea inicial.",
+    ],
+    interactions: [
+      { name: "Sildenafil (Viagra)", type: "synergic", description: "Ação central (PT-141) + ação periférica vascular (Sildenafil) = sinergía potente para DE." },
+      { name: "Oxitocina", type: "synergic", description: "PT-141 aumenta desejo e Oxitocina aumenta vínculo emocional e intensidade." },
+      { name: "Antidepressivos (ISRS)", type: "monitor", description: "ISRSs podem reduzir libido; PT-141 pode contrariar esse efeito — monitorar com médico." },
+    ],
+    stacks: [
+      { name: "Stack Libido & Performance", peptides: ["PT-141", "Oxitocina"], goal: "Função sexual otimizada", description: "PT-141 (desejo) + Oxitocina (vínculo/intensidade) = experiência sexual completa." },
+    ],
   },
   51: {
     peptideId: 51,
@@ -450,6 +1029,33 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 4-6+", description: "Perda de até 24% com protocolo contínuo." },
     ],
 
+    protocol: {
+      title: "Protocolo Retatrutide",
+      route: "Subcutâneo (SC) semanal",
+      phases: [
+        { phase: "Titulação", dose: "1-2mg/semana", units: "4 semanas — ajuste à tolerância" },
+        { phase: "Manutenção", dose: "4-8mg/semana", units: "Dose alvo para perda de peso máxima" },
+        { phase: "Sustentação", dose: "2-4mg/semana", units: "Dose de manutenção após objetivo atingido" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Obesidade / sobrepeso severo", dose: "8mg", frequency: "1x/semana", duration: "24-52 semanas" },
+      { indication: "Perda de peso moderada", dose: "4mg", frequency: "1x/semana", duration: "24 semanas" },
+    ],
+    reconstitution: [
+      "Disponível em formulação pronta para injeção.",
+      "Aplicar SC no abdômen, coxa ou braço — rotacionar locais.",
+      "Refrigerar a 2-8°C. Nunca congelar.",
+      "Titulação lenta é essencial para tolerabilidade GI.",
+    ],
+    interactions: [
+      { name: "Metformina", type: "compatible", description: "Combinação segura e aditiva no controle glicêmico e perda de peso." },
+      { name: "Tireoide (Levotiroxina)", type: "monitor", description: "Perda de peso altera absorção — monitorar e ajustar dose de T4." },
+      { name: "Anticoagulantes orais", type: "monitor", description: "Velocidade de esvaziamento gástrico afeta absorção de outros medicamentos." },
+    ],
+    stacks: [
+      { name: "Stack Metabólico Máximo", peptides: ["Retatrutide", "AOD-9604"], goal: "Perda de gordura máxima", description: "Triple agonista GLP-1/GIP/Glucagon + ação lipocito-seletiva do AOD = composição corporal premium." },
+    ],
   },
   53: {
     peptideId: 53,
@@ -468,6 +1074,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 2-4+", description: "Estabilidade emocional e efeitos cognitivos consolidados." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "IN",
+      phases: [
+        { phase: "Dose Principal", dose: "300-900mcg", units: "1-3x/dia" },
+        { phase: "Duração do Ciclo", dose: "Ciclos 4-8 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "300-900mcg", frequency: "1-3x/dia", duration: "Ciclos 4-8 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: IN.",
+    ],
+    interactions: [
+      { name: "PE-22-28", type: "synergic", description: "Selank + PE-22-28 = ansiedade + depressão" },
+      { name: "Oxitocina", type: "compatible", description: "Estabilidade emocional + comportamento social" },
+    ],
+    stacks: [
+      { name: "Stack Mental", peptides: ["Selank", "PE-22-28"], goal: "Saúde mental", description: "Ansiolítico + antidepressivo rápido" },
+    ],
   },
   54: {
     peptideId: 54,
@@ -486,6 +1116,34 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 4-12", description: "Perda sustentada de 15-20% com protocolo completo." },
     ],
 
+    protocol: {
+      title: "Protocolo Semaglutide",
+      route: "Subcutâneo (SC) semanal",
+      phases: [
+        { phase: "Titulação (Sem 1-4)", dose: "0.25mg/semana", units: "4 semanas de adaptação" },
+        { phase: "Dose Terapêutica (Sem 5-16)", dose: "0.5-1mg/semana", units: "Dose padrão de manutenção" },
+        { phase: "Dose Máxima (Opcional)", dose: "2mg/semana", units: "Para resposta máxima" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Perda de peso", dose: "1-2mg", frequency: "1x/semana", duration: "52+ semanas" },
+      { indication: "Diabetes tipo 2", dose: "0.5-1mg", frequency: "1x/semana", duration: "Uso contínuo" },
+    ],
+    reconstitution: [
+      "Disponível em caneta injetora pré-carregada (Ozempic/Wegovy) ou pó.",
+      "Para pó: reconstituir com 1mL de água bacteriostática.",
+      "Refrigerar a 2-8°C. Após abertura: até 56 dias em temperatura ambiente.",
+      "Titulação lenta é fundamental para tolerabilidade GI.",
+    ],
+    interactions: [
+      { name: "AOD-9604", type: "synergic", description: "Semaglutide reduz apetite + AOD-9604 queima gordura localmente = stack de composição corporal." },
+      { name: "Metformina", type: "synergic", description: "Combinação aprovada e sinérgica para DM2 e perda de peso." },
+      { name: "Anticoagulantes", type: "monitor", description: "Semaglutide muda velocidade gástrica — ajustar dose de anticoagulantes se necessário." },
+      { name: "Insulina", type: "monitor", description: "Risco de hipoglicemia aumentado — reduzir insulina ao iniciar semaglutide." },
+    ],
+    stacks: [
+      { name: "Stack GLP-1 + Body Comp", peptides: ["Semaglutide", "AOD-9604", "Ipamorelin"], goal: "Perda de gordura + preservação muscular", description: "GLP-1 (apetite) + lipólise direta (AOD) + GH seletivo (Ipamorelin) = recomposição corporal premium." },
+    ],
   },
   56: {
     peptideId: 56,
@@ -504,6 +1162,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 2-4+", description: "Neuroproteção e ganhos cognitivos consolidados." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "IN",
+      phases: [
+        { phase: "Dose Principal", dose: "200-900mcg", units: "1-2x/dia" },
+        { phase: "Duração do Ciclo", dose: "Ciclos 4-8 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "200-900mcg", frequency: "1-2x/dia", duration: "Ciclos 4-8 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: IN.",
+    ],
+    interactions: [
+      { name: "P21", type: "synergic", description: "Semax + P21 = neurogênese + nootrópico" },
+      { name: "Selank", type: "synergic", description: "Cognição + estabilidade mental" },
+    ],
+    stacks: [
+      { name: "Stack Brain", peptides: ["Semax", "P21", "NAD+"], goal: "Nootrópico completo", description: "Nootrópico + neurogênese + energia cerebral" },
+    ],
   },
   60: {
     peptideId: 60,
@@ -522,6 +1204,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Mudança na composição corporal consolidada e metabolismo acelerado." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "500mcg", units: "1x/dia jejum" },
+        { phase: "Duração do Ciclo", dose: "12 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "500mcg", frequency: "1x/dia jejum", duration: "12 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "AOD-9604", type: "compatible", description: "Ambos queimam gordura sem GH sistêmico" },
+      { name: "Ipamorelin", type: "compatible", description: "GH seletivo preserva massa sem adipogênese" },
+    ],
+    stacks: [
+      { name: "Stack Lipólise", peptides: ["HGH Frag 176-191", "AOD-9604"], goal: "Lipólise pura", description: "Queima de gordura específica sem dose plena de GH" },
+    ],
   },
   61: {
     peptideId: 61,
@@ -540,6 +1246,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 4-6", description: "Perda de peso consolidada e reversão da esteatose hepática." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "1-6mg", units: "1x/sem" },
+        { phase: "Duração do Ciclo", dose: "24 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "1-6mg", frequency: "1x/sem", duration: "24 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "Semaglutide", type: "compatible", description: "GLP-1 + Glucagon = perda de peso + fígado" },
+      { name: "AOD-9604", type: "synergic", description: "Lipólise direta complementar ao Survodutide" },
+    ],
+    stacks: [
+      { name: "Stack Liver Fat", peptides: ["Survodutide", "AOD-9604"], goal: "MASLD/NAFLD + peso", description: "GLP-1/Glucagon + lipólise para fígado e peso" },
+    ],
   },
   62: {
     peptideId: 62,
@@ -558,6 +1288,33 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 1-2", description: "Recuperação funcional completa e cicatrização consolidada." },
     ],
 
+    protocol: {
+      title: "Protocolo TB-500 (Thymosin Beta-4)",
+      route: "Subcutâneo (SC) ou intramuscular (IM)",
+      phases: [
+        { phase: "Fase Aguda (Lesão)", dose: "5-10mg/semana", units: "2 injeções semanais por 4-6 semanas" },
+        { phase: "Manutenção", dose: "2.5-5mg/semana", units: "1-2x/semana por 4-6 semanas" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Lesão aguda muscular/tendinosa", dose: "5mg", frequency: "2x/semana", duration: "4-6 semanas" },
+      { indication: "Recuperação pós-cirurgia", dose: "2.5mg", frequency: "2x/semana", duration: "8 semanas" },
+      { indication: "Anti-aging preventivo", dose: "2mg", frequency: "1x/semana", duration: "Ciclos de 12 semanas" },
+    ],
+    reconstitution: [
+      "Reconstituir 5mg com 2mL de água bacteriostática.",
+      "Agitar suavemente. Não sacudir vigorosamente.",
+      "Armazenar a 2-8°C. Usar dentro de 30 dias.",
+      "Aplicar SC ou IM. SC no abdômen para absorção mais uniforme.",
+    ],
+    interactions: [
+      { name: "BPC-157", type: "synergic", description: "O stack mais famoso de recuperação: BPC-157 (local/GI) + TB-500 (sistêmico) = recuperação completa." },
+      { name: "GHK-Cu", type: "synergic", description: "TB-500 acelera cicatrização e GHK-Cu melhora qualidade do colágeno resultante." },
+      { name: "MGF", type: "synergic", description: "TB-500 (tecido geral) + MGF (músculo específico) = recuperação muscular máxima." },
+    ],
+    stacks: [
+      { name: "Stack Recovery Pro", peptides: ["TB-500", "BPC-157", "GHK-Cu"], goal: "Recuperação máxima de lesões", description: "O stack de recuperação mais completo disponível — combina reparo sistêmico, local e de colágeno." },
+    ],
   },
   63: {
     peptideId: 63,
@@ -576,6 +1333,32 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 4-6", description: "Melhora da cognição e composição corporal consolidadas." },
     ],
 
+    protocol: {
+      title: "Protocolo Tesamorelin",
+      route: "Subcutâneo (SC)",
+      phases: [
+        { phase: "Diário", dose: "2mg/dia SC", units: "1 injeção diária em jejum (aprovado FDA)" },
+        { phase: "Off-Label", dose: "1-2mg/dia", units: "Ciclos de 12-24 semanas" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Lipodistrofia (aprovado FDA)", dose: "2mg/dia", frequency: "1x/dia", duration: "26 semanas" },
+      { indication: "Cognição e anti-aging", dose: "1-2mg/dia", frequency: "1x/dia", duration: "12-24 semanas" },
+    ],
+    reconstitution: [
+      "Reconstituir 2mg com 2.2mL de água estéril (fornecida).",
+      "Injetar o diluente na lateral do vial — não diretamente no pó.",
+      "Rodar gentilmente. NÃO agitar.",
+      "Usar imediatamente após reconstituição. Não armazenar reconstituído.",
+    ],
+    interactions: [
+      { name: "Ipamorelin", type: "synergic", description: "Stack de GH: Tesamorelin (GHRH analóg) + Ipamorelin (GHRP seletivo) = liberação sinérgica." },
+      { name: "Corticosteroides", type: "monitor", description: "Corticosteroides podem reduzir eficácia de Tesamorelin — monitorar resposta." },
+      { name: "Insulina", type: "monitor", description: "Tesamorelin aumenta GH/IGF-1 — ajustar dose de insulina se diabético." },
+    ],
+    stacks: [
+      { name: "Stack Tesamorelin + Ipamorelin", peptides: ["Tesamorelin", "Ipamorelin"], goal: "GH e composição corporal", description: "Combinação premium de GHRH + GHRP para liberação máxima de GH sem efeitos colaterais indesejados." },
+    ],
   },
   65: {
     peptideId: 65,
@@ -594,6 +1377,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Imunidade fortalecida e modulação da inflamação consolidadas." },
     ],
 
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "1.6mg", units: "3x/sem" },
+        { phase: "Duração do Ciclo", dose: "4-12 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "1.6mg", frequency: "3x/sem", duration: "4-12 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "Livagen", type: "synergic", description: "Thymosin + Livagen = imunidade dual" },
+      { name: "Selank", type: "synergic", description: "Reduz estresse que suprime imunidade" },
+    ],
+    stacks: [
+      { name: "Stack Imune", peptides: ["Thymosin Alpha-1", "Livagen"], goal: "Imunidade reforçada", description: "Células T + imunidade inata + estresse reduzido" },
+    ],
   },
   66: {
     peptideId: 66,
@@ -612,6 +1419,33 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 4-12", description: "Perda de até 22% com protocolo completo." },
     ],
 
+    protocol: {
+      title: "Protocolo Tirzepatide",
+      route: "Subcutâneo (SC) semanal",
+      phases: [
+        { phase: "Titulação (Sem 1-4)", dose: "2.5mg/semana", units: "Período de adaptação GI" },
+        { phase: "Dose Terapêutica", dose: "5-10mg/semana", units: "Dose de manutenção" },
+        { phase: "Dose Máxima", dose: "15mg/semana", units: "Para perda de peso máxima" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Perda de peso", dose: "10-15mg", frequency: "1x/semana", duration: "52+ semanas" },
+      { indication: "Diabetes tipo 2", dose: "5-10mg", frequency: "1x/semana", duration: "Uso contínuo" },
+    ],
+    reconstitution: [
+      "Disponível em caneta injetora pré-carregada (Mounjaro/Zepbound).",
+      "Aplicar SC no abdômen, coxa ou braço — rotacionar locais.",
+      "Refrigerar a 2-8°C. Após abertura: up to 21 dias em temperatura ambiente.",
+      "Titulação lenta é essencial — 4 semanas em cada dose.",
+    ],
+    interactions: [
+      { name: "Metformina", type: "synergic", description: "Combinação segura e sinérgica para DM2 — redução superior da A1C." },
+      { name: "Insulina", type: "monitor", description: "Alto risco de hipoglicemia — reduzir insulina ao iniciar tirzepatide." },
+      { name: "AOD-9604", type: "synergic", description: "Tirzepatide (apetite/insulina) + AOD-9604 (lipólise) = composição corporal otimizada." },
+    ],
+    stacks: [
+      { name: "Stack Metabólico Premium", peptides: ["Tirzepatide", "AOD-9604"], goal: "Composição corporal e metabolismo", description: "GIP/GLP-1 dual + lipólise direta = o stack de perda de gordura mais eficaz disponível." },
+    ],
   },
   11: {
     peptideId: 11,
@@ -628,6 +1462,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Dias 1-7", description: "Melhora progressiva na clareza mental e humor." },
       { period: "Semana 2-4", description: "Melhora perceptível na memória de trabalho e capacidade de concentração." },
       { period: "Mês 2-3", description: "Consolidação dos ganhos cognitivos e neuroproteção a longo prazo." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "2mg", units: "1x/sem" },
+        { phase: "Duração do Ciclo", dose: "12 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "2mg", frequency: "1x/sem", duration: "12 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "BPC-157", type: "compatible", description: "Reparo tecidual complementar ao Chonluten" },
+      { name: "Epithalon", type: "compatible", description: "Anti-aging sistêmico com Chonluten" },
+    ],
+    stacks: [
+      { name: "Stack Longev", peptides: ["Chonluten", "Epithalon"], goal: "Pulmão e anti-aging", description: "Biorregulador pulmonar + longevidade sistêmica" },
     ],
   },
   13: {
@@ -646,6 +1504,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 3-6", description: "Melhora da função respiratória e capacidade pulmonar." },
       { period: "Mês 2-3", description: "Regeneração epitelial consolidada e redução de episódios inflamatórios." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "0.5-1mg", units: "Diária 10 dias" },
+        { phase: "Duração do Ciclo", dose: "1-2x/ano", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "0.5-1mg", frequency: "Diária 10 dias", duration: "1-2x/ano" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "Epithalon", type: "synergic", description: "Coração + longevidade sistêmica Khavinson" },
+      { name: "Cardiogen", type: "synergic", description: "Dupla proteção cardíaca biorreguladora" },
+    ],
+    stacks: [
+      { name: "Stack Card Longev", peptides: ["Cortagen", "Epithalon"], goal: "Saúde cardíaca anti-aging", description: "Biorregulador cardíaco + longevidade" },
+    ],
   },
   16: {
     peptideId: 16,
@@ -662,6 +1544,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 1-2", description: "Melhora sutil na clareza mental e foco." },
       { period: "Semana 3-6", description: "Ganhos perceptíveis de memória e velocidade de processamento." },
       { period: "Mês 2-3", description: "Neuroproteção consolidada e melhora cognitiva sustentada." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "1mg", units: "Diária 10 dias" },
+        { phase: "Duração do Ciclo", dose: "1-2x/ano", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "1mg", frequency: "Diária 10 dias", duration: "1-2x/ano" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "Epithalon", type: "synergic", description: "Pâncreas + longevidade sistêmica" },
+      { name: "Livagen", type: "compatible", description: "Modulação imune complementar" },
+    ],
+    stacks: [
+      { name: "Stack Metab", peptides: ["Crystagen", "Livagen", "Epithalon"], goal: "Pâncreas e imunidade", description: "Biorregulador pancreático + anti-aging" },
     ],
   },
   17: {
@@ -680,6 +1586,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 3-6", description: "Melhora da resposta a infecções e bem-estar geral." },
       { period: "Mês 2-3", description: "Fortalecimento sustentado da imunidade adaptativa." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC/IN",
+      phases: [
+        { phase: "Dose Principal", dose: "100-200mcg", units: "1-2x/dia" },
+        { phase: "Duração do Ciclo", dose: "4-8 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "100-200mcg", frequency: "1-2x/dia", duration: "4-8 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC/IN.",
+    ],
+    interactions: [
+      { name: "Semax", type: "synergic", description: "DSIP sono + Semax nooroproteção" },
+      { name: "Epithalon", type: "synergic", description: "Anti-aging + regulação sono completa" },
+    ],
+    stacks: [
+      { name: "Stack Sono", peptides: ["DSIP", "Semax", "Epithalon"], goal: "Sono e neuroproteção", description: "Indução de sono + nootrópico + anti-aging" },
+    ],
   },
   19: {
     peptideId: 19,
@@ -696,6 +1626,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Noite 1-3", description: "Melhora inicial da qualidade do sono e tempo para adormecer." },
       { period: "Semana 1-2", description: "Regulação progressiva do ciclo circadiano." },
       { period: "Semana 3-4", description: "Sono delta consolidado e melhora do GH noturno." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "1mg", units: "Diária 10 dias" },
+        { phase: "Duração do Ciclo", dose: "1-2x/ano", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "1mg", frequency: "Diária 10 dias", duration: "1-2x/ano" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "GHK-Cu", type: "synergic", description: "Pele + colágeno Khavinson + cobre" },
+      { name: "Epithalon", type: "synergic", description: "Anti-aging total pele e longevidade" },
+    ],
+    stacks: [
+      { name: "Stack Pele", peptides: ["Endoluten", "GHK-Cu", "Epithalon"], goal: "Anti-aging cutâneo", description: "Pineal + colágeno + longevidade pele" },
     ],
   },
   24: {
@@ -718,6 +1672,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { name: "Stack GH Clássico", peptides: ["GHRP-6", "CJC-1295 NO DAC"], goal: "Maximizar liberação de GH", description: "Combinação clássica que produz liberação sinérgica de GH. Administrar GHRP-6 (100-200mcg) com CJC-1295 (100-200mcg) 2-3x/dia." },
       { name: "Stack Bulking", peptides: ["GHRP-6", "Ipamorelin", "CJC-1295 DAC"], goal: "Ganho de massa magra", description: "Para ganho máximo de massa com estímulo ao apetite e GH elevado." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "100mcg", units: "1-2x/dia" },
+        { phase: "Duração do Ciclo", dose: "8-12 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "100mcg", frequency: "1-2x/dia", duration: "8-12 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "CJC-1295", type: "synergic", description: "GHRH + GHRP-6 = GH + apetite bulking" },
+      { name: "Ipamorelin", type: "compatible", description: "Ipamorelin mais seletivo que GHRP-6" },
+    ],
+    stacks: [
+      { name: "Stack GH Bulk", peptides: ["GHRP-6", "CJC-1295", "Ipamorelin"], goal: "Bulking com GH", description: "GH + apetite = ganho de massa" },
+    ],
   },
   25: {
     peptideId: 25,
@@ -734,6 +1712,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Dias 1-7", description: "Aumento da energia e redução da fadiga." },
       { period: "Semana 2-4", description: "Melhora perceptível na clareza mental e função hepática." },
       { period: "Mês 1-3", description: "Efeitos antienvelhecimento e clareamento progressivo da pele." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "100-300mcg", units: "1-2x/dia" },
+        { phase: "Duração do Ciclo", dose: "12 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "100-300mcg", frequency: "1-2x/dia", duration: "12 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "Ipamorelin", type: "synergic", description: "GH Frag lipólise + Ipam GH = composição" },
+      { name: "BPC-157", type: "compatible", description: "Recuperação preserva ganhos de composição" },
+    ],
+    stacks: [
+      { name: "Stack Composição", peptides: ["HGH Frag 176-191", "Ipamorelin", "BPC-157"], goal: "Composição corporal", description: "Lipólise sem GH full + recuperação" },
     ],
   },
   26: {
@@ -752,6 +1754,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 3-6", description: "Manutenção do volume testicular e espermatogênese." },
       { period: "Mês 2-3+", description: "Preservação sustentada da fertilidade durante TRT." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "200-300mcg", units: "2-3x/dia" },
+        { phase: "Duração do Ciclo", dose: "8-12 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "200-300mcg", frequency: "2-3x/dia", duration: "8-12 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "CJC-1295", type: "synergic", description: "GHRH + GHRP-6 = GH + apetite" },
+      { name: "Ipamorelin", type: "compatible", description: "Alternativa GHRP seletiva ao GHRP-6" },
+    ],
+    stacks: [
+      { name: "Stack Bulk GH", peptides: ["GHRP-6", "CJC-1295 no DAC"], goal: "Ganho de massa com GH", description: "GHRP apetite + GHRH para bulking" },
+    ],
   },
   27: {
     peptideId: 27,
@@ -768,6 +1794,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 1-2", description: "Aumento dos níveis intratesticulares de testosterona." },
       { period: "Semana 3-6", description: "Manutenção do volume testicular e espermatogênese." },
       { period: "Mês 2-3+", description: "Preservação sustentada da fertilidade e função gonadal." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC/IM",
+      phases: [
+        { phase: "Dose Principal", dose: "500-2000 UI", units: "2-3x/sem" },
+        { phase: "Duração do Ciclo", dose: "12 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "500-2000 UI", frequency: "2-3x/sem", duration: "12 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC/IM.",
+    ],
+    interactions: [
+      { name: "Enclomifeno", type: "compatible", description: "Estimulam eixo HPG por vias diferentes" },
+      { name: "Clomid", type: "compatible", description: "Antiestrogênico + HCG = restauração HPG" },
+    ],
+    stacks: [
+      { name: "Stack TRT", peptides: ["HCG", "Enclomifeno"], goal: "Fertilidade em TRT", description: "Preservação testicular durante TRT" },
     ],
   },
   28: {
@@ -786,6 +1836,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Ganho perceptível de massa muscular magra." },
       { period: "Mês 4-6", description: "Mudança significativa na composição corporal e densidade óssea." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "2-4 UI", units: "1-2x/dia" },
+        { phase: "Duração do Ciclo", dose: "5 on/2 off", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "2-4 UI", frequency: "1-2x/dia", duration: "5 on/2 off" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "Ipamorelin", type: "synergic", description: "HGH + GHRP = eixo GH completo" },
+      { name: "IGF-1 LR3", type: "synergic", description: "IGF-1 exógeno + GH exógeno = anabolismo máximo" },
+    ],
+    stacks: [
+      { name: "Stack GH Avançado", peptides: ["HGH 191AA", "Ipamorelin", "IGF-1 LR3"], goal: "GH + IGF-1 completo", description: "Stack avançado: GH + GHRP + IGF-1 exógeno" },
+    ],
   },
   29: {
     peptideId: 29,
@@ -802,6 +1876,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Dias 1-5", description: "Início da estimulação folicular ou testicular." },
       { period: "Semana 2-3", description: "Desenvolvimento folicular ou espermatogênico progressivo." },
       { period: "Mês 1-3", description: "Resultados de fertilidade mensuráveis." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC/IM",
+      phases: [
+        { phase: "Dose Principal", dose: "75-150 UI", units: "Diária" },
+        { phase: "Duração do Ciclo", dose: "10-14 dias", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "75-150 UI", frequency: "Diária", duration: "10-14 dias" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC/IM.",
+    ],
+    interactions: [
+      { name: "HCG", type: "compatible", description: "FSH + LH para fertilidade completa" },
+      { name: "Clomid", type: "monitor", description: "Antiestrogênico com HMG — monitorar" },
+    ],
+    stacks: [
+      { name: "Stack Fertilidade", peptides: ["HMG", "HCG"], goal: "Fertilidade masculina/feminina", description: "LH + FSH = espermatogênese completa" },
     ],
   },
   30: {
@@ -820,6 +1918,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 2-4", description: "Ganho de massa muscular notável e redução de gordura." },
       { period: "Mês 1-2", description: "Mudança na composição corporal consolidada." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "50-80mcg/kg", units: "1x/dia pós-treino" },
+        { phase: "Duração do Ciclo", dose: "4-6 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "50-80mcg/kg", frequency: "1x/dia pós-treino", duration: "4-6 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "MGF", type: "synergic", description: "IGF-1 LR3 sistêmico + MGF local = hipertrofia" },
+      { name: "CJC-1295", type: "compatible", description: "GH aumenta IGF-1 que potencia LR3" },
+    ],
+    stacks: [
+      { name: "Stack IGF", peptides: ["IGF-1 LR3", "MGF", "CJC-1295"], goal: "Hipertrofia avançada", description: "IGF-1 meia-longa + local + GH = anabolismo" },
+    ],
   },
   32: {
     peptideId: 32,
@@ -836,6 +1958,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Horas 1-6", description: "Aumento agudo de LH circulante." },
       { period: "Semana 1-2", description: "Normalização do eixo HPG com uso regular." },
       { period: "Mês 1-2", description: "Melhora da função reprodutiva e hormonal." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC/IN",
+      phases: [
+        { phase: "Dose Principal", dose: "50-100mcg", units: "1-2x/sem" },
+        { phase: "Duração do Ciclo", dose: "4-8 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "50-100mcg", frequency: "1-2x/sem", duration: "4-8 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC/IN.",
+    ],
+    interactions: [
+      { name: "HCG", type: "compatible", description: "HCG mimetiza LH; Kisspeptin estimula GnRH" },
+      { name: "Enclomifeno", type: "compatible", description: "HPG restaurado por múltiplas vias" },
+    ],
+    stacks: [
+      { name: "Stack HPG", peptides: ["Kisspeptin", "HCG"], goal: "Restauração do eixo HPG", description: "Eixo HPG restaurado por via central e periférica" },
     ],
   },
   33: {
@@ -854,6 +2000,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 2-4", description: "Melhora dos sintomas inflamatórios crônicos." },
       { period: "Mês 1-3", description: "Controle sustentado da inflamação sistêmica." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "1-2mg", units: "2x/sem" },
+        { phase: "Duração do Ciclo", dose: "8-12 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "1-2mg", frequency: "2x/sem", duration: "8-12 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "BPC-157", type: "synergic", description: "Anti-inflamatório local + KLOW sistêmico" },
+      { name: "NAD+", type: "synergic", description: "Energia celular + controle inflamação" },
+    ],
+    stacks: [
+      { name: "Stack Anti-Inflam", peptides: ["KLOW", "BPC-157", "NAD+"], goal: "Controle inflamação sistêmica", description: "Anti-inflamatório local + sistêmico + energia" },
+    ],
   },
   35: {
     peptideId: 35,
@@ -870,6 +2040,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 1-2", description: "Aumento de energia e menor fadiga durante exercícios." },
       { period: "Semana 3-6", description: "Melhora perceptível na composição corporal." },
       { period: "Mês 2-3", description: "Otimização metabólica e desempenho atlético consolidado." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "IV/IM/Oral",
+      phases: [
+        { phase: "Dose Principal", dose: "1-3g", units: "1-3x/dia" },
+        { phase: "Duração do Ciclo", dose: "Uso contínuo", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "1-3g", frequency: "1-3x/dia", duration: "Uso contínuo" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: IV/IM/Oral.",
+    ],
+    interactions: [
+      { name: "CoQ10", type: "synergic", description: "Energia mitocondrial amplificada junto com L-Carnitine" },
+      { name: "NAD+", type: "synergic", description: "NAD+ + L-Carnitine = otimização energética total" },
+    ],
+    stacks: [
+      { name: "Stack Energia", peptides: ["L-Carnitine", "CoQ10", "NAD+"], goal: "Energia e metab", description: "Transporte de ácidos graxos + coenzimas vitais" },
     ],
   },
   36: {
@@ -888,6 +2082,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 3-6", description: "Fortalecimento da resposta adaptativa." },
       { period: "Mês 2-3", description: "Redução da inflamação crônica e melhora na qualidade de vida." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "0.5-1mg", units: "Diária 10 dias" },
+        { phase: "Duração do Ciclo", dose: "1-2x/ano", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "0.5-1mg", frequency: "Diária 10 dias", duration: "1-2x/ano" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "Vilon", type: "synergic", description: "Livagen + Vilon = dupla imunidade Khavinson" },
+      { name: "Epithalon", type: "synergic", description: "Longevidade sistêmica com imunidade reforçada" },
+    ],
+    stacks: [
+      { name: "Stack Imune", peptides: ["Livagen", "Vilon", "Epithalon"], goal: "Imunidade e longevidade", description: "Imunidade + timo + longevidade sistêmica" },
+    ],
   },
   38: {
     peptideId: 38,
@@ -904,6 +2122,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 1-4", description: "Redução do apetite e início da perda de peso." },
       { period: "Mês 2-3", description: "Perda de peso de 5-10% do peso corporal." },
       { period: "Mês 4-6", description: "Perda de peso consolidada e melhora metabólica significativa." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "1-6mg", units: "1x/sem" },
+        { phase: "Duração do Ciclo", dose: "24 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "1-6mg", frequency: "1x/sem", duration: "24 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "AOD-9604", type: "synergic", description: "GLP-1+Glucagon apetite + lipólise AOD" },
+      { name: "Metformina", type: "compatible", description: "Controle glicêmico aditivo" },
+    ],
+    stacks: [
+      { name: "Stack Metabol", peptides: ["Mazdutide", "AOD-9604"], goal: "Perda de gordura dual", description: "GLP-1/Glucagon + lipólise direta" },
     ],
   },
   39: {
@@ -922,6 +2164,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 1-2", description: "Bronzeamento progressivo e redução do apetite." },
       { period: "Semana 3-4", description: "Bronzeamento pleno e efeitos na libido consolidados." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "500mcg-1mg", units: "Conforme necessidade" },
+        { phase: "Duração do Ciclo", dose: "4-6 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "500mcg-1mg", frequency: "Conforme necessidade", duration: "4-6 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "PT-141", type: "synergic", description: "MT-II bronzeamento + PT-141 libido pure" },
+      { name: "Oxitocina", type: "compatible", description: "Vínculo emocional + desejo = experiência completa" },
+    ],
+    stacks: [
+      { name: "Stack BronzLibido", peptides: ["Melanotan II", "PT-141"], goal: "Bronzeamento e libido", description: "Bronzeamento sem UV + libido amplificada" },
+    ],
   },
   40: {
     peptideId: 40,
@@ -938,6 +2204,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Dias 1-3", description: "Ativação de células satélites e início do reparo muscular." },
       { period: "Semana 1-2", description: "Recuperação acelerada pós-treino perceptível." },
       { period: "Semana 3-6", description: "Hipertrofia muscular progressiva e consolidada." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "200-500mcg PEG-MGF", units: "2x/sem" },
+        { phase: "Duração do Ciclo", dose: "6-8 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "200-500mcg PEG-MGF", frequency: "2x/sem", duration: "6-8 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "IGF-1 LR3", type: "synergic", description: "MGF local + IGF-1 LR3 sistêmico = hipertrofia" },
+      { name: "TB-500", type: "synergic", description: "Recuperação sistêmica amplifica ganhos" },
+    ],
+    stacks: [
+      { name: "Stack Hipertrofia", peptides: ["MGF", "IGF-1 LR3", "TB-500"], goal: "Hipertrofia e reparo", description: "Reparação muscular local + anabolismo sistêmico" },
     ],
   },
   42: {
@@ -956,6 +2246,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Dias 1-7", description: "Melhora notável de energia, clareza mental e desempenho físico." },
       { period: "Semana 2-4+", description: "Efeitos anti-aging e metabólicos consolidados." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "IV/SC",
+      phases: [
+        { phase: "Dose Principal", dose: "500mg-1g IV", units: "1x/mês IV" },
+        { phase: "Duração do Ciclo", dose: "Uso contínuo", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "500mg-1g IV", frequency: "1x/mês IV", duration: "Uso contínuo" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: IV/SC.",
+    ],
+    interactions: [
+      { name: "Epithalon", type: "synergic", description: "NAD+ energético + telômeros = longevidade" },
+      { name: "SS-31", type: "synergic", description: "Saúde mitocondrial + NAD+ = longevidade máxima" },
+    ],
+    stacks: [
+      { name: "Stack Longev", peptides: ["NAD+", "Epithalon", "SS-31"], goal: "Longevidade e energia", description: "A combinação anti-aging mais estudada" },
+    ],
   },
   43: {
     peptideId: 43,
@@ -972,6 +2286,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 1-2", description: "Modulação inicial dos níveis hormonais femininos." },
       { period: "Semana 3-6", description: "Melhora dos ciclos hormonais e síntese." },
       { period: "Mês 2-3", description: "Preservação da função ovariana consolidada." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "0.5-1mg", units: "Diária 10 dias" },
+        { phase: "Duração do Ciclo", dose: "1-2x/ano", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "0.5-1mg", frequency: "Diária 10 dias", duration: "1-2x/ano" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "Epithalon", type: "synergic", description: "Ovário + longevidade sistêmica Khavinson" },
+      { name: "Livagen", type: "compatible", description: "Imunidade + saúde feminina" },
+    ],
+    stacks: [
+      { name: "Stack Feminino", peptides: ["Ovagen", "Epithalon", "Livagen"], goal: "Saúde feminina anti-aging", description: "Biorregulador ovariano + longevidade + imunidade" },
     ],
   },
   44: {
@@ -990,6 +2328,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 1-2", description: "Melhora nos padrões de comportamento social e emocional." },
       { period: "Mês 1-2+", description: "Mudanças comportamentais consistentes com uso regular." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "IN/SC",
+      phases: [
+        { phase: "Dose Principal", dose: "100 UI IN", units: "1-3x/dia" },
+        { phase: "Duração do Ciclo", dose: "Conforme uso", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "100 UI IN", frequency: "1-3x/dia", duration: "Conforme uso" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: IN/SC.",
+    ],
+    interactions: [
+      { name: "PT-141", type: "synergic", description: "PT-141 desejo + OT vínculo e intensidade" },
+      { name: "Selank", type: "compatible", description: "Ansiedade reduzida + confiança aumentada" },
+    ],
+    stacks: [
+      { name: "Stack Social", peptides: ["Oxitocina", "PT-141", "Selank"], goal: "Bem-estar social e sexual", description: "Oxitocina + libido + redução de ansiedade" },
+    ],
   },
   45: {
     peptideId: 45,
@@ -1006,6 +2368,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 1-2", description: "Melhora inicial do foco e clareza mental." },
       { period: "Semana 3-6", description: "Ganhos mensuráveis de memória e aprendizado." },
       { period: "Mês 2-3", description: "Efeitos nootrópicos consolidados e neuroproteção." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "1-2mg", units: "1x/dia" },
+        { phase: "Duração do Ciclo", dose: "8-12 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "1-2mg", frequency: "1x/dia", duration: "8-12 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "Semax", type: "synergic", description: "P21 neurogênese + Semax nootrópico" },
+      { name: "Dihexa", type: "synergic", description: "Neurogênese máxima com triple stack" },
+    ],
+    stacks: [
+      { name: "Stack Neuro", peptides: ["P21", "Semax", "Dihexa"], goal: "Neurogênese máxima", description: "Triple nootrópico para neurogênese e memória" },
     ],
   },
   46: {
@@ -1024,6 +2410,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Dias 2-7", description: "Estabilização do humor e aumento da motivação." },
       { period: "Semana 2-4+", description: "Melhora consistente do estado emocional." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "200-500mcg", units: "1x/dia" },
+        { phase: "Duração do Ciclo", dose: "4-8 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "200-500mcg", frequency: "1x/dia", duration: "4-8 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "Selank", type: "synergic", description: "Ansiolítico + antidepressivo rápido" },
+      { name: "Semax", type: "synergic", description: "Nootrópico + antidepressivo cognitivo" },
+    ],
+    stacks: [
+      { name: "Stack Mental", peptides: ["PE-22-28", "Selank", "Semax"], goal: "Saúde mental completa", description: "Antidepressivo + ansiolítico + nootrópico" },
+    ],
   },
   47: {
     peptideId: 47,
@@ -1040,6 +2450,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Dias 1-7", description: "Melhora da qualidade do sono pela regulação da melatonina." },
       { period: "Semana 2-4", description: "Regulação do ciclo circadiano e ritmos biológicos." },
       { period: "Mês 1-3", description: "Neuroproteção e anti-aging cerebral consolidados." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "1mg", units: "Diária 10 dias" },
+        { phase: "Duração do Ciclo", dose: "1-2x/ano", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "1mg", frequency: "Diária 10 dias", duration: "1-2x/ano" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "Epithalon", type: "synergic", description: "Pineal + geral anti-aging Khavinson" },
+      { name: "DSIP", type: "synergic", description: "DSIP sono + Pinealon melatonina = sono premium" },
+    ],
+    stacks: [
+      { name: "Stack Sono", peptides: ["Pinealon", "Epithalon", "DSIP"], goal: "Sono e anti-aging", description: "Regulação pineal + longevidade + sono profundo" },
     ],
   },
   48: {
@@ -1058,6 +2492,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Dias 2-14", description: "Redução de massa tumoral progressiva (modelos animais)." },
       { period: "Semanas 2-4+", description: "Efeitos antitumorais sustentados em protocolos contínuos." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "1-2mg", units: "3x/sem pesquisa" },
+        { phase: "Duração do Ciclo", dose: "4-6 sem pesq", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "1-2mg", frequency: "3x/sem pesquisa", duration: "4-6 sem pesq" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "SS-31", type: "compatible", description: "Saúde celular + PNC-27 função oncológica" },
+      { name: "NAD+", type: "compatible", description: "Energia celular em contexto de pesquisa" },
+    ],
+    stacks: [
+      { name: "Stack Oncol", peptides: ["PNC-27", "SS-31"], goal: "Pesquisa antitumoral", description: "PNC-27 antitumoral + SS-31 saúde celular" },
+    ],
   },
   49: {
     peptideId: 49,
@@ -1074,6 +2532,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 1-2", description: "Redução inicial da inflamação prostática." },
       { period: "Semana 3-6", description: "Melhora dos sintomas urinários e função prostática." },
       { period: "Mês 2-3", description: "Saúde prostática consolidada." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "0.5-1mg", units: "Diária 10 dias" },
+        { phase: "Duração do Ciclo", dose: "1-2x/ano", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "0.5-1mg", frequency: "Diária 10 dias", duration: "1-2x/ano" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "Epithalon", type: "synergic", description: "Próstata + longevidade sistêmica" },
+      { name: "HCG", type: "compatible", description: "Testosterona + saúde prostática" },
+    ],
+    stacks: [
+      { name: "Stack Masculino", peptides: ["Prostamax", "Epithalon", "Testagen"], goal: "Saúde masculina", description: "Próstata + testo + longevidade" },
     ],
   },
   52: {
@@ -1092,6 +2574,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Dias 1-7", description: "Redução progressiva da ansiedade basal." },
       { period: "Semana 2-4+", description: "Estabilidade emocional e melhora cognitiva consolidadas." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "IN",
+      phases: [
+        { phase: "Dose Principal", dose: "300-900mcg", units: "1-3x/dia" },
+        { phase: "Duração do Ciclo", dose: "Ciclos 4-8 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "300-900mcg", frequency: "1-3x/dia", duration: "Ciclos 4-8 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: IN.",
+    ],
+    interactions: [
+      { name: "Semax", type: "synergic", description: "Selank ansio + Semax cognitivo = saúde mental" },
+      { name: "Oxitocina", type: "compatible", description: "Confiança social + ansiolítico" },
+    ],
+    stacks: [
+      { name: "Stack Bem-estar", peptides: ["Selank", "Semax", "Oxitocina"], goal: "Ansiedade e cognição", description: "Ansiolítico + nootrópico + bem-estar social" },
+    ],
   },
   55: {
     peptideId: 55,
@@ -1108,6 +2614,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Minutos 15-30", description: "Aumento imediato do foco e alerta após dose intranasal." },
       { period: "Dias 1-7", description: "Melhora progressiva da memória e velocidade de processamento." },
       { period: "Semana 2-4+", description: "Neuroproteção e ganhos cognitivos consolidados." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "IN",
+      phases: [
+        { phase: "Dose Principal", dose: "200-900mcg", units: "1-2x/dia" },
+        { phase: "Duração do Ciclo", dose: "Ciclos 4-8 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "200-900mcg", frequency: "1-2x/dia", duration: "Ciclos 4-8 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: IN.",
+    ],
+    interactions: [
+      { name: "Dihexa", type: "synergic", description: "Semax + Dihexa = neuroplasticidade máxima" },
+      { name: "Selank", type: "synergic", description: "Cognição + ansiolítico = performance cog" },
+    ],
+    stacks: [
+      { name: "Stack Cognitivo", peptides: ["Semax", "Dihexa", "NAD+"], goal: "Cognição premium", description: "Nootrópico potente + neuroplasticidade + energia" },
     ],
   },
   57: {
@@ -1126,6 +2656,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Mês 2-3", description: "Melhora da composição corporal e recuperação muscular." },
       { period: "Mês 4-6", description: "Efeitos anti-aging consolidados e mudança corporal perceptível." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "200-500mcg", units: "1x/dia noite" },
+        { phase: "Duração do Ciclo", dose: "12-24 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "200-500mcg", frequency: "1x/dia noite", duration: "12-24 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "Ipamorelin", type: "synergic", description: "Sermorelin GHRH + Ipamorelin GHRP fisiológico" },
+      { name: "CJC-1295", type: "synergic", description: "CJC alternativa a Sermorelin — mais potente" },
+    ],
+    stacks: [
+      { name: "Stack GH Fisiológico", peptides: ["Sermorelin", "Ipamorelin"], goal: "GH restaurado naturalmente", description: "GHRH + GHRP = GH fisiológico sem supressão" },
+    ],
   },
   58: {
     peptideId: 58,
@@ -1142,6 +2696,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 1-2", description: "Aumento da oxidação de gordura e energia." },
       { period: "Semana 3-6", description: "Melhora da resistência física e capacidade aeróbica." },
       { period: "Mês 2-3", description: "Adaptações musculares similares ao treinamento consolidadas." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC/Oral",
+      phases: [
+        { phase: "Dose Principal", dose: "pesquisa", units: "Conforme estudo" },
+        { phase: "Duração do Ciclo", dose: "Pesquisa", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "pesquisa", frequency: "Conforme estudo", duration: "Pesquisa" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC/Oral.",
+    ],
+    interactions: [
+      { name: "AICAR", type: "synergic", description: "Ativação de AMPK + ERRγ = mimic exercise duplo" },
+      { name: "L-Carnitine", type: "synergic", description: "Transporte de ácidos graxos + biogênese" },
+    ],
+    stacks: [
+      { name: "Stack Exercise Mimic", peptides: ["SLU-PP-332", "AICAR", "L-Carnitine"], goal: "Mimético de exercício", description: "Todos ativam metabolismo sem treino" },
     ],
   },
   59: {
@@ -1160,6 +2738,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 2-4", description: "Redução visível das rugas de expressão." },
       { period: "Mês 1-3", description: "Suavização consolidada das linhas de expressão dinâmicas." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "Tópico",
+      phases: [
+        { phase: "Dose Principal", dose: "2x/dia tópico", units: "Manhã e noite" },
+        { phase: "Duração do Ciclo", dose: "Uso contínuo", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "2x/dia tópico", frequency: "Manhã e noite", duration: "Uso contínuo" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: Tópico.",
+    ],
+    interactions: [
+      { name: "GHK-Cu", type: "synergic", description: "SNAP-8 relaxamento + GHK-Cu colágeno" },
+      { name: "Argireline", type: "synergic", description: "Hexapeptídeo sinérgico ao SNAP-8" },
+    ],
+    stacks: [
+      { name: "Stack Anti-Rugas", peptides: ["SNAP-8", "GHK-Cu", "Epithalon"], goal: "Anti-wrinkle completo", description: "Botox-like + colágeno + telômeros" },
+    ],
   },
   64: {
     peptideId: 64,
@@ -1176,6 +2778,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 1-2", description: "Modulação inicial da função testicular." },
       { period: "Semana 3-6", description: "Melhora da produção hormonal testicular." },
       { period: "Mês 2-3", description: "Saúde testicular consolidada e função reprodutiva." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "0.5-1mg", units: "Diária 10 dias" },
+        { phase: "Duração do Ciclo", dose: "1-2x/ano", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "0.5-1mg", frequency: "Diária 10 dias", duration: "1-2x/ano" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "HCG", type: "compatible", description: "Testosterona local + saúde testicular bioreg" },
+      { name: "Epithalon", type: "synergic", description: "Longevidade testicular anti-aging" },
+    ],
+    stacks: [
+      { name: "Stack Masculino", peptides: ["Testagen", "HCG", "Kisspeptin"], goal: "Saúde testicular", description: "Biorregulador + estímulo LH + HPG central" },
     ],
   },
   67: {
@@ -1194,6 +2820,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 3-6", description: "Redução da inflamação vascular e melhora da circulação." },
       { period: "Mês 2-3", description: "Saúde vascular consolidada e proteção endotelial." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "0.5-1mg", units: "Diária 10 dias" },
+        { phase: "Duração do Ciclo", dose: "1-2x/ano", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "0.5-1mg", frequency: "Diária 10 dias", duration: "1-2x/ano" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "SS-31", type: "synergic", description: "Coração + mitocôndrias + vasos = cardio total" },
+      { name: "NAD+", type: "synergic", description: "Energia celular + proteção vascular" },
+    ],
+    stacks: [
+      { name: "Stack Vascular", peptides: ["Vesugen", "SS-31", "NAD+"], goal: "Saúde cardiovascular", description: "Vascular + mitocôndria + energia cardíaca" },
+    ],
   },
   68: {
     peptideId: 68,
@@ -1210,6 +2860,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 1-2", description: "Ativação inicial da regeneração tímica." },
       { period: "Semana 3-6", description: "Melhora da função de células T e resposta imune." },
       { period: "Mês 2-3", description: "Redução da imunosenescência consolidada." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "0.5-1mg", units: "Diária 10 dias" },
+        { phase: "Duração do Ciclo", dose: "1-2x/ano", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "0.5-1mg", frequency: "Diária 10 dias", duration: "1-2x/ano" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "Livagen", type: "synergic", description: "Vilon + Livagen = timo + imunidade Khavinson" },
+      { name: "Epithalon", type: "synergic", description: "Timo + imunidade + longevidade sistêmica" },
+    ],
+    stacks: [
+      { name: "Stack Imune", peptides: ["Vilon", "Livagen", "Epithalon"], goal: "Longevidade imune", description: "Timo + leucócitos + longevidade = anti-aging imune" },
     ],
   },
   69: {
@@ -1231,6 +2905,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
     stacks: [
       { name: "Stack GH Otimizado", peptides: ["Tesamorelin", "Ipamorelin"], goal: "Composição corporal superior", description: "Este blend é a combinação ideal de GHRH + GHRP para maximizar GH. Administrar à noite antes de dormir." },
     ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "100-200mcg cada", units: "2x/dia noite" },
+        { phase: "Duração do Ciclo", dose: "12-16 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "100-200mcg cada", frequency: "2x/dia noite", duration: "12-16 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "GHK-Cu", type: "compatible", description: "Blend GH + pele regenerada via IGF-1" },
+      { name: "NAD+", type: "synergic", description: "Longevidade + GH = anti-aging completo" },
+    ],
+    stacks: [
+      { name: "Stack GH Anti-Aging", peptides: ["Tesamorelin+Ipamorelin", "NAD+", "GHK-Cu"], goal: "GH + longevidade", description: "O blend GH mais completo para anti-aging" },
+    ],
   },
   70: {
     peptideId: 70,
@@ -1247,6 +2945,30 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Dias 1-7", description: "Aumento de energia e redução da fadiga mitocondrial." },
       { period: "Semana 2-4", description: "Melhora da performance física e recuperação muscular." },
       { period: "Mês 1-3", description: "Proteção cardíaca/renal e efeitos anti-aging consolidados." },
+    ],
+    protocol: {
+      title: "Protocolo de Uso",
+      route: "SC",
+      phases: [
+        { phase: "Dose Principal", dose: "1-5mg", units: "3-5x/sem" },
+        { phase: "Duração do Ciclo", dose: "8-12 sem", units: "Conforme objetivo" },
+      ],
+    },
+    dosageByIndication: [
+      { indication: "Uso geral", dose: "1-5mg", frequency: "3-5x/sem", duration: "8-12 sem" },
+    ],
+    reconstitution: [
+      "Reconstituir com 1-2mL de água bacteriostática.",
+      "Agitar suavemente até dissolver. Não agitar vigorosamente.",
+      "Armazenar a 2-8°C. Usar em até 30 dias após reconstituição.",
+      "Via de administração: SC.",
+    ],
+    interactions: [
+      { name: "NAD+", type: "synergic", description: "SS-31 mitoc + NAD+ coenzima = longevidade" },
+      { name: "Epithalon", type: "synergic", description: "Telômeros + mitocôndria = anti-aging celular" },
+    ],
+    stacks: [
+      { name: "Stack Mitocond", peptides: ["SS-31", "NAD+", "MOTS-C"], goal: "Saúde mitocondrial", description: "Cardiolipina + NAD+ + metaboloma = longevidade" },
     ],
   },
 };
