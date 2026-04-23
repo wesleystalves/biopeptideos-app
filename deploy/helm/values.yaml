@@ -2,7 +2,7 @@ frontend:
   replicaCount: 1
   image:
     repository: ghcr.io/wesleystalves/biopeptideos-frontend
-    tag: 8dcbe3e0e20009b3f6f26e9b19646f208ce2f62d
+    tag: b3f614728230c887429bf5b7764bcdd1572dd9e7
     pullPolicy: Always
   service:
     port: 3000
@@ -18,7 +18,7 @@ backend:
   replicaCount: 1
   image:
     repository: ghcr.io/wesleystalves/biopeptideos-backend
-    tag: 8dcbe3e0e20009b3f6f26e9b19646f208ce2f62d
+    tag: b3f614728230c887429bf5b7764bcdd1572dd9e7
     pullPolicy: Always
   service:
     port: 3001
