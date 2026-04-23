@@ -1668,10 +1668,6 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 3-4", description: "Ganho de massa muscular inicial e melhora da recuperação." },
       { period: "Mês 2-3", description: "Melhora da composição corporal e densidade óssea." },
     ],
-    stacks: [
-      { name: "Stack GH Clássico", peptides: ["GHRP-6", "CJC-1295 NO DAC"], goal: "Maximizar liberação de GH", description: "Combinação clássica que produz liberação sinérgica de GH. Administrar GHRP-6 (100-200mcg) com CJC-1295 (100-200mcg) 2-3x/dia." },
-      { name: "Stack Bulking", peptides: ["GHRP-6", "Ipamorelin", "CJC-1295 DAC"], goal: "Ganho de massa magra", description: "Para ganho máximo de massa com estímulo ao apetite e GH elevado." },
-    ],
     protocol: {
       title: "Protocolo de Uso",
       route: "SC",
@@ -2901,9 +2897,6 @@ export const PEPTIDE_DETAILS: Record<number, PeptideDetail> = {
       { period: "Semana 1-2", description: "Melhora imediata da qualidade do sono e recuperação." },
       { period: "Semana 3-6", description: "Aumento de IGF-1 e início da mudança na composição corporal." },
       { period: "Mês 2-3", description: "Redução de gordura visceral e ganho de massa magra consolidados." },
-    ],
-    stacks: [
-      { name: "Stack GH Otimizado", peptides: ["Tesamorelin", "Ipamorelin"], goal: "Composição corporal superior", description: "Este blend é a combinação ideal de GHRH + GHRP para maximizar GH. Administrar à noite antes de dormir." },
     ],
     protocol: {
       title: "Protocolo de Uso",
