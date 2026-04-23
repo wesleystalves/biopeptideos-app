@@ -8,8 +8,10 @@ import {
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { IsString, IsOptional, IsIn } from 'class-validator';
 import axios from 'axios';
+import * as crypto from 'crypto';
 import { CouponService } from '../coupons/coupon.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { EmailService } from '../notifications/email.service';
 
 export class EbookCheckoutDto {
     @IsString()
@@ -67,6 +69,7 @@ export class EbookCheckoutController {
     constructor(
         private readonly couponService: CouponService,
         private readonly prisma: PrismaService,
+        private readonly email: EmailService,
     ) { }
 
     private readonly asaas = axios.create({
@@ -155,13 +158,13 @@ export class EbookCheckoutController {
                     await asaas.put(`/customers/${customerId}`, { cpfCnpj: dto.cpfCnpj });
                 }
             } else {
-                const customer = await asaas.post('/customers', {
+                const customerPayload: Record<string, unknown> = {
                     name: dto.name || dto.email.split('@')[0],
                     email: dto.email,
-                    // Asaas Sandbox aceita qualquer CPF válido; prod exige CPF real do comprador
-                    cpfCnpj: dto.cpfCnpj || '24971563792',
                     notificationDisabled: false,
-                });
+                };
+                if (dto.cpfCnpj) customerPayload.cpfCnpj = dto.cpfCnpj;
+                const customer = await asaas.post('/customers', customerPayload);
                 customerId = customer.data.id;
             }
         } catch (err) {
@@ -195,13 +198,19 @@ export class EbookCheckoutController {
                 let pixQrCodeUrl = '';
                 try {
                     const pix = await asaas.get(`/payments/${paymentId}/pixQrCode`);
-                    pixQrCode = pix.data.payload || '';
+                    this.logger.log(`pixQrCode raw: ${JSON.stringify(pix.data)}`);
+                    pixQrCode = pix.data.payload || pix.data.encodedImage || '';
                     pixQrCodeUrl = pix.data.encodedImage || '';
-                } catch (e) {
-                    this.logger.warn('Não foi possível buscar PIX QR Code', e?.message);
+                } catch (e: any) {
+                    this.logger.warn(`PIX QR Code falhou: ${e?.message} — response: ${JSON.stringify(e?.response?.data)}`);
                 }
 
                 if (couponId) await this.couponService.incrementUsage(couponId);
+
+                // Cria ou busca conta do usuário + dispara emails
+                this.provisionAccountAndSendEmails(dto.email, dto.name, dto.plan, finalPrice).catch(
+                    e => this.logger.warn('provisionAccount failed:', e?.message),
+                );
 
                 return {
                     paymentMethod: 'pix',
@@ -243,7 +252,7 @@ export class EbookCheckoutController {
                 creditCardHolderInfo: {
                     name: dto.name || dto.cardHolder,
                     email: dto.email,
-                    cpfCnpj: dto.cpfCnpj || '24971563792',
+                    cpfCnpj: dto.cpfCnpj || '',
                     postalCode: dto.postalCode || '01310100',
                     addressNumber: dto.addressNumber || 'S/N',
                     phone: dto.phone || '11999999999',
@@ -273,4 +282,65 @@ export class EbookCheckoutController {
             throw new BadRequestException(asaasError || 'Falha ao criar cobrança no gateway de pagamento');
         }
     }
+
+    /**
+     * Cria ou atualiza a conta do cliente após pagamento confirmado.
+     * Eleva o plano, gera token de verificação de email e dispara os emails.
+     * Executado de forma assíncrona (fire-and-forget) para não bloquear a resposta.
+     */
+    private async provisionAccountAndSendEmails(
+        email: string,
+        name: string | undefined,
+        plan: 'basic' | 'premium',
+        amount: number,
+    ) {
+        const verifyToken = crypto.randomBytes(32).toString('hex');
+
+        const existing = await this.prisma.profile.findUnique({ where: { email } });
+
+        if (existing) {
+            // Atualiza plano se necessário (só eleva, nunca rebaixa)
+            const planRank = { free: 0, basic: 1, premium: 2 };
+            const shouldUpgrade = (planRank[plan] ?? 0) > (planRank[existing.plan] ?? 0);
+
+            await this.prisma.profile.update({
+                where: { id: existing.id },
+                data: {
+                    ...(name && !existing.name ? { name, displayName: name } : {}),
+                    ...(shouldUpgrade ? { plan } : {}),
+                    // Renova token de verificação se ainda não verificou
+                    ...(!existing.emailVerified ? {
+                        emailVerifyToken: verifyToken,
+                        emailVerifyExpires: new Date(Date.now() + 48 * 60 * 60 * 1000),
+                    } : {}),
+                } as any,
+            });
+
+            if (!existing.emailVerified) {
+                await this.email.sendEmailVerification({ to: email, name: name || existing.name || '', token: verifyToken });
+            }
+        } else {
+            // Cria nova conta sem senha (usuário define depois via "esqueci minha senha")
+            await this.prisma.profile.create({
+                data: {
+                    email,
+                    name: name || email.split('@')[0],
+                    displayName: name || email.split('@')[0],
+                    plan,
+                    emailVerifyToken: verifyToken,
+                    emailVerifyExpires: new Date(Date.now() + 48 * 60 * 60 * 1000),
+                } as any,
+            });
+
+            await this.email.sendWelcome(email, name || '');
+            await this.email.sendEmailVerification({ to: email, name: name || '', token: verifyToken });
+        }
+
+        // Email de confirmação de compra sempre
+        const loginUrl = `${process.env.APP_URL || 'https://peptideosbio.com'}/auth/login`;
+        await this.email.sendPurchaseConfirmation({ to: email, name, plan, amount, loginUrl });
+
+        this.logger.log(`✅ Conta provisionada e emails enviados para ${email} (plano: ${plan})`);
+    }
 }
+

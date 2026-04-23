@@ -3,6 +3,7 @@
 import ClientLayout from "@/components/client-layout";
 import Link from "next/link";
 import { FlaskConical, Search, GitCompare, Calculator, Layers, ShoppingBag, ArrowRight, Zap, Activity, BookOpen } from "lucide-react";
+import EmailVerifyBanner from "@/components/email-verify-banner";
 
 const quickAccess = [
     { href: "/library", icon: FlaskConical, label: "Biblioteca", desc: "80+ peptídeos catalogados", color: "from-blue-600/20 to-blue-500/5", border: "border-blue-500/20", iconColor: "text-blue-400" },
@@ -23,6 +24,7 @@ export default function PainelPage() {
     return (
         <ClientLayout>
             <div className="max-w-5xl mx-auto space-y-8">
+                <EmailVerifyBanner />
                 {/* Hero */}
                 <div className="glass-card p-8 relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-brand-600/10 to-transparent pointer-events-none" />

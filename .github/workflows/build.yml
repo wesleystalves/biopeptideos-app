@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'deploy/helm/values.yaml'
 
 env:
   REGISTRY: ghcr.io
@@ -63,3 +65,30 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ env.OWNER }}/biopeptideos-backend:latest
             ${{ env.REGISTRY }}/${{ env.OWNER }}/biopeptideos-backend:${{ github.sha }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build-frontend, build-backend]
+    permissions:
+      contents: write
+      packages: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update image tags in values.yaml
+        run: |
+          sed -i "s|tag: .*|tag: ${{ github.sha }}|g" deploy/helm/values.yaml
+          echo "Updated tags to: ${{ github.sha }}"
+          cat deploy/helm/values.yaml
+
+      - name: Commit and push updated values.yaml
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add deploy/helm/values.yaml
+          git diff --staged --quiet && echo "No changes to commit" || git commit -m "ci: bump image tags to ${{ github.sha }}"
+          git push

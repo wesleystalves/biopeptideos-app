@@ -119,6 +119,12 @@ export default function LoginPage() {
                         </button>
                     </form>
 
+                    <div style={{ textAlign: 'center', marginTop: '12px' }}>
+                        <Link href="/auth/forgot-password" style={{ color: '#64748b', fontSize: '13px', textDecoration: 'none' }}>
+                            Esqueci minha senha
+                        </Link>
+                    </div>
+
                     <div className="section-divider" />
                     <p className="text-center text-sm text-slate-500">
                         Não tem conta?{" "}

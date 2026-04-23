@@ -50,11 +50,12 @@ function CheckoutInner() {
     const searchParams = useSearchParams();
     const planParam = searchParams.get("plan") || "";
     const emailParam = searchParams.get("email") || "";
+    const nameParam = searchParams.get("name") || "";
     const productParam = searchParams.get("product") || "";
     const isEbookFlow = productParam === "ebook" && !!planParam;
 
     const [form, setForm] = useState({
-        name: "", email: emailParam, phone: "", cpf: "", country: "BR",
+        name: nameParam, email: emailParam, phone: "", cpf: "", country: "BR",
     });
     const [phoneMasked, setPhoneMasked] = useState("");
     const [cpfMasked, setCpfMasked] = useState("");
@@ -154,16 +155,27 @@ function CheckoutInner() {
                     name: form.name,
                     cpfCnpj: form.cpf,
                     phone: form.phone,
+                    paymentMethod,
+                    ...(paymentMethod !== 'pix' ? {
+                        cardNumber: card.number.replace(/\s/g, ''),
+                        cardHolder: card.holder,
+                        cardExpiryMonth: card.expiry.split('/')[0] || '',
+                        cardExpiryYear: (() => { const y = card.expiry.split('/')[1] || ''; return y.length === 2 ? `20${y}` : y; })(),
+                        cardCvv: card.cvv,
+                        postalCode: card.postalCode.replace(/\D/g, ''),
+                        addressNumber: card.addressNumber,
+                    } : {}),
                 }),
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Erro ao criar pedido");
-            // Se tiver checkout URL (prod/domínio configurado), redireciona
-            if (data.checkoutUrl) {
-                window.location.href = data.checkoutUrl;
+
+            // Cartão: mostrar confirmação
+            if (data.paymentMethod && data.paymentMethod !== 'pix') {
+                setCardSuccess({ amount: data.amount, method: data.paymentMethod });
                 return;
             }
-            // PIX: exibe QR code inline
+            // PIX: SEMPRE exibir QR code inline — nunca redirecionar para Asaas
             if (data.pixQrCode) {
                 setPixData({
                     qrCode: data.pixQrCode,

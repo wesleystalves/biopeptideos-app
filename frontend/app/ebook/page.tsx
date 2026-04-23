@@ -91,6 +91,8 @@ export default function EbookPage() {
             plan,
             product: 'ebook',
             email: email || '',
+            name: name || '',
+            ...(coupon ? { coupon } : {}),
         });
         router.push(`/checkout?${params.toString()}`);
     };

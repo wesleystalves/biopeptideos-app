@@ -4,6 +4,7 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { ComplianceModule } from '../compliance/compliance.module';
 import { CouponModule } from '../coupons/coupon.module';
 import { EmailModule } from '../email/email.module';
+import { EmailService } from '../notifications/email.service';
 import { PaymentRouterService } from './payment-router.service';
 import { StripeProvider } from './providers/stripe.provider';
 import { AsaasProvider } from './providers/asaas.provider';
@@ -22,7 +23,7 @@ import { BackupController } from './backup.controller';
         EmailModule,
         JwtModule.register({ secret: process.env.JWT_SECRET }),
     ],
-    providers: [PaymentRouterService, StripeProvider, AsaasProvider],
+    providers: [PaymentRouterService, StripeProvider, AsaasProvider, EmailService],
     controllers: [PaymentsController, GatewayConfigController, EbookWebhookController, EbookCheckoutController, BackupController],
     exports: [PaymentRouterService],
 })

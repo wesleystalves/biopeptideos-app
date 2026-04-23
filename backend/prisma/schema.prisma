@@ -28,10 +28,15 @@ model Profile {
   // basic   = ebook (R$9,90)
   // premium = ebook + IA (R$29,90)
   plan             String   @default("free")
-  autoLoginToken   String?  @unique @map("auto_login_token")
-  autoLoginExpires DateTime? @map("auto_login_expires")
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  autoLoginToken       String?   @unique @map("auto_login_token")
+  autoLoginExpires     DateTime? @map("auto_login_expires")
+  emailVerified        Boolean   @default(false) @map("email_verified")
+  emailVerifyToken     String?   @unique @map("email_verify_token")
+  emailVerifyExpires   DateTime? @map("email_verify_expires")
+  passwordResetToken   String?   @unique @map("password_reset_token")
+  passwordResetExpires DateTime? @map("password_reset_expires")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
 
   subscriptions    Subscription[]
   orders           Order[]
