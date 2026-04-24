@@ -29,7 +29,7 @@ export default function AdminUsuarios() {
     async function load() {
         setLoading(true);
         try {
-            const r = await fetch(`${API}/api/analytics/users`, { headers: headers() });
+            const r = await fetch(`${API}/api/auth/admin/users?search=${encodeURIComponent(search)}&plan=${filterPlan}`, { headers: headers() });
             if (r.ok) {
                 const data = await r.json();
                 setUsers(data.users || data);
@@ -53,7 +53,7 @@ export default function AdminUsuarios() {
     };
 
     async function toggleAdmin(u: User) {
-        const r = await fetch(`${API}/api/analytics/users/${u.id}/admin`, { method: "PATCH", headers: headers(), body: JSON.stringify({ isAdmin: !u.isAdmin }) });
+        const r = await fetch(`${API}/api/auth/admin/users/${u.id}/admin`, { method: "PATCH", headers: headers(), body: JSON.stringify({ isAdmin: !u.isAdmin }) });
         if (r.ok) load();
     }
 

@@ -32,7 +32,7 @@ export default function AdminCoupons() {
     async function load() {
         setLoading(true);
         try {
-            const r = await fetch(`${API}/coupons`, { headers: headers() });
+            const r = await fetch(`${API}/api/coupons`, { headers: headers() });
             if (r.ok) setCoupons(await r.json());
         } finally { setLoading(false); }
     }
@@ -47,7 +47,7 @@ export default function AdminCoupons() {
     }
 
     async function viewUsages(c: Coupon) {
-        const r = await fetch(`${API}/coupons/${c.id}/usage`, { headers: headers() });
+        const r = await fetch(`${API}/api/coupons/${c.id}/usage`, { headers: headers() });
         const usages = r.ok ? await r.json() : [];
         setUsageModal({ coupon: c, usages });
     }
@@ -56,7 +56,7 @@ export default function AdminCoupons() {
         setSaving(true);
         try {
             const body = { ...form, discountValue: Number(form.discountValue), maxUses: form.maxUses ? Number(form.maxUses) : null, minAmount: form.minAmount ? Number(form.minAmount) : null, expiresAt: form.expiresAt || null };
-            const url = editing ? `${API}/coupons/${editing.id}` : `${API}/coupons`;
+            const url = editing ? `${API}/api/coupons/${editing.id}` : `${API}/api/coupons`;
             const method = editing ? "PATCH" : "POST";
             const r = await fetch(url, { method, headers: headers(), body: JSON.stringify(body) });
             if (r.ok) { setShowModal(false); load(); }
@@ -66,12 +66,12 @@ export default function AdminCoupons() {
 
     async function deleteCoupon(id: string) {
         if (!confirm("Excluir este cupom?")) return;
-        await fetch(`${API}/coupons/${id}`, { method: "DELETE", headers: headers() });
+        await fetch(`${API}/api/coupons/${id}`, { method: "DELETE", headers: headers() });
         load();
     }
 
     async function toggleActive(c: Coupon) {
-        await fetch(`${API}/coupons/${c.id}`, { method: "PATCH", headers: headers(), body: JSON.stringify({ isActive: !c.isActive }) });
+        await fetch(`${API}/api/coupons/${c.id}`, { method: "PATCH", headers: headers(), body: JSON.stringify({ isActive: !c.isActive }) });
         load();
     }
 
