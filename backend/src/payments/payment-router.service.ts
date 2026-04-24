@@ -63,12 +63,19 @@ export class PaymentRouterService {
         await this.prisma.order.create({
             data: {
                 userId: input.userId,
-                productId: input.productId,
                 amount: product.price,
                 currency: paymentDto.currency,
                 status: 'pending',
                 gateway: provider.name,
                 gatewayPaymentId: result.id,
+                items: {
+                    create: {
+                        productId: input.productId,
+                        name: product.name,
+                        qty: 1,
+                        price: product.price,
+                    },
+                },
             },
         });
 
@@ -94,7 +101,7 @@ export class PaymentRouterService {
     async getOrdersByUser(userId: string) {
         return this.prisma.order.findMany({
             where: { userId },
-            include: { product: true },
+            include: { items: { include: { product: true } } },
             orderBy: { createdAt: 'desc' },
         });
     }
