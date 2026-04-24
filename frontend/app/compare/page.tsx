@@ -1,23 +1,41 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import ClientLayout from "@/components/client-layout";
-import { Plus, X, GitCompare, Search, ChevronRight } from "lucide-react";
+import { Plus, X, GitCompare, Search, ChevronRight, CheckCircle, AlertCircle, Activity } from "lucide-react";
 import { PEPTIDES } from "@/lib/peptides-data";
 import { PEPTIDE_DETAILS } from "@/lib/peptides-detail-data";
+
+// ─── Popular comparisons ──────────────────────────────────────────────────────
 
 const POPULAR = [
     { label: "Recuperação", desc: "Os dois peptídeos de recuperação mais populares", tags: ["BPC-157", "TB-500"] },
     { label: "Secretagogos de GH", desc: "Compare os liberadores de GH", tags: ["CJC-1295 NO DAC", "Ipamorelin"] },
-    { label: "Emagrecimento", desc: "Líderes em perda de peso", tags: ["Semaglutida", "Tirzepatida"] },
+    { label: "Emagrecimento", desc: "Líderes em perda de peso", tags: ["Semaglutide", "Tirzepatide"] },
     { label: "Nootrópicos", desc: "Peptídeos russos nootropicos", tags: ["Semax", "Selank"] },
     { label: "Anti-aging", desc: "Peptídeos para longevidade", tags: ["Epithalon", "GHK-Cu"] },
     { label: "Stack Completo", desc: "Recuperação completa", tags: ["BPC-157", "TB-500", "GHK-Cu"] },
 ];
 
-type Peptide = { id: number; name: string; slug: string; category: string; description?: string; tags?: string[] };
-
+type Peptide = { id: number; name: string; slug: string; category: string; imageUrl: string; description?: string };
 const MAX_COMPARE = 3;
+
+// ─── Evidence level badge ─────────────────────────────────────────────────────
+
+function EvidenceBadge({ level }: { level?: string }) {
+    if (!level) return <span className="text-slate-500">—</span>;
+    const color =
+        level.includes("Fase III") || level.includes("FDA") ? "text-green-400 bg-green-500/10 border-green-500/30" :
+            level.includes("Fase II") ? "text-blue-400 bg-blue-500/10 border-blue-500/30" :
+                level.includes("Fase I") ? "text-cyan-400 bg-cyan-500/10 border-cyan-500/30" :
+                    "text-orange-400 bg-orange-500/10 border-orange-500/30";
+    return (
+        <span className={`text-[11px] px-2 py-0.5 rounded-full border font-semibold ${color}`}>{level}</span>
+    );
+}
+
+// ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function ComparePage() {
     const [selected, setSelected] = useState<Peptide[]>([]);
@@ -26,7 +44,6 @@ export default function ComparePage() {
     const [showDropdown, setShowDropdown] = useState(false);
     const searchRef = useRef<HTMLDivElement>(null);
 
-    // Close dropdown on outside click
     useEffect(() => {
         function handler(e: MouseEvent) {
             if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
@@ -45,54 +62,128 @@ export default function ComparePage() {
         : [];
 
     function addPeptide(p: Peptide) {
-        if (selected.find(s => s.id === p.id)) return;
-        if (selected.length >= MAX_COMPARE) return;
+        if (selected.find(s => s.id === p.id) || selected.length >= MAX_COMPARE) return;
         setSelected(prev => [...prev, p]);
-        setSearch("");
-        setShowDropdown(false);
-        setShowSearch(false);
+        setSearch(""); setShowDropdown(false); setShowSearch(false);
     }
 
     function removePeptide(id: number) {
         setSelected(prev => prev.filter(p => p.id !== id));
     }
 
-    // Load a popular comparison
     function loadPopular(tags: string[]) {
         const found = tags
-            .map(tag => PEPTIDES.find(p => p.name.toLowerCase() === tag.toLowerCase() || p.slug.toLowerCase() === tag.toLowerCase().replace(/\s/g, "-")))
+            .map(tag => PEPTIDES.find(p =>
+                p.name.toLowerCase() === tag.toLowerCase() ||
+                p.slug.toLowerCase() === tag.toLowerCase().replace(/\s/g, "-")
+            ))
             .filter(Boolean) as Peptide[];
         setSelected(found.slice(0, MAX_COMPARE));
         setShowSearch(false);
     }
 
-    function getDetail(p: Peptide) {
-        return PEPTIDE_DETAILS?.[p.id];
+    function getDetail(p: Peptide) { return PEPTIDE_DETAILS?.[p.id]; }
+
+    // Extract route string from protocol
+    function getRoute(p: Peptide) {
+        const d = getDetail(p);
+        return d?.protocol?.route || "—";
+    }
+
+    // Get dosage summary from dosageByIndication
+    function getDosage(p: Peptide) {
+        const d = getDetail(p);
+        if (!d?.dosageByIndication?.length) return "—";
+        const main = d.dosageByIndication[0];
+        return `${main.dose}, ${main.frequency}`;
     }
 
     const canAdd = selected.length < MAX_COMPARE;
+
+    // ── Comparison rows ────────────────────────────────────────────────────────
+    const ROWS: { label: string; render: (p: Peptide) => React.ReactNode }[] = [
+        { label: "Categoria", render: p => <span className="text-xs px-2 py-0.5 rounded-full bg-brand-600/15 text-brand-400 border border-brand-500/20 font-medium">{getDetail(p)?.classification || p.category || "—"}</span> },
+        { label: "Nível de Evidência", render: p => <EvidenceBadge level={getDetail(p)?.evidenceLevel} /> },
+        { label: "Meia-vida", render: p => <span className="text-slate-200 font-medium">{getDetail(p)?.halfLife || "—"}</span> },
+        {
+            label: "Benefícios",
+            render: p => {
+                const b = getDetail(p)?.benefits?.slice(0, 5);
+                return b?.length ? (
+                    <ul className="space-y-1">
+                        {b.map(item => (
+                            <li key={item} className="flex items-start gap-1.5 text-sm text-slate-300">
+                                <CheckCircle className="w-3.5 h-3.5 text-green-400 shrink-0 mt-0.5" />
+                                <span>{item}</span>
+                            </li>
+                        ))}
+                    </ul>
+                ) : <span className="text-slate-500">—</span>;
+            }
+        },
+        {
+            label: "Mecanismo",
+            render: p => {
+                const m = getDetail(p)?.mechanism?.slice(0, 3);
+                return m?.length ? (
+                    <ul className="space-y-1">
+                        {m.map(item => (
+                            <li key={item} className="flex items-start gap-1.5 text-sm text-slate-300">
+                                <Activity className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />
+                                <span>{item}</span>
+                            </li>
+                        ))}
+                    </ul>
+                ) : <span className="text-slate-500">—</span>;
+            }
+        },
+        { label: "Via de Administração", render: p => <span className="text-slate-200">{getRoute(p)}</span> },
+        { label: "Dosagem", render: p => <span className="text-slate-200">{getDosage(p)}</span> },
+        { label: "Reconstituição", render: p => <span className="text-slate-200">{getDetail(p)?.reconstitutionDifficulty || "—"}</span> },
+        {
+            label: "Referências",
+            render: p => {
+                const count = getDetail(p)?.references?.length;
+                return count
+                    ? <span className="text-slate-300">{count} estudo{count !== 1 ? "s" : ""}</span>
+                    : <span className="text-slate-500">—</span>;
+            }
+        },
+    ];
 
     return (
         <ClientLayout>
             <div className="max-w-5xl mx-auto space-y-6">
                 {/* Header */}
-                <div className="flex items-start justify-between gap-4">
-                    <div>
-                        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                            <GitCompare className="w-6 h-6 text-brand-400" />
-                            Comparar Peptídeos
-                        </h1>
-                        <p className="text-slate-400 text-sm mt-1">
-                            Compare até {MAX_COMPARE} peptídeos lado a lado — mecanismos, dosagens, benefícios e compatibilidade.
-                        </p>
-                    </div>
+                <div>
+                    <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+                        <GitCompare className="w-6 h-6 text-brand-400" />
+                        Comparar Peptídeos
+                    </h1>
+                    <p className="text-slate-400 text-sm mt-1">
+                        Compare até {MAX_COMPARE} peptídeos lado a lado — mecanismos, dosagens, benefícios e compatibilidade.
+                    </p>
                 </div>
 
                 {/* Selected peptides as chips + Add button */}
                 <div className="flex flex-wrap items-center gap-3">
                     {selected.map(p => (
-                        <div key={p.id} className="flex items-center gap-2 glass-card px-4 py-2.5 border-brand-500/40">
-                            <span className="font-semibold text-white text-sm">{p.name}</span>
+                        <div key={p.id} className="flex items-center gap-2 glass-card px-3 py-2 border-brand-500/40">
+                            {p.imageUrl && (
+                                <div className="w-7 h-7 rounded-lg overflow-hidden bg-white/5 shrink-0">
+                                    <Image
+                                        src={p.imageUrl}
+                                        alt={p.name}
+                                        width={28}
+                                        height={28}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                            )}
+                            <div>
+                                <div className="font-semibold text-white text-sm leading-tight">{p.name}</div>
+                                <div className="text-[10px] text-slate-400">{p.category}</div>
+                            </div>
                             <button
                                 onClick={() => removePeptide(p.id)}
                                 className="text-slate-500 hover:text-red-400 transition-colors ml-1"
@@ -123,9 +214,14 @@ export default function ComparePage() {
                                                     <button
                                                         key={p.id}
                                                         onClick={() => addPeptide(p)}
-                                                        className="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors flex items-center justify-between"
+                                                        className="w-full text-left px-3 py-2.5 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors flex items-center gap-3"
                                                     >
-                                                        <span>{p.name}</span>
+                                                        {p.imageUrl && (
+                                                            <div className="w-6 h-6 rounded overflow-hidden bg-white/5 shrink-0">
+                                                                <Image src={p.imageUrl} alt={p.name} width={24} height={24} className="w-full h-full object-cover" />
+                                                            </div>
+                                                        )}
+                                                        <span className="flex-1">{p.name}</span>
                                                         <span className="text-xs text-slate-500">{p.category}</span>
                                                     </button>
                                                 ))}
@@ -137,10 +233,7 @@ export default function ComparePage() {
                                             </div>
                                         )}
                                     </div>
-                                    <button
-                                        onClick={() => { setShowSearch(false); setSearch(""); setShowDropdown(false); }}
-                                        className="text-slate-400 hover:text-white transition-colors"
-                                    >
+                                    <button onClick={() => { setShowSearch(false); setSearch(""); setShowDropdown(false); }} className="text-slate-400 hover:text-white transition-colors">
                                         <X className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -157,10 +250,7 @@ export default function ComparePage() {
                     )}
 
                     {selected.length > 0 && (
-                        <button
-                            onClick={() => setSelected([])}
-                            className="text-xs text-slate-500 hover:text-slate-300 transition-colors ml-2"
-                        >
+                        <button onClick={() => setSelected([])} className="text-xs text-slate-500 hover:text-slate-300 transition-colors ml-2">
                             Limpar tudo
                         </button>
                     )}
@@ -169,43 +259,45 @@ export default function ComparePage() {
                 {/* COMPARISON TABLE */}
                 {selected.length >= 2 ? (
                     <div className="glass-card overflow-hidden">
-                        {/* Header row */}
-                        <div className={`grid border-b border-white/5`} style={{ gridTemplateColumns: `1fr ${selected.map(() => "1fr").join(" ")}` }}>
+                        {/* Header row with images */}
+                        <div
+                            className="grid border-b border-white/5"
+                            style={{ gridTemplateColumns: `180px ${selected.map(() => "1fr").join(" ")}` }}
+                        >
                             <div className="p-4 text-xs text-slate-500 font-semibold uppercase tracking-wide">Propriedade</div>
                             {selected.map(p => (
                                 <div key={p.id} className="p-4 border-l border-white/5">
+                                    {p.imageUrl && (
+                                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-white/5 mb-3">
+                                            <Image src={p.imageUrl} alt={p.name} width={48} height={48} className="w-full h-full object-cover" />
+                                        </div>
+                                    )}
                                     <div className="font-bold text-white">{p.name}</div>
                                     <div className="text-xs text-brand-400 mt-0.5">{p.category}</div>
                                 </div>
                             ))}
                         </div>
+
                         {/* Rows */}
-                        {[
-                            { label: "Categoria", get: (p: Peptide) => p.category || "—" },
-                            { label: "O que é", get: (p: Peptide) => { const d = getDetail(p); const txt = d?.whatIs || p.description || ""; return txt.slice(0, 160) + (txt.length > 160 ? "..." : "") || "—"; } },
-                            { label: "Mecanismo", get: (p: Peptide) => { const d = getDetail(p); const m = d?.mechanism; return m ? (Array.isArray(m) ? m[0]?.slice(0, 120) : String(m).slice(0, 120)) || "—" : "—"; } },
-                            { label: "Benefícios", get: (p: Peptide) => { const d = getDetail(p); return d?.benefits?.slice(0, 3).join(" • ") || "—"; } },
-                            { label: "Linha do tempo", get: (p: Peptide) => { const d = getDetail(p); const t = d?.timeline?.[0]; return t ? `${t.period}: ${t.description.slice(0, 100)}` : "—"; } },
-                            { label: "Meia-vida", get: (p: Peptide) => { const d = getDetail(p); return d?.halfLife || "—"; } },
-                            { label: "Compatível com", get: (p: Peptide) => { const d = getDetail(p); return d?.stacks?.slice(0, 3).map((s: any) => s.name).join(", ") || "—"; } },
-                        ].map(row => (
+                        {ROWS.map(row => (
                             <div
                                 key={row.label}
-                                className={`grid border-b border-white/5 hover:bg-white/2 transition-colors`}
-                                style={{ gridTemplateColumns: `1fr ${selected.map(() => "1fr").join(" ")}` }}
+                                className="grid border-b border-white/5 hover:bg-white/2 transition-colors"
+                                style={{ gridTemplateColumns: `180px ${selected.map(() => "1fr").join(" ")}` }}
                             >
-                                <div className="p-4 text-xs text-slate-500 font-medium self-start pt-5">{row.label}</div>
+                                <div className="p-4 text-xs text-slate-500 font-medium self-start pt-4">{row.label}</div>
                                 {selected.map(p => (
-                                    <div key={p.id} className="p-4 text-sm text-slate-300 border-l border-white/5 leading-relaxed">
-                                        {row.get(p)}
+                                    <div key={p.id} className="p-4 border-l border-white/5">
+                                        {row.render(p)}
                                     </div>
                                 ))}
                             </div>
                         ))}
-                        {/* Links */}
+
+                        {/* Links row */}
                         <div
-                            className={`grid border-t border-white/10`}
-                            style={{ gridTemplateColumns: `1fr ${selected.map(() => "1fr").join(" ")}` }}
+                            className="grid border-t border-white/10"
+                            style={{ gridTemplateColumns: `180px ${selected.map(() => "1fr").join(" ")}` }}
                         >
                             <div className="p-4 text-xs text-slate-500 font-medium">Ver detalhes</div>
                             {selected.map(p => (
@@ -222,7 +314,7 @@ export default function ComparePage() {
                     </div>
                 ) : (
                     <>
-                        {/* Comparações populares */}
+                        {/* Popular comparisons */}
                         <div>
                             <h2 className="text-sm font-semibold text-slate-400 mb-3 uppercase tracking-wide">Comparações Populares</h2>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -236,9 +328,7 @@ export default function ComparePage() {
                                         <div className="text-xs text-slate-500 mb-2">{desc}</div>
                                         <div className="flex gap-1 flex-wrap">
                                             {tags.map(t => (
-                                                <span key={t} className="px-2 py-0.5 bg-brand-600/15 text-brand-400 text-[10px] rounded-full border border-brand-500/20">
-                                                    {t}
-                                                </span>
+                                                <span key={t} className="px-2 py-0.5 bg-brand-600/15 text-brand-400 text-[10px] rounded-full border border-brand-500/20">{t}</span>
                                             ))}
                                         </div>
                                     </button>
@@ -248,6 +338,7 @@ export default function ComparePage() {
 
                         {selected.length === 1 && (
                             <div className="glass-card p-5 border-dashed border-brand-500/20 text-center space-y-2">
+                                <AlertCircle className="w-8 h-8 text-brand-400 mx-auto" />
                                 <p className="text-sm text-slate-400">
                                     <span className="text-brand-300 font-semibold">{selected[0].name}</span> selecionado.
                                     Adicione mais um peptídeo para comparar.

@@ -35,6 +35,10 @@ model Profile {
   emailVerified        Boolean   @default(false) @map("email_verified")
   emailVerifyToken     String?   @unique @map("email_verify_token")
   emailVerifyExpires   DateTime? @map("email_verify_expires")
+  cpf                  String?
+  whatsapp             String?
+  birthDate            DateTime? @map("birth_date")
+  gender               String?   // masculino | feminino | outro | prefiro_nao_dizer
   passwordResetToken   String?   @unique @map("password_reset_token")
   passwordResetExpires DateTime? @map("password_reset_expires")
   createdAt            DateTime  @default(now()) @map("created_at")

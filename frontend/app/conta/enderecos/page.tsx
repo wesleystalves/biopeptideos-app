@@ -26,7 +26,7 @@ export default function MeusEnderecosPage() {
     async function load() {
         if (!token()) { router.push("/auth/login"); return; }
         setLoading(true);
-        const r = await fetch(`${API}/api/ecommerce/addresses`, { headers: headers() });
+        const r = await fetch(`${API}/api/auth/addresses`, { headers: headers() });
         if (r.ok) setAddresses(await r.json());
         setLoading(false);
     }
@@ -47,20 +47,20 @@ export default function MeusEnderecosPage() {
     async function save() {
         setSaving(true);
         try {
-            const r = await fetch(`${API}/api/ecommerce/addresses`, { method: "POST", headers: headers(), body: JSON.stringify({ ...form, cep: form.cep.replace(/\D/g, "") }) });
+            const r = await fetch(`${API}/api/auth/addresses`, { method: "POST", headers: headers(), body: JSON.stringify({ ...form, cep: form.cep.replace(/\D/g, "") }) });
             if (r.ok) { setShowForm(false); setForm(emptyForm); load(); }
             else { const e = await r.json(); alert(e.message || "Erro ao salvar endereço"); }
         } finally { setSaving(false); }
     }
 
     async function setDefault(id: string) {
-        await fetch(`${API}/api/ecommerce/addresses/${id}/default`, { method: "PATCH", headers: headers() });
+        await fetch(`${API}/api/auth/addresses/${id}`, { method: "PATCH", headers: headers(), body: JSON.stringify({ isDefault: true }) });
         load();
     }
 
     async function remove(id: string) {
         if (!confirm("Excluir este endereço?")) return;
-        await fetch(`${API}/api/ecommerce/addresses/${id}`, { method: "DELETE", headers: headers() });
+        await fetch(`${API}/api/auth/addresses/${id}`, { method: "DELETE", headers: headers() });
         load();
     }
 
