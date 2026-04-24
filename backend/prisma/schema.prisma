@@ -1,5 +1,5 @@
 // This is your Prisma schema file
-// BioPeptidios — Full Platform Schema
+// BioPeptidios — Full Platform Schema v2
 
 generator client {
   provider      = "prisma-client-js"
@@ -28,6 +28,8 @@ model Profile {
   // basic   = ebook (R$9,90)
   // premium = ebook + IA (R$29,90)
   plan             String   @default("free")
+  profileType          String?   @map("profile_type") // medico | nutricionista | coach | atleta | paciente | outro
+  onboardingDone       Boolean   @default(false) @map("onboarding_done")
   autoLoginToken       String?   @unique @map("auto_login_token")
   autoLoginExpires     DateTime? @map("auto_login_expires")
   emailVerified        Boolean   @default(false) @map("email_verified")
@@ -41,6 +43,9 @@ model Profile {
   subscriptions    Subscription[]
   orders           Order[]
   ebookPurchases   EbookPurchase[]
+  addresses        Address[]
+  cartItems        CartItem[]
+  couponUsages     CouponUsage[]
 
   @@map("profiles")
 }
@@ -65,32 +70,46 @@ model EbookPurchase {
 
 model Coupon {
   id            String    @id @default(uuid())
-  code          String    @unique // Ex: LAUNCH50
-  description   String?   // "Lançamento — 50% off"
+  code          String    @unique
+  description   String?
 
-  // Tipo de desconto
   discountType  String    @default("percent") // "percent" | "fixed"
-  discountValue Float     // 50 (%) ou 5.00 (R$)
+  discountValue Float
 
-  // Limites
-  maxUses       Int?      @map("max_uses")       // null = ilimitado
+  // Escopo: quais tipos de compra aceita
+  scope         String?   // null = todos | "subscription" | "product" | "ebook"
+
+  maxUses       Int?      @map("max_uses")
   usedCount     Int       @default(0) @map("used_count")
-  minAmount     Float?    @map("min_amount")      // valor mínimo para aplicar
+  minAmount     Float?    @map("min_amount")
 
-  // Escopo — quais planos aceitam (json array: ["basic","premium"] ou null = todos)
   allowedPlans  String?   @map("allowed_plans")
 
-  // Validade
   startsAt      DateTime? @map("starts_at")
   expiresAt     DateTime? @map("expires_at")
 
-  // Estado
   isActive      Boolean   @default(true) @map("is_active")
 
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
 
+  usages        CouponUsage[]
+
   @@map("coupons")
+}
+
+model CouponUsage {
+  id        String   @id @default(uuid())
+  couponId  String   @map("coupon_id")
+  userId    String   @map("user_id")
+  orderId   String?  @map("order_id")
+  discount  Float
+  createdAt DateTime @default(now()) @map("created_at")
+
+  coupon    Coupon   @relation(fields: [couponId], references: [id])
+  profile   Profile  @relation(fields: [userId], references: [id])
+
+  @@map("coupon_usages")
 }
 
 
@@ -125,49 +144,106 @@ model Peptide {
 }
 
 model Product {
-  id               String   @id @default(uuid())
+  id               String      @id @default(uuid())
   name             String
-  slug             String   @unique
+  slug             String      @unique
   description      String?
-  longDescription  String?  @map("long_description")
+  longDescription  String?     @map("long_description")
   price            Float
-  currency         String   @default("USD")
+  currency         String      @default("BRL")
   category         String
-  imageUrl         String?  @map("image_url")
-  images           String[] @default([])
-  featured         Boolean  @default(false)
-  isActive         Boolean  @default(true) @map("is_active")
-  stockQty         Int      @default(999) @map("stock_qty")
-  allowedCountries String[] @default([]) @map("allowed_countries")
-  tags             Json     @default("[]")
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  imageUrl         String?     @map("image_url")
+  images           String[]    @default([])
+  featured         Boolean     @default(false)
+  isActive         Boolean     @default(true) @map("is_active")
+  stockQty         Int         @default(999) @map("stock_qty")
+  weight           Float?      // kg para cálculo de frete
+  allowedCountries String[]    @default([]) @map("allowed_countries")
+  tags             Json        @default("[]")
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
 
-  orders           Order[]
+  orderItems       OrderItem[]
+  cartItems        CartItem[]
 
   @@map("products")
 }
 
 // ==================== ECOMMERCE ====================
 
-model Order {
-  id               String   @id @default(uuid())
-  userId           String   @map("user_id")
-  productId        String   @map("product_id")
-  amount           Float
-  currency         String
-  status           String   @default("pending") // pending | paid | shipped | delivered | cancelled | refunded
-  gateway          String?
-  gatewayPaymentId String?  @map("gateway_payment_id")
-  shippingAddress  Json?    @map("shipping_address")
-  notes            String?
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+model Address {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  label       String?  // "Casa", "Trabalho"
+  recipientName String  @map("recipient_name")
+  phone       String?
+  cep         String
+  street      String
+  number      String
+  complement  String?
+  neighborhood String
+  city        String
+  state       String
+  isDefault   Boolean  @default(false) @map("is_default")
+  createdAt   DateTime @default(now()) @map("created_at")
 
-  profile          Profile  @relation(fields: [userId], references: [id])
-  product          Product  @relation(fields: [productId], references: [id])
+  profile     Profile  @relation(fields: [userId], references: [id])
+
+  @@map("addresses")
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  productId String   @map("product_id")
+  qty       Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  profile   Profile  @relation(fields: [userId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+  @@map("cart_items")
+}
+
+model Order {
+  id               String      @id @default(uuid())
+  userId           String      @map("user_id")
+  amount           Float
+  discountAmount   Float       @default(0) @map("discount_amount")
+  shippingAmount   Float       @default(0) @map("shipping_amount")
+  currency         String      @default("BRL")
+  status           String      @default("pending") // pending|paid|shipped|delivered|cancelled|refunded
+  gateway          String?
+  gatewayPaymentId String?     @map("gateway_payment_id")
+  gatewayPixQr     String?     @map("gateway_pix_qr")
+  gatewayPixCode   String?     @map("gateway_pix_code")
+  paymentMethod    String?     @map("payment_method") // pix | credit_card
+  couponCode       String?     @map("coupon_code")
+  shippingAddress  Json?       @map("shipping_address")
+  notes            String?
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+
+  profile          Profile     @relation(fields: [userId], references: [id])
+  items            OrderItem[]
 
   @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String  @map("order_id")
+  productId String  @map("product_id")
+  name      String
+  price     Float
+  qty       Int     @default(1)
+
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
 }
 
 // ==================== CRM ====================

@@ -146,4 +146,14 @@ export class CouponService {
             data: { usedCount: { increment: 1 } },
         });
     }
+
+    /** Histórico de quem usou o cupom */
+    async getUsageHistory(couponId: string) {
+        await this.findOne(couponId);
+        return this.prisma.couponUsage.findMany({
+            where: { couponId },
+            include: { profile: { select: { id: true, name: true, email: true } } },
+            orderBy: { createdAt: 'desc' },
+        });
+    }
 }

@@ -170,6 +170,14 @@ export class CouponController {
         return this.couponService.update(id, dto);
     }
 
+    @Get(':id/usage')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    async getUsage(@Request() req: any, @Param('id') id: string) {
+        requireAdmin(req);
+        return this.couponService.getUsageHistory(id);
+    }
+
     @Delete(':id')
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()

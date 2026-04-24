@@ -1,111 +1,156 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, Package } from "lucide-react";
+import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, Package, Tag, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+const API = process.env.NEXT_PUBLIC_API_URL || "https://api.peptideosbio.com";
+
+type CartItem = { id: string; qty: number; product: { id: string; name: string; price: number; imageUrl?: string; category: string } };
 
 export default function CartPage() {
-    const [cart, setCart] = useState<any[]>([]);
+    const [items, setItems] = useState<CartItem[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [coupon, setCoupon] = useState("");
+    const [discount, setDiscount] = useState<{ code: string; discountApplied: number; finalAmount: number } | null>(null);
+    const [couponError, setCouponError] = useState("");
+    const [validating, setValidating] = useState(false);
+    const router = useRouter();
 
-    function loadCart() {
-        const raw = localStorage.getItem("bp_cart");
-        setCart(raw ? JSON.parse(raw) : []);
+    const token = () => typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const headers = () => ({ "Content-Type": "application/json", Authorization: `Bearer ${token()}` });
+
+    async function loadCart() {
+        if (!token()) { router.push("/auth/login"); return; }
+        setLoading(true);
+        const r = await fetch(`${API}/api/ecommerce/cart`, { headers: headers() });
+        if (r.ok) { const d = await r.json(); setItems(d.items || []); }
+        setLoading(false);
     }
 
     useEffect(() => { loadCart(); }, []);
 
-    function updateQty(id: string, delta: number) {
-        const updated = cart.map(item =>
-            item.id === id ? { ...item, qty: Math.max(1, item.qty + delta) } : item
-        );
-        setCart(updated);
-        localStorage.setItem("bp_cart", JSON.stringify(updated));
+    async function updateQty(itemId: string, qty: number) {
+        if (qty < 1) { removeItem(itemId); return; }
+        await fetch(`${API}/api/ecommerce/cart/${itemId}`, { method: "PUT", headers: headers(), body: JSON.stringify({ qty }) });
+        loadCart();
     }
 
-    function remove(id: string) {
-        const updated = cart.filter(item => item.id !== id);
-        setCart(updated);
-        localStorage.setItem("bp_cart", JSON.stringify(updated));
+    async function removeItem(itemId: string) {
+        await fetch(`${API}/api/ecommerce/cart/${itemId}`, { method: "DELETE", headers: headers() });
+        setDiscount(null);
+        loadCart();
     }
 
-    const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
-    const currency = cart[0]?.currency || "USD";
+    async function validateCoupon() {
+        if (!coupon.trim()) return;
+        setValidating(true);
+        setCouponError("");
+        try {
+            const subtotal = items.reduce((s, i) => s + i.product.price * i.qty, 0);
+            const r = await fetch(`${API}/coupons/validate`, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code: coupon.trim(), plan: "product", amount: subtotal }),
+            });
+            if (r.ok) {
+                const d = await r.json();
+                setDiscount({ code: coupon.trim().toUpperCase(), discountApplied: d.discountApplied, finalAmount: d.finalAmount });
+            } else {
+                const e = await r.json();
+                setCouponError(e.message || "Cupom inválido");
+            }
+        } finally { setValidating(false); }
+    }
+
+    const subtotal = items.reduce((s, i) => s + i.product.price * i.qty, 0);
+    const finalTotal = discount ? discount.finalAmount : subtotal;
+    const totalItems = items.reduce((s, i) => s + i.qty, 0);
+
+    if (loading) return (
+        <div className="min-h-screen bg-[#050d1a] flex items-center justify-center">
+            <div className="animate-spin w-8 h-8 border-2 border-brand-400 border-t-transparent rounded-full" />
+        </div>
+    );
 
     return (
-        <div className="min-h-screen" style={{ background: "#050d1a" }}>
-            <nav className="border-b border-white/5 backdrop-blur-md sticky top-0 z-40" style={{ background: "rgba(5,13,26,0.8)" }}>
-                <div className="max-w-4xl mx-auto px-6 h-14 flex items-center gap-3">
-                    <Link href="/catalog" className="text-sm" style={{ color: "#94a3b8" }}>← Continuar comprando</Link>
-                    <div className="flex-1" />
-                    <ShoppingCart className="w-5 h-5" style={{ color: "#0ea5e9" }} />
-                </div>
-            </nav>
+        <div className="min-h-screen bg-[#050d1a] text-white">
+            <div className="max-w-4xl mx-auto px-4 py-12">
+                <h1 className="text-3xl font-bold mb-8 flex items-center gap-3">
+                    <ShoppingCart className="w-7 h-7 text-brand-400" />
+                    Meu Carrinho
+                    {totalItems > 0 && <span className="text-sm font-normal text-slate-400">({totalItems} {totalItems === 1 ? "item" : "itens"})</span>}
+                </h1>
 
-            <div className="max-w-4xl mx-auto px-6 py-10">
-                <h1 className="text-2xl font-bold text-white mb-8">Carrinho</h1>
-
-                {cart.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-64" style={{ color: "#475569" }}>
-                        <Package className="w-12 h-12 mb-3 opacity-30" />
-                        <p className="text-sm">Seu carrinho está vazio</p>
-                        <Link href="/catalog" className="btn-primary mt-4 text-sm">Ver Catálogo</Link>
+                {items.length === 0 ? (
+                    <div className="glass-card p-16 text-center space-y-4">
+                        <Package className="w-16 h-16 text-slate-600 mx-auto" />
+                        <h2 className="text-xl font-semibold text-slate-300">Carrinho vazio</h2>
+                        <p className="text-slate-500">Adicione produtos do catálogo para continuar</p>
+                        <a href="/catalog" className="btn-primary inline-flex items-center gap-2 mt-2">Ver Catálogo <ArrowRight className="w-4 h-4" /></a>
                     </div>
                 ) : (
-                    <div className="grid md:grid-cols-3 gap-6">
+                    <div className="grid lg:grid-cols-3 gap-6">
                         {/* Items */}
-                        <div className="md:col-span-2 space-y-3">
-                            {cart.map(item => (
+                        <div className="lg:col-span-2 space-y-3">
+                            {items.map(item => (
                                 <div key={item.id} className="glass-card p-4 flex items-center gap-4">
-                                    <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0"
-                                        style={{ background: "rgba(14,165,233,0.08)", border: "1px solid rgba(14,165,233,0.15)" }}>
-                                        <Package className="w-7 h-7" style={{ color: "rgba(14,165,233,0.4)" }} />
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="font-medium text-white text-sm">{item.name}</div>
-                                        <div className="text-xs mt-0.5" style={{ color: "#34d399" }}>
-                                            {item.currency} {Number(item.price).toFixed(2)} / unidade
-                                        </div>
+                                    {item.product.imageUrl
+                                        ? <img src={item.product.imageUrl} alt={item.product.name} className="w-16 h-16 rounded-xl object-cover bg-white/5 shrink-0" />
+                                        : <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center shrink-0"><Package className="w-6 h-6 text-slate-500" /></div>}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="text-[10px] text-brand-400 uppercase tracking-wider">{item.product.category}</div>
+                                        <div className="font-semibold text-white truncate">{item.product.name}</div>
+                                        <div className="text-sm text-slate-400 mt-0.5">R$ {item.product.price.toFixed(2)} / unid.</div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <button onClick={() => updateQty(item.id, -1)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white/5 transition-colors border border-white/10">
-                                            <Minus className="w-3 h-3 text-white" />
-                                        </button>
-                                        <span className="text-white font-medium w-6 text-center">{item.qty}</span>
-                                        <button onClick={() => updateQty(item.id, 1)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white/5 transition-colors border border-white/10">
-                                            <Plus className="w-3 h-3 text-white" />
-                                        </button>
+                                        <button onClick={() => updateQty(item.id, item.qty - 1)} className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"><Minus className="w-3 h-3" /></button>
+                                        <span className="w-8 text-center text-sm font-bold text-white">{item.qty}</span>
+                                        <button onClick={() => updateQty(item.id, item.qty + 1)} className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"><Plus className="w-3 h-3" /></button>
                                     </div>
-                                    <div className="font-semibold text-white w-20 text-right">
-                                        {currency} {(item.price * item.qty).toFixed(2)}
+                                    <div className="text-right w-20 shrink-0">
+                                        <div className="font-bold text-white">R$ {(item.product.price * item.qty).toFixed(2)}</div>
                                     </div>
-                                    <button onClick={() => remove(item.id)} className="p-1.5 hover:bg-red-500/10 rounded-lg text-red-400 transition-colors">
-                                        <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
+                                    <button onClick={() => removeItem(item.id)} className="text-slate-500 hover:text-red-400 transition-colors p-1.5"><Trash2 className="w-4 h-4" /></button>
                                 </div>
                             ))}
                         </div>
 
-                        {/* Resumo */}
-                        <div className="glass-card p-5 h-fit space-y-4">
-                            <h2 className="font-semibold text-white">Resumo</h2>
-                            <div className="section-divider" />
-                            <div className="flex justify-between text-sm" style={{ color: "#94a3b8" }}>
-                                <span>Subtotal ({cart.reduce((a, i) => a + i.qty, 0)} itens)</span>
-                                <span className="font-semibold text-white">{currency} {subtotal.toFixed(2)}</span>
+                        {/* Summary */}
+                        <div className="space-y-4">
+                            {/* Coupon */}
+                            <div className="glass-card p-4 space-y-3">
+                                <div className="flex items-center gap-2 text-sm font-semibold text-white"><Tag className="w-4 h-4 text-brand-400" /> Cupom de desconto</div>
+                                {discount ? (
+                                    <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                                        <div>
+                                            <div className="font-mono text-sm font-bold text-emerald-300">{discount.code}</div>
+                                            <div className="text-xs text-emerald-400">-R$ {discount.discountApplied.toFixed(2)}</div>
+                                        </div>
+                                        <button onClick={() => { setDiscount(null); setCoupon(""); }} className="text-slate-400 hover:text-white"><X className="w-4 h-4" /></button>
+                                    </div>
+                                ) : (
+                                    <div className="flex gap-2">
+                                        <input className="flex-1 glass-card px-3 py-2 text-sm text-white uppercase placeholder-slate-500" placeholder="CUPOM15" value={coupon} onChange={e => { setCoupon(e.target.value.toUpperCase()); setCouponError(""); }} onKeyDown={e => e.key === "Enter" && validateCoupon()} />
+                                        <button onClick={validateCoupon} disabled={validating || !coupon.trim()} className="px-3 py-2 rounded-xl bg-brand-600 text-white text-sm hover:bg-brand-500 disabled:opacity-50 transition-colors">{validating ? "..." : "OK"}</button>
+                                    </div>
+                                )}
+                                {couponError && <p className="text-xs text-red-400">{couponError}</p>}
                             </div>
-                            <div className="flex justify-between text-xs" style={{ color: "#64748b" }}>
-                                <span>Frete</span>
-                                <span>Calculado no checkout</span>
+
+                            {/* Order Summary */}
+                            <div className="glass-card p-4 space-y-3">
+                                <div className="text-sm font-semibold text-white mb-2">Resumo do Pedido</div>
+                                <div className="space-y-2 text-sm">
+                                    <div className="flex justify-between text-slate-400"><span>Subtotal</span><span>R$ {subtotal.toFixed(2)}</span></div>
+                                    {discount && <div className="flex justify-between text-emerald-400"><span>Desconto ({discount.code})</span><span>-R$ {discount.discountApplied.toFixed(2)}</span></div>}
+                                    <div className="flex justify-between text-slate-400"><span>Frete</span><span className="text-emerald-400">A calcular</span></div>
+                                    <div className="flex justify-between font-bold text-white text-base border-t border-white/10 pt-2"><span>Total</span><span>R$ {finalTotal.toFixed(2)}</span></div>
+                                </div>
+                                <button onClick={() => router.push(`/checkout${discount ? `?coupon=${discount.code}` : ""}`)} className="btn-primary w-full flex items-center justify-center gap-2 mt-2">
+                                    Finalizar Pedido <ArrowRight className="w-4 h-4" />
+                                </button>
+                                <a href="/catalog" className="block text-center text-xs text-slate-500 hover:text-slate-300 mt-1">Continuar comprando</a>
                             </div>
-                            <div className="section-divider" />
-                            <div className="flex justify-between font-bold">
-                                <span className="text-white">Total</span>
-                                <span style={{ color: "#34d399" }}>{currency} {subtotal.toFixed(2)}</span>
-                            </div>
-                            <Link href="/checkout" className="btn-primary w-full justify-center flex items-center gap-2 py-3">
-                                Finalizar Compra <ArrowRight className="w-4 h-4" />
-                            </Link>
-                            <p className="text-center text-xs" style={{ color: "#475569" }}>Pagamento seguro via Stripe ou PIX</p>
                         </div>
                     </div>
                 )}

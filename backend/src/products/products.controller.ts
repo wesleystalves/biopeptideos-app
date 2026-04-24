@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Patch, Param, Body, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { AdminGuard } from '../auth/admin.guard';
 import { ProductsService } from './products.service';
 
 @ApiTags('products')
-@Controller('products')
+@Controller('api/products')
 export class ProductsController {
     constructor(private readonly svc: ProductsService) { }
 
@@ -17,6 +17,13 @@ export class ProductsController {
     @Get('categories')
     getCategories() {
         return this.svc.getCategories();
+    }
+
+    @Get('admin')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, AdminGuard)
+    findAllAdmin() {
+        return this.svc.findAll();
     }
 
     @Get(':slug')
@@ -38,7 +45,14 @@ export class ProductsController {
         return this.svc.update(id, body);
     }
 
-    @Put(':id/toggle')
+    @Patch(':id')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, AdminGuard)
+    updatePatch(@Param('id') id: string, @Body() body: any) {
+        return this.svc.update(id, body);
+    }
+
+    @Patch(':id/toggle')
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, AdminGuard)
     toggle(@Param('id') id: string) {

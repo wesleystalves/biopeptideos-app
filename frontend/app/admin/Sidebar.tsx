@@ -6,21 +6,23 @@ import { usePathname } from "next/navigation";
 import {
     LayoutDashboard, Users, MessageSquare, Settings, Package,
     ShieldCheck, BarChart3, Zap, LogOut, Bot, ChevronRight,
-    Archive, CreditCard, Menu, X,
+    Archive, CreditCard, Menu, X, Tag, ShoppingCart,
 } from "lucide-react";
 import { clsx } from "clsx";
 
 const navItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/admin/crm", label: "CRM / Leads", icon: Users },
-    { href: "/admin/conversations", label: "Conversas", icon: MessageSquare },
-    { href: "/admin/products", label: "Produtos", icon: Package },
-    { href: "/admin/orders", label: "Pedidos", icon: BarChart3 },
+    { href: "/admin/usuarios", label: "Usuários", icon: Users },
+    { href: "/admin/produtos", label: "Produtos", icon: Package },
+    { href: "/admin/pedidos", label: "Pedidos", icon: ShoppingCart },
+    { href: "/admin/coupons", label: "Cupons", icon: Tag },
     { href: "/admin/payments", label: "Pagamentos", icon: CreditCard },
+    { href: "/admin/crm", label: "CRM / Leads", icon: BarChart3 },
+    { href: "/admin/conversations", label: "Conversas", icon: MessageSquare },
     { href: "/admin/compliance", label: "Compliance", icon: ShieldCheck },
     { href: "/admin/automations", label: "Automações", icon: Zap },
     { href: "/admin/ai-config", label: "Config IA", icon: Bot },
-    { href: "/admin/backup", label: "💾 Backup", icon: Archive },
+    { href: "/admin/backup", label: "Backup", icon: Archive },
     { href: "/admin/settings", label: "Configurações", icon: Settings },
 ];
 
