@@ -103,9 +103,12 @@ export default function EbookPage() {
 
             {/* ── HEADER ── */}
             <header style={{ padding: '18px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)', position: 'sticky', top: 0, zIndex: 50, background: 'rgba(7,26,44,0.85)' }}>
-                <span style={{ fontSize: '18px', fontWeight: 800, background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                <Link
+                    href={isLoggedIn ? '/painel' : '/'}
+                    style={{ fontSize: '18px', fontWeight: 800, background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textDecoration: 'none' }}
+                >
                     ✦ PeptídeosBio
-                </span>
+                </Link>
                 {isLoggedIn ? (
                     <button onClick={() => router.push('/ebook/reader')}
                         style={{ background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '9px 22px', borderRadius: '10px', border: 'none', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>
