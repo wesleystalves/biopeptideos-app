@@ -50,8 +50,8 @@ export default function RegisterPage() {
             localStorage.setItem("token", jwt);
             localStorage.setItem("user", JSON.stringify(data.user));
 
-            // Após cadastro, leva para o ebook para concluir a compra
-            window.location.href = "/ebook";
+            // Após cadastro, leva para o painel
+            window.location.href = "/painel";
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -76,7 +76,7 @@ export default function RegisterPage() {
                 <div className="glass-card p-8">
                     <h1 className="text-xl font-bold text-white mb-1">Criar conta</h1>
                     <p className="text-slate-400 text-sm mb-6">
-                        Crie sua conta para acessar o ebook e a plataforma
+                        Crie sua conta gratuita e acesse a plataforma
                     </p>
 
                     {error && (
@@ -153,7 +153,7 @@ export default function RegisterPage() {
                 </div>
 
                 <p className="text-center text-xs text-slate-600 mt-6">
-                    🔒 Para se cadastrar é necessário adquirir o ebook
+                    🔒 Seus dados estão seguros e protegidos
                 </p>
             </div>
         </div>
