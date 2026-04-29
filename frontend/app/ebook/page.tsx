@@ -136,6 +136,34 @@ export default function EbookPage() {
                     {' '}dos Peptídeos
                 </h1>
 
+                {/* ── VÍDEO HERO ── */}
+                <div style={{
+                    position: 'relative',
+                    width: '100%',
+                    maxWidth: '720px',
+                    margin: '36px auto',
+                    borderRadius: '20px',
+                    overflow: 'hidden',
+                    boxShadow: '0 0 0 1px rgba(91,138,245,0.25), 0 24px 64px rgba(0,0,0,0.6), 0 0 80px rgba(91,138,245,0.12)',
+                    aspectRatio: '16/9',
+                    background: '#000',
+                }}>
+                    <video
+                        src="/hero-video.mp4"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        controls
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            display: 'block',
+                        }}
+                    />
+                </div>
+
                 <p style={{ fontSize: '18px', color: '#94afc7', lineHeight: 1.75, marginBottom: '44px', maxWidth: '560px', margin: '0 auto 44px' }}>
                     O manual completo de emagrecimento, performance, regeneração e longevidade que médicos não te contam. Leia online, aplique hoje.
                 </p>
