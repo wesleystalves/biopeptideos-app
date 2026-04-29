@@ -14,8 +14,8 @@ const API = process.env.NEXT_PUBLIC_API_URL || 'https://api.peptideosbio.com';
 
 const nav = [
     { href: "/painel", icon: LayoutDashboard, label: "Painel" },
-    { href: "/ebook/reader", icon: BookMarked, label: "📘 Ebook 1 — Fundamentos" },
-    { href: "/ebook2/reader", icon: BookMarked, label: "🧬 Ebook 2 — Era dos Peptídeos" },
+    { href: "/ebook/reader", icon: BookMarked, label: "📘 Ebook 1 — Fundamentos", noIcon: true },
+    { href: "/ebook2/reader", icon: BookMarked, label: "🧬 Ebook 2 — Era dos Peptídeos", noIcon: true },
     { href: "/library", icon: FlaskConical, label: "Peptídeos" },
     { href: "/finder", icon: Search, label: "Encontre o Seu" },
     { href: "/compare", icon: GitCompare, label: "Comparar" },
@@ -109,7 +109,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
                 {/* Nav */}
                 <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-0.5">
-                    {nav.map(({ href, icon: Icon, label }) => (
+                    {nav.map(({ href, icon: Icon, label, noIcon }) => (
                         <Link
                             key={href}
                             href={href}
@@ -123,7 +123,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                                 }
                             `}
                         >
-                            <Icon className={`w-4 h-4 flex-shrink-0 ${isActive(href) ? "text-brand-400" : "text-slate-500 group-hover:text-slate-300"}`} />
+                            {!noIcon && <Icon className={`w-4 h-4 flex-shrink-0 ${isActive(href) ? "text-brand-400" : "text-slate-500 group-hover:text-slate-300"}`} />}
                             {label}
                             {isActive(href) && <ChevronRight className="w-3 h-3 ml-auto text-brand-500" />}
                         </Link>
