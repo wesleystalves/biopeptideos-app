@@ -1,17 +1,29 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'https://api.peptideosbio.com';
 const BG = 'linear-gradient(135deg, #071a2c 0%, #083a5a 50%, #071a2c 100%)';
 const BRAND = '#5b8af5';
 
+/** Marca o localStorage como verificado para o banner sumir imediatamente */
+function markVerifiedInStorage() {
+    try {
+        const userStr = localStorage.getItem('user');
+        const user = userStr ? JSON.parse(userStr) : {};
+        localStorage.setItem('user', JSON.stringify({ ...user, emailVerified: true }));
+        // Flag para o painel ignorar o cache e recarregar o /me
+        sessionStorage.setItem('emailJustVerified', '1');
+    } catch { /* ignore */ }
+}
+
 function VerifyEmailInner() {
     const params = useSearchParams();
+    const router = useRouter();
     const token = params.get('token') || '';
-    const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
+    const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'already'>('loading');
     const [message, setMessage] = useState('');
 
     useEffect(() => {
@@ -20,29 +32,38 @@ function VerifyEmailInner() {
             setMessage('Link inválido. Faça login e solicite um novo e-mail de verificação.');
             return;
         }
+
         fetch(`${API}/api/auth/verify-email?token=${token}`)
             .then(r => r.json())
             .then(data => {
-                if (data.message) {
-                    // Atualiza localStorage para o banner sumir imediatamente
-                    try {
-                        const userStr = localStorage.getItem('user');
-                        if (userStr) {
-                            const user = JSON.parse(userStr);
-                            localStorage.setItem('user', JSON.stringify({ ...user, emailVerified: true }));
-                        }
-                    } catch { /* ignore */ }
+                // Sucesso: a API retorna { message: '...' } sem statusCode de erro
+                if (data.message && !data.statusCode) {
+                    markVerifiedInStorage();
                     setStatus('success');
                     setMessage(data.message);
+                    // Redireciona para o painel após 2s (com flag de refresh)
+                    setTimeout(() => router.replace('/painel?emailVerified=1'), 2500);
+                } else if (data.statusCode === 400 || data.error) {
+                    const msg = data.message || '';
+                    // "E-mail já verificado" → tratar como sucesso
+                    if (msg.toLowerCase().includes('já verificado') || msg.toLowerCase().includes('already verified')) {
+                        markVerifiedInStorage();
+                        setStatus('already');
+                        setTimeout(() => router.replace('/painel?emailVerified=1'), 2500);
+                    } else {
+                        setStatus('error');
+                        setMessage(msg || 'Link inválido ou expirado.');
+                    }
                 } else {
-                    throw new Error(data.message || 'Erro ao verificar');
+                    setStatus('error');
+                    setMessage('Resposta inesperada. Tente novamente.');
                 }
             })
-            .catch(e => {
+            .catch(() => {
                 setStatus('error');
-                setMessage(e.message || 'Link inválido ou expirado.');
+                setMessage('Erro de conexão. Tente novamente mais tarde.');
             });
-    }, [token]);
+    }, [token, router]);
 
     return (
         <main style={{ background: BG, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
@@ -61,9 +82,24 @@ function VerifyEmailInner() {
                         <div style={{ fontSize: '56px', marginBottom: '16px' }}>✅</div>
                         <h1 style={{ color: '#fff', fontSize: '22px', fontWeight: 800, marginBottom: '12px' }}>E-mail confirmado!</h1>
                         <p style={{ color: '#64748b', fontSize: '14px', lineHeight: 1.7, marginBottom: '28px' }}>
-                            Sua conta está totalmente segura agora. Obrigado por confirmar!
+                            Sua conta está totalmente segura agora. Obrigado por confirmar!<br />
+                            <span style={{ color: BRAND, fontSize: '13px' }}>Redirecionando para o painel...</span>
                         </p>
-                        <Link href="/painel" style={{ display: 'block', background: `linear-gradient(135deg, ${BRAND}, #00e5cc)`, color: '#fff', borderRadius: '12px', padding: '14px', fontWeight: 800, textDecoration: 'none', marginBottom: '12px' }}>
+                        <Link href="/painel?emailVerified=1" style={{ display: 'block', background: `linear-gradient(135deg, ${BRAND}, #00e5cc)`, color: '#fff', borderRadius: '12px', padding: '14px', fontWeight: 800, textDecoration: 'none' }}>
+                            Ir para o painel →
+                        </Link>
+                    </>
+                )}
+
+                {status === 'already' && (
+                    <>
+                        <div style={{ fontSize: '56px', marginBottom: '16px' }}>✅</div>
+                        <h1 style={{ color: '#fff', fontSize: '22px', fontWeight: 800, marginBottom: '12px' }}>E-mail já confirmado!</h1>
+                        <p style={{ color: '#64748b', fontSize: '14px', lineHeight: 1.7, marginBottom: '28px' }}>
+                            Seu e-mail já havia sido verificado anteriormente.<br />
+                            <span style={{ color: BRAND, fontSize: '13px' }}>Redirecionando para o painel...</span>
+                        </p>
+                        <Link href="/painel?emailVerified=1" style={{ display: 'block', background: `linear-gradient(135deg, ${BRAND}, #00e5cc)`, color: '#fff', borderRadius: '12px', padding: '14px', fontWeight: 800, textDecoration: 'none' }}>
                             Ir para o painel →
                         </Link>
                     </>

@@ -1,9 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'https://api.peptideosbio.com';
+
+/** Tempo (ms) para o banner reaparecer após clicar em "Agora não" */
+const SNOOZE_MS = 5 * 60 * 1000; // 5 minutos
 
 export default function EmailVerifyBanner() {
     const [visible, setVisible] = useState(false);
@@ -14,38 +17,81 @@ export default function EmailVerifyBanner() {
     const [changingEmail, setChangingEmail] = useState(false);
     const [userEmail, setUserEmail] = useState('');
 
+    // Lê o query param para detectar redirect pós-verificação
+    // Não podemos usar useSearchParams diretamente aqui (pode estar fora de Suspense),
+    // então lemos via window.location
+    function wasJustVerified() {
+        if (typeof window === 'undefined') return false;
+        const params = new URLSearchParams(window.location.search);
+        return params.get('emailVerified') === '1' || sessionStorage.getItem('emailJustVerified') === '1';
+    }
+
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) return;
+        // Se acabou de verificar, nunca mostra o banner
+        if (wasJustVerified()) {
+            sessionStorage.removeItem('emailJustVerified');
+            return;
+        }
 
-        // Sempre consulta o backend para pegar o estado real do emailVerified
-        fetch(`${API}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
-            .then(r => r.ok ? r.json() : null)
-            .then(data => {
-                if (!data) return;
-                // Atualiza localStorage com dados frescos
-                try {
-                    const userStr = localStorage.getItem('user');
-                    const user = userStr ? JSON.parse(userStr) : {};
-                    localStorage.setItem('user', JSON.stringify({ ...user, ...data }));
-                } catch { /* ignore */ }
+        function checkVerification() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
 
-                setUserEmail(data.email || '');
-                if (data.emailVerified === false) setVisible(true);
-            })
-            .catch(() => {
-                // Fallback para localStorage se a API falhar
-                try {
-                    const userStr = localStorage.getItem('user');
-                    if (!userStr) return;
-                    const user = JSON.parse(userStr);
-                    setUserEmail(user.email || '');
-                    if (user.emailVerified === false) setVisible(true);
-                } catch { /* ignore */ }
-            });
+            // Consulta sempre o backend para pegar o estado real
+            fetch(`${API}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
+                .then(r => r.ok ? r.json() : null)
+                .then(data => {
+                    if (!data) return;
+                    // Atualiza localStorage com dados frescos
+                    try {
+                        const userStr = localStorage.getItem('user');
+                        const user = userStr ? JSON.parse(userStr) : {};
+                        localStorage.setItem('user', JSON.stringify({ ...user, ...data }));
+                    } catch { /* ignore */ }
+
+                    setUserEmail(data.email || '');
+
+                    if (data.emailVerified === true) {
+                        // Verificado! Garante que o banner nunca mais aparece
+                        setVisible(false);
+                        return;
+                    }
+
+                    // Não verificado — verifica se está em snooze
+                    const snoozeUntil = parseInt(sessionStorage.getItem('emailBannerSnooze') || '0', 10);
+                    if (Date.now() < snoozeUntil) return; // ainda em snooze
+
+                    setVisible(true);
+                })
+                .catch(() => {
+                    // Fallback para localStorage se a API falhar
+                    try {
+                        const userStr = localStorage.getItem('user');
+                        if (!userStr) return;
+                        const user = JSON.parse(userStr);
+                        setUserEmail(user.email || '');
+                        if (user.emailVerified === true) { setVisible(false); return; }
+                        const snoozeUntil = parseInt(sessionStorage.getItem('emailBannerSnooze') || '0', 10);
+                        if (Date.now() >= snoozeUntil) setVisible(true);
+                    } catch { /* ignore */ }
+                });
+        }
+
+        // Verificação imediata
+        checkVerification();
+
+        // Recheck a cada 5 minutos (para que o banner reapareça após snooze)
+        const interval = setInterval(checkVerification, SNOOZE_MS);
+        return () => clearInterval(interval);
     }, []);
 
     if (!visible) return null;
+
+    function dismiss() {
+        // Snooze por 5 minutos
+        sessionStorage.setItem('emailBannerSnooze', String(Date.now() + SNOOZE_MS));
+        setVisible(false);
+    }
 
     async function resend() {
         setSending(true);
@@ -56,6 +102,8 @@ export default function EmailVerifyBanner() {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setSent(true);
+            // Após enviar, snooze por 5 min para não irritar
+            sessionStorage.setItem('emailBannerSnooze', String(Date.now() + SNOOZE_MS));
         } catch { /* ignore */ }
         setSending(false);
     }
@@ -71,16 +119,16 @@ export default function EmailVerifyBanner() {
                 body: JSON.stringify({ email: newEmail }),
             });
             if (res.ok) {
-                // Atualiza o email no localStorage
                 const userStr = localStorage.getItem('user');
                 if (userStr) {
                     const user = JSON.parse(userStr);
-                    localStorage.setItem('user', JSON.stringify({ ...user, email: newEmail }));
+                    localStorage.setItem('user', JSON.stringify({ ...user, email: newEmail, emailVerified: false }));
                 }
                 setUserEmail(newEmail);
                 setShowChangeEmail(false);
                 setSent(true);
                 setNewEmail('');
+                sessionStorage.setItem('emailBannerSnooze', String(Date.now() + SNOOZE_MS));
             }
         } catch { /* ignore */ }
         setChangingEmail(false);
@@ -126,7 +174,7 @@ export default function EmailVerifyBanner() {
                             }}>
                                 ✏️ Trocar e-mail
                             </button>
-                            <button onClick={() => setVisible(false)} style={{
+                            <button onClick={dismiss} style={{
                                 background: 'transparent', border: 'none',
                                 color: '#475569', fontSize: '12px', cursor: 'pointer',
                             }}>
