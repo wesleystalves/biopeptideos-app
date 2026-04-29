@@ -119,20 +119,50 @@ export default function PeptideDetailPage() {
     const [detail, setDetail] = useState<PeptideDetail | undefined>(undefined);
     const [showDisclaimer, setShowDisclaimer] = useState(false);
     const [activeTab, setActiveTab] = useState<Tab>('overview');
-    const [userPlan, setUserPlan] = useState<string>('free');
+    const [userPlan, setUserPlan] = useState<string>('loading');
 
     useEffect(() => {
-        // Ler o plano do JWT (sem request extra)
+        // Primeiro lê do JWT (rápido, sem latência) como fallback
+        let planFromJwt = 'free';
         try {
             const token = localStorage.getItem('token');
             if (token) {
                 const payload = JSON.parse(atob(token.split('.')[1]));
-                setUserPlan(payload.plan || 'free');
+                planFromJwt = payload.plan || 'free';
+                setUserPlan(planFromJwt);
+            } else {
+                setUserPlan('free');
+                return;
             }
-        } catch { /* ignore */ }
+        } catch {
+            setUserPlan('free');
+            return;
+        }
+
+        // Depois confirma com o backend (plano real do banco, evita JWT desatualizado)
+        const token = localStorage.getItem('token');
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api.peptideosbio.com'}/api/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (data?.plan) {
+                    const realPlan = data.isAdmin ? 'admin' : data.plan;
+                    setUserPlan(realPlan);
+                    // Atualiza o localStorage com o plano real
+                    try {
+                        const userStr = localStorage.getItem('user');
+                        const user = userStr ? JSON.parse(userStr) : {};
+                        localStorage.setItem('user', JSON.stringify({ ...user, plan: realPlan }));
+                    } catch { /* ignore */ }
+                }
+            })
+            .catch(() => { /* mantém o plano do JWT */ });
     }, []);
 
-    const isPremium = userPlan === 'premium' || userPlan === 'basic';
+    const isPremium = userPlan === 'premium' || userPlan === 'basic' || userPlan === 'admin';
+    // Enquanto carrega, não renderiza o paywall para evitar flash
+    const isLoading = userPlan === 'loading';
 
     useEffect(() => {
         if (!slug) { setPeptide(null); return; }
