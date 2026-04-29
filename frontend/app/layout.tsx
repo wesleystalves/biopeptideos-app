@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "BioPeptidios — Performance & Longevity",
@@ -17,21 +16,22 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className="dark">
-      <body>
+      <head>
         {/* ── Google Analytics ── */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-BNBP69F73Q"
-          strategy="afterInteractive"
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-BNBP69F73Q" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-BNBP69F73Q');
+            `,
+          }}
         />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-BNBP69F73Q');
-          `}
-        </Script>
-
+      </head>
+      <body>
         {children}
         <WhatsAppButton />
       </body>
