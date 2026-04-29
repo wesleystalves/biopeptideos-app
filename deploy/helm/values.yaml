@@ -18,7 +18,7 @@ backend:
   replicaCount: 1
   image:
     repository: ghcr.io/wesleystalves/biopeptideos-backend
-    tag: 6f8d3c06e01146f6b9a7d056fdd21ec318389bc2
+    tag: bcf678b48be3af734417bfe407e30ec1df9e6e59
     pullPolicy: Always
   service:
     port: 3001
