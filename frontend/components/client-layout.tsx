@@ -8,6 +8,9 @@ import {
     BookOpen, BookMarked, Calculator, Layers, AlertTriangle, Map,
     CalendarDays, ShoppingBag, User, LogOut, Menu, X, ChevronRight
 } from "lucide-react";
+import OnboardingQuiz from "@/components/OnboardingQuiz";
+
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://api.peptideosbio.com';
 
 const nav = [
     { href: "/painel", icon: LayoutDashboard, label: "Painel" },
@@ -32,6 +35,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     const router = useRouter();
     const [open, setOpen] = useState(false);
     const [user, setUser] = useState<{ email: string } | null>(null);
+    const [showOnboarding, setShowOnboarding] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -40,6 +44,18 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             const payload = JSON.parse(atob(token.split(".")[1]));
             setUser({ email: payload.email || payload.sub || "Usuário" });
         } catch { /* ignore */ }
+
+        // Verificar se precisa mostrar o quiz de onboarding
+        fetch(`${API}/api/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data && data.onboardingDone === false) {
+                    setShowOnboarding(true);
+                }
+            })
+            .catch(() => { /* silenciar */ });
     }, [router]);
 
     function logout() {
@@ -51,7 +67,13 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         pathname === href || (href !== "/painel" && pathname.startsWith(href));
 
     return (
-        <div className="flex min-h-screen" style={{ background: 'linear-gradient(160deg, #071a2c 0%, #0b2d4a 40%, #083a5a 70%, #071a2c 100%)', minHeight: '100vh' }}>
+        <>
+            {/* Quiz de Onboarding — aparece somente na primeira entrada */}
+            {showOnboarding && (
+                <OnboardingQuiz onComplete={() => setShowOnboarding(false)} />
+            )}
+
+            <div className="flex min-h-screen" style={{ background: 'linear-gradient(160deg, #071a2c 0%, #0b2d4a 40%, #083a5a 70%, #071a2c 100%)', minHeight: '100vh' }}>
             {/* Mobile overlay */}
             {open && (
                 <div
@@ -149,5 +171,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 </main>
             </div>
         </div>
+        </>
     );
 }

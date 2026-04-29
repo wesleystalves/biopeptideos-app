@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ClientLayout from "@/components/client-layout";
 import { findBySlug, type Peptide } from "@/lib/peptides-data";
@@ -8,9 +8,48 @@ import { getPeptideDetail, type PeptideDetail } from "@/lib/peptides-detail-data
 import {
     ArrowLeft, FlaskConical, ShoppingBag, CheckCircle2,
     AlertTriangle, X, ChevronRight, Zap, Clock,
-    BookOpen, Link2, Shield
+    BookOpen, Link2, Shield, Lock
 } from "lucide-react";
 import Link from "next/link";
+
+// ── Paywall overlay para usuários FREE ──────────────────────────────
+function PaywallOverlay() {
+    return (
+        <div className="relative glass-card p-12 text-center overflow-hidden">
+            {/* Blur de conteúdo simulado */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a192f] via-[#0a192f]/80 to-transparent z-10" />
+            <div className="relative z-20 flex flex-col items-center gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-amber-500/15 border border-amber-500/25 flex items-center justify-center">
+                    <Lock className="w-8 h-8 text-amber-400" />
+                </div>
+                <div>
+                    <h3 className="text-xl font-bold text-white mb-2">Conteúdo Premium</h3>
+                    <p className="text-slate-400 text-sm max-w-sm mx-auto">
+                        Este conteúdo é exclusivo para assinantes. Assine para ter acesso completo a protocolos,
+                        mecanismos de ação, dosagens e stacks de todos os 70 peptídeos.
+                    </p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3 mt-2">
+                    <Link
+                        href="/catalog"
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-bold text-sm transition-all shadow-lg shadow-brand-900/40"
+                    >
+                        <Zap className="w-4 h-4" /> Assinar Agora
+                    </Link>
+                    <Link
+                        href="/ebook"
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-slate-300 hover:text-white hover:border-white/20 text-sm transition-all"
+                    >
+                        <BookOpen className="w-4 h-4" /> Ver Ebook Gratuito
+                    </Link>
+                </div>
+                <p className="text-xs text-slate-600">
+                    Plano atual: <span className="text-amber-400 font-semibold">Gratuito</span> · Cancele quando quiser
+                </p>
+            </div>
+        </div>
+    );
+}
 
 // ── Aviso Legal Modal ──────────────────────────────────────────────
 function DisclaimerModal({ onAccept }: { onAccept: () => void }) {
@@ -80,6 +119,20 @@ export default function PeptideDetailPage() {
     const [detail, setDetail] = useState<PeptideDetail | undefined>(undefined);
     const [showDisclaimer, setShowDisclaimer] = useState(false);
     const [activeTab, setActiveTab] = useState<Tab>('overview');
+    const [userPlan, setUserPlan] = useState<string>('free');
+
+    useEffect(() => {
+        // Ler o plano do JWT (sem request extra)
+        try {
+            const token = localStorage.getItem('token');
+            if (token) {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                setUserPlan(payload.plan || 'free');
+            }
+        } catch { /* ignore */ }
+    }, []);
+
+    const isPremium = userPlan === 'premium' || userPlan === 'basic';
 
     useEffect(() => {
         if (!slug) { setPeptide(null); return; }
@@ -120,9 +173,9 @@ export default function PeptideDetailPage() {
     const displayWhatIs = d?.whatIs || peptide.description;
     const tabs: { id: Tab; label: string }[] = [
         { id: 'overview', label: '📋 Visão Geral' },
-        { id: 'protocol', label: '💉 Protocolo' },
-        { id: 'science', label: '🔬 Mecanismo' },
-        { id: 'stacks', label: '⚡ Stacks' },
+        { id: 'protocol', label: isPremium ? '💉 Protocolo' : '🔒 Protocolo' },
+        { id: 'science', label: isPremium ? '🔬 Mecanismo' : '🔒 Mecanismo' },
+        { id: 'stacks', label: isPremium ? '⚡ Stacks' : '🔒 Stacks' },
     ];
 
     return (
@@ -289,6 +342,7 @@ export default function PeptideDetailPage() {
 
                     {/* ── TAB: PROTOCOLO ── */}
                     {activeTab === 'protocol' && (
+                        !isPremium ? <PaywallOverlay /> : (
                         <div className="space-y-5">
                             {d?.protocol && (
                                 <div className="glass-card p-6">
@@ -370,10 +424,12 @@ export default function PeptideDetailPage() {
                                 </p>
                             </div>
                         </div>
+                        )
                     )}
 
                     {/* ── TAB: MECANISMO ── */}
                     {activeTab === 'science' && (
+                        !isPremium ? <PaywallOverlay /> : (
                         <div className="space-y-5">
                             {d?.mechanism && d.mechanism.length > 0 && (
                                 <div className="glass-card p-6">
@@ -429,10 +485,12 @@ export default function PeptideDetailPage() {
                                 </div>
                             )}
                         </div>
+                        )
                     )}
 
                     {/* ── TAB: STACKS ── */}
                     {activeTab === 'stacks' && (
+                        !isPremium ? <PaywallOverlay /> : (
                         <div className="space-y-5">
                             {d?.interactions && d.interactions.length > 0 && (
                                 <div className="glass-card overflow-hidden">
@@ -491,6 +549,7 @@ export default function PeptideDetailPage() {
                                 </div>
                             )}
                         </div>
+                        )
                     )}
                 </div>
             </ClientLayout>

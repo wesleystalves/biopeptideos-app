@@ -78,7 +78,7 @@ const USER_SELECT = {
     id: true, email: true, name: true, displayName: true, avatarUrl: true,
     phone: true, cpf: true, whatsapp: true, birthDate: true, gender: true,
     profileType: true, plan: true, isAdmin: true,
-    emailVerified: true, createdAt: true, updatedAt: true,
+    emailVerified: true, onboardingDone: true, createdAt: true, updatedAt: true,
     _count: { select: { orders: true } },
 };
 
@@ -132,6 +132,17 @@ export class AuthController {
         const data: any = { ...dto };
         if (dto.birthDate) data.birthDate = new Date(dto.birthDate);
         return this.prisma.profile.update({ where: { id: req.user.sub }, data, select: USER_SELECT });
+    }
+
+    /** PATCH /api/auth/onboarding — salva o tipo de perfil do quiz de boas-vindas */
+    @Patch('onboarding')
+    @ApiBearerAuth() @UseGuards(JwtAuthGuard)
+    async completeOnboarding(@Request() req: any, @Body() body: { profileType: string }) {
+        return this.prisma.profile.update({
+            where: { id: req.user.sub },
+            data: { profileType: body.profileType, onboardingDone: true },
+            select: { id: true, profileType: true, onboardingDone: true },
+        });
     }
 
     // ── Client Address CRUD ────────────────────────────────────────────────────
