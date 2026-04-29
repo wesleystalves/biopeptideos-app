@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
     LayoutDashboard, Users, MessageSquare, Settings, Package,
     ShieldCheck, BarChart3, Zap, LogOut, Bot, ChevronRight,
@@ -28,7 +28,14 @@ const navItems = [
 
 export default function AdminSidebar() {
     const pathname = usePathname();
+    const router = useRouter();
     const [mobileOpen, setMobileOpen] = useState(false);
+
+    function logout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        router.push("/auth/login");
+    }
 
     const SidebarContent = ({ onNavClick }: { onNavClick?: () => void }) => (
         <>
@@ -83,10 +90,10 @@ export default function AdminSidebar() {
                         <span className="text-xs text-yellow-400 font-semibold">PRE-LAUNCH</span>
                     </div>
                 </div>
-                <Link href="/auth/logout" onClick={onNavClick} className="nav-item text-red-400 hover:text-red-300 hover:bg-red-500/5">
+                <button onClick={() => { logout(); onNavClick?.(); }} className="nav-item text-red-400 hover:text-red-300 hover:bg-red-500/5 w-full">
                     <LogOut className="w-4 h-4" />
                     Sair
-                </Link>
+                </button>
             </div>
         </>
     );
