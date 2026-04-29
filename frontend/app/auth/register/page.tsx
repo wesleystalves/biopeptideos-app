@@ -1,18 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Zap, ArrowRight } from "lucide-react";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.peptideosbio.com";
 
 export default function RegisterPage() {
-    const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
+    const searchParams = useSearchParams();
+    const fromEbook = searchParams.get("from") === "ebook";
+
+    const [form, setForm] = useState({ name: "", email: "", whatsapp: "", password: "", confirm: "" });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
     function patch(k: string, v: string) {
         setForm(p => ({ ...p, [k]: v }));
+    }
+
+    // Formatar número de whatsapp enquanto digita
+    function formatWhatsapp(v: string) {
+        // Remove tudo que não é número
+        const nums = v.replace(/\D/g, "");
+        // Aplica máscara (99) 99999-9999
+        if (nums.length <= 2) return `(${nums}`;
+        if (nums.length <= 7) return `(${nums.slice(0,2)}) ${nums.slice(2)}`;
+        if (nums.length <= 11) return `(${nums.slice(0,2)}) ${nums.slice(2,7)}-${nums.slice(7)}`;
+        return `(${nums.slice(0,2)}) ${nums.slice(2,7)}-${nums.slice(7,11)}`;
     }
 
     async function handleSubmit(e: React.FormEvent) {
@@ -25,6 +40,11 @@ export default function RegisterPage() {
             setError("A senha deve ter pelo menos 6 caracteres.");
             return;
         }
+        const whatsappNums = form.whatsapp.replace(/\D/g, "");
+        if (whatsappNums.length < 10) {
+            setError("WhatsApp inválido. Digite DDD + número.");
+            return;
+        }
 
         setLoading(true);
         setError("");
@@ -33,7 +53,12 @@ export default function RegisterPage() {
             const res = await fetch(`${API}/api/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name: form.name, email: form.email, password: form.password }),
+                body: JSON.stringify({
+                    name: form.name,
+                    email: form.email,
+                    password: form.password,
+                    whatsapp: whatsappNums,
+                }),
             });
 
             if (!res.ok) {
@@ -50,8 +75,13 @@ export default function RegisterPage() {
             localStorage.setItem("token", jwt);
             localStorage.setItem("user", JSON.stringify(data.user));
 
-            // Após cadastro, leva para o painel
-            window.location.href = "/painel";
+            // Se veio do ebook → vai para página de obrigado (rastreia lead)
+            // Caso contrário → painel
+            if (fromEbook) {
+                window.location.href = "/ebook/obrigado";
+            } else {
+                window.location.href = "/painel";
+            }
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -74,9 +104,13 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="glass-card p-8">
-                    <h1 className="text-xl font-bold text-white mb-1">Criar conta</h1>
+                    <h1 className="text-xl font-bold text-white mb-1">
+                        {fromEbook ? "Criar acesso grátis" : "Criar conta"}
+                    </h1>
                     <p className="text-slate-400 text-sm mb-6">
-                        Crie sua conta gratuita e acesse a plataforma
+                        {fromEbook
+                            ? "📚 Cadastre-se e acesse o Código Secreto dos Peptídeos"
+                            : "Crie sua conta gratuita e acesse a plataforma"}
                     </p>
 
                     {error && (
@@ -107,6 +141,21 @@ export default function RegisterPage() {
                                 onChange={e => patch("email", e.target.value)}
                                 required
                             />
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="text-xs text-slate-400 font-medium">
+                                WhatsApp <span style={{ color: '#00e5cc' }}>*</span>
+                            </label>
+                            <input
+                                type="tel"
+                                className="input w-full"
+                                placeholder="(47) 99999-9999"
+                                value={form.whatsapp}
+                                onChange={e => patch("whatsapp", formatWhatsapp(e.target.value))}
+                                maxLength={15}
+                                required
+                            />
+                            <p className="text-xs text-slate-600">Usado para suporte e novidades exclusivas</p>
                         </div>
                         <div className="space-y-1.5">
                             <label className="text-xs text-slate-400 font-medium">Senha</label>

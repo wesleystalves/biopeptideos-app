@@ -127,7 +127,7 @@ export default function EbookPage() {
                         </>
                     ) : (
                         <>
-                            <Link href="/auth/register"
+                            <Link href="/auth/register?from=ebook"
                                 style={{ background: `linear-gradient(135deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '9px 20px', borderRadius: '10px', textDecoration: 'none', fontSize: '13px', fontWeight: 700, boxShadow: '0 4px 16px rgba(91,138,245,0.3)' }}>
                                 Criar acesso grátis
                             </Link>
@@ -226,10 +226,10 @@ export default function EbookPage() {
                 </p>
 
                 <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '28px' }}>
-                    <a href="#checkout"
+                    <Link href={isLoggedIn ? '/painel' : '/auth/register?from=ebook'}
                         style={{ background: `linear-gradient(135deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '16px 36px', borderRadius: '12px', fontWeight: 800, fontSize: '16px', textDecoration: 'none', boxShadow: '0 8px 32px rgba(91,138,245,0.35)' }}>
-                        Quero Acessar Agora →
-                    </a>
+                        {isLoggedIn ? 'Acessar Painel →' : 'Quero Acessar Agora →'}
+                    </Link>
                     <a href="#conteudo"
                         style={{ ...GLASS, color: '#cbd5e1', padding: '16px 28px', borderRadius: '12px', fontWeight: 600, fontSize: '15px', textDecoration: 'none' }}>
                         Ver conteúdo
