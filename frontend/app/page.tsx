@@ -25,6 +25,9 @@ export default function HomePage() {
             <Link href="/auth/login" className="text-sm text-slate-400 hover:text-white transition-colors">
               Entrar
             </Link>
+            <Link href="/painel" className="text-sm text-slate-400 hover:text-white transition-colors hidden md:block">
+              Painel
+            </Link>
             <Link href="/catalog" className="btn-primary text-xs">
               Explorar Produtos
             </Link>
