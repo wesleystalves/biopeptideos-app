@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -39,6 +39,8 @@ const ACCENT = '#00e5cc';
 
 export default function EbookPage() {
     const router = useRouter();
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const [videoMuted, setVideoMuted] = useState(true);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [coupon, setCoupon] = useState('');
@@ -102,24 +104,44 @@ export default function EbookPage() {
         <main style={{ background: BG, minHeight: '100vh', color: '#fff', fontFamily: "'Inter', system-ui, sans-serif" }}>
 
             {/* ── HEADER ── */}
-            <header style={{ padding: '18px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)', position: 'sticky', top: 0, zIndex: 50, background: 'rgba(7,26,44,0.85)' }}>
+            <header style={{ padding: '14px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)', position: 'sticky', top: 0, zIndex: 50, background: 'rgba(7,26,44,0.92)' }}>
                 <Link
                     href={isLoggedIn ? '/painel' : '/'}
-                    style={{ fontSize: '18px', fontWeight: 800, background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textDecoration: 'none' }}
+                    style={{ fontSize: '18px', fontWeight: 800, background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textDecoration: 'none', flexShrink: 0 }}
                 >
                     ✦ PeptídeosBio
                 </Link>
-                {isLoggedIn ? (
-                    <button onClick={() => router.push('/ebook/reader')}
-                        style={{ background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '9px 22px', borderRadius: '10px', border: 'none', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>
-                        Acessar Ebook →
-                    </button>
-                ) : (
-                    <Link href="/auth/login?redirect=/ebook/reader"
-                        style={{ ...GLASS, color: '#e2e8f0', padding: '9px 22px', borderRadius: '10px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}>
-                        Entrar
-                    </Link>
-                )}
+
+                {/* Nav direita */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                    {isLoggedIn ? (
+                        <>
+                            <Link href="/painel"
+                                style={{ ...GLASS, color: '#94afc7', padding: '8px 18px', borderRadius: '10px', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}>
+                                Painel
+                            </Link>
+                            <button onClick={() => router.push('/ebook/reader')}
+                                style={{ background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '9px 22px', borderRadius: '10px', border: 'none', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>
+                                Acessar Ebook →
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link href="/auth/register"
+                                style={{ background: `linear-gradient(135deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '9px 20px', borderRadius: '10px', textDecoration: 'none', fontSize: '13px', fontWeight: 700, boxShadow: '0 4px 16px rgba(91,138,245,0.3)' }}>
+                                Criar acesso grátis
+                            </Link>
+                            <Link href="/painel"
+                                style={{ ...GLASS, color: '#94afc7', padding: '8px 16px', borderRadius: '10px', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}>
+                                Painel
+                            </Link>
+                            <Link href="/auth/login?redirect=/ebook/reader"
+                                style={{ ...GLASS, color: '#e2e8f0', padding: '8px 18px', borderRadius: '10px', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}>
+                                Entrar
+                            </Link>
+                        </>
+                    )}
+                </div>
             </header>
 
             {/* ── HERO ── */}
@@ -149,12 +171,14 @@ export default function EbookPage() {
                     background: '#000',
                 }}>
                     <video
+                        ref={videoRef}
                         src="/hero-video.mp4"
                         autoPlay
                         muted
                         loop
                         playsInline
                         controls
+                        preload="auto"
                         style={{
                             width: '100%',
                             height: '100%',
@@ -163,6 +187,38 @@ export default function EbookPage() {
                             background: '#000',
                         }}
                     />
+                    {videoMuted && (
+                        <button
+                            onClick={() => {
+                                if (videoRef.current) {
+                                    videoRef.current.muted = false;
+                                    videoRef.current.volume = 1;
+                                    setVideoMuted(false);
+                                }
+                            }}
+                            style={{
+                                position: 'absolute',
+                                top: '12px',
+                                right: '12px',
+                                background: 'rgba(0,0,0,0.78)',
+                                color: '#fff',
+                                border: '1px solid rgba(255,255,255,0.2)',
+                                borderRadius: '8px',
+                                padding: '8px 14px',
+                                fontSize: '13px',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                                backdropFilter: 'blur(6px)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                zIndex: 10,
+                                lineHeight: 1,
+                            }}
+                        >
+                            🔇 Ativar Som
+                        </button>
+                    )}
                 </div>
 
                 <p style={{ fontSize: '18px', color: '#94afc7', lineHeight: 1.75, marginBottom: '44px', maxWidth: '560px', margin: '0 auto 44px' }}>
