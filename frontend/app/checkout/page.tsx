@@ -51,13 +51,14 @@ function CheckoutInner() {
     const planParam = searchParams.get("plan") || "";
     const emailParam = searchParams.get("email") || "";
     const nameParam = searchParams.get("name") || "";
+    const whatsappParam = searchParams.get("whatsapp") || "";
     const productParam = searchParams.get("product") || "";
     const isEbookFlow = productParam === "ebook" && !!planParam;
 
     const [form, setForm] = useState({
-        name: nameParam, email: emailParam, phone: "", cpf: "", country: "BR",
+        name: nameParam, email: emailParam, phone: whatsappParam, cpf: "", country: "BR",
     });
-    const [phoneMasked, setPhoneMasked] = useState("");
+    const [phoneMasked, setPhoneMasked] = useState(whatsappParam ? maskPhone(whatsappParam) : "");
     const [cpfMasked, setCpfMasked] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -80,14 +81,14 @@ function CheckoutInner() {
             .catch(() => { });
     }, []);
 
-    // Pré-preencher com dados do usuário logado
+    // Pré-preencher com dados do usuário logado (sem sobrescrever o que veio da URL)
     useEffect(() => {
         const userStr = localStorage.getItem("user");
         const token = localStorage.getItem("token");
         if (userStr) {
             try {
                 const u = JSON.parse(userStr);
-                const phone = u.phone || "";
+                const phone = whatsappParam || u.phone || u.whatsapp || "";
                 const cpf = u.cpfCnpj || u.cpf || "";
                 setForm(p => ({
                     ...p,
@@ -103,7 +104,7 @@ function CheckoutInner() {
             fetch(`${API}/api/profiles/me`, { headers: { Authorization: `Bearer ${token}` } })
                 .then(r => r.json())
                 .then(data => {
-                    const phone = data.phone || "";
+                    const phone = whatsappParam || data.phone || data.whatsapp || "";
                     const cpf = data.cpfCnpj || data.cpf || "";
                     setForm(p => ({
                         ...p,
@@ -115,8 +116,11 @@ function CheckoutInner() {
                     if (phone) setPhoneMasked(maskPhone(phone));
                     if (cpf) setCpfMasked(maskCPF(cpf));
                 }).catch(() => { });
+        } else if (whatsappParam) {
+            // Sem usuário logado mas tem whatsapp da URL
+            setPhoneMasked(maskPhone(whatsappParam));
         }
-    }, [emailParam]);
+    }, [emailParam, whatsappParam]);
 
     function patch(k: string, v: string) { setForm(p => ({ ...p, [k]: v })); }
 
@@ -340,7 +344,21 @@ function CheckoutInner() {
                         {/* Formulário */}
                         <div className="md:col-span-3 space-y-5">
                             <div className="glass-card p-6 space-y-4">
-                                <h2 className="font-semibold text-white text-sm">Dados do cliente</h2>
+                                {isEbookFlow && (
+                                    <div style={{ display: 'flex', gap: '8px', marginBottom: '4px' }}>
+                                        <div style={{ flex: 1, height: '3px', borderRadius: '2px', background: 'rgba(91,138,245,0.4)' }} />
+                                        <div style={{ flex: 1, height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg,#5b8af5,#00e5cc)' }} />
+                                    </div>
+                                )}
+                                <h2 className="font-semibold text-white text-sm">
+                                    {isEbookFlow ? 'Etapa 2 de 2 — Finalizar pagamento' : 'Dados do cliente'}
+                                </h2>
+                                {isEbookFlow && whatsappParam && (
+                                    <div style={{ background: 'rgba(0,229,204,0.07)', border: '1px solid rgba(0,229,204,0.2)', borderRadius: '10px', padding: '10px 14px', fontSize: '13px', color: '#64748b', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                        <span>✅ <strong style={{ color: '#94a3b8' }}>{form.name}</strong> — {form.email}</span>
+                                        <span>📱 WhatsApp: <strong style={{ color: '#94a3b8' }}>{phoneMasked}</strong></span>
+                                    </div>
+                                )}
 
                                 {error && (
                                     <div className="px-4 py-3 rounded-xl text-sm"

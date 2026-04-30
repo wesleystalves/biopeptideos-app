@@ -41,14 +41,27 @@ export default function EbookPage() {
     const router = useRouter();
     const videoRef = useRef<HTMLVideoElement>(null);
     const [videoMuted, setVideoMuted] = useState(true);
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [coupon, setCoupon] = useState('');
     const [plan, setPlan] = useState<'basic' | 'premium'>('basic');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
     const [prices, setPrices] = useState<{ basic: number; premium: number }>({ basic: 9.9, premium: 29.9 });
+
+    // Step 1: captura de lead
+    const [leadName, setLeadName] = useState('');
+    const [leadEmail, setLeadEmail] = useState('');
+    const [leadWhatsapp, setLeadWhatsapp] = useState('');
+    const [coupon, setCoupon] = useState('');
+    const [leadLoading, setLeadLoading] = useState(false);
+    const [leadError, setLeadError] = useState('');
+    const [leadSaved, setLeadSaved] = useState(false);
+
+    // Formatar WhatsApp enquanto digita
+    function formatWa(v: string) {
+        const n = v.replace(/\D/g, '');
+        if (n.length <= 2) return `(${n}`;
+        if (n.length <= 7) return `(${n.slice(0,2)}) ${n.slice(2)}`;
+        if (n.length <= 11) return `(${n.slice(0,2)}) ${n.slice(2,7)}-${n.slice(7)}`;
+        return `(${n.slice(0,2)}) ${n.slice(2,7)}-${n.slice(7,11)}`;
+    }
 
     // Carrega preços do banco
     useEffect(() => {
@@ -74,30 +87,59 @@ export default function EbookPage() {
                     router.replace('/ebook/reader');
                     return;
                 }
-                // free: fica na página mas logado
             } catch { /* ignore */ }
             setIsLoggedIn(true);
-            // pré-preenche email do usuário logado
+            // pré-preenche dados do usuário logado
             try {
                 const userData = userStr ? JSON.parse(userStr) : null;
-                if (userData?.email) setEmail(userData.email);
-                if (userData?.name) setName(userData.name);
+                if (userData?.email) setLeadEmail(userData.email);
+                if (userData?.name) setLeadName(userData.name);
+                if (userData?.whatsapp) setLeadWhatsapp(formatWa(userData.whatsapp));
             } catch { }
         }
     }, [router]);
 
-    // Redireciona para /checkout com os dados preenchidos
-    const handleCheckout = (e: React.FormEvent) => {
+    // Passo 1 — salvar lead e ir para checkout
+    async function handleLeadCapture(e: React.FormEvent) {
         e.preventDefault();
+        const waDigits = leadWhatsapp.replace(/\D/g, '');
+        if (!leadName.trim() || !leadEmail.trim()) {
+            setLeadError('Nome e email são obrigatórios.');
+            return;
+        }
+        if (waDigits.length < 10) {
+            setLeadError('WhatsApp inválido. Informe DDD + número.');
+            return;
+        }
+        setLeadLoading(true);
+        setLeadError('');
+
+        // Salva lead no backend (fire-and-forget — não bloqueia o fluxo)
+        fetch(`${API}/api/crm/leads/public`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: leadName,
+                email: leadEmail,
+                whatsapp: waDigits,
+                source: 'ebook_checkout',
+                plan,
+            }),
+        }).catch(() => { /* silencioso — não bloqueia */ });
+
+        setLeadSaved(true);
+
+        // Vai para /checkout com dados pré-preenchidos
         const params = new URLSearchParams({
             plan,
             product: 'ebook',
-            email: email || '',
-            name: name || '',
+            name: leadName,
+            email: leadEmail,
+            whatsapp: waDigits,
             ...(coupon ? { coupon } : {}),
         });
         router.push(`/checkout?${params.toString()}`);
-    };
+    }
 
 
     return (
@@ -320,22 +362,40 @@ export default function EbookPage() {
                         ))}
                     </div>
 
-                    <form onSubmit={handleCheckout} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <form onSubmit={handleLeadCapture} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {/* Indicador de etapa */}
+                        <div style={{ display: 'flex', gap: '8px', marginBottom: '4px' }}>
+                            <div style={{ flex: 1, height: '3px', borderRadius: '2px', background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})` }} />
+                            <div style={{ flex: 1, height: '3px', borderRadius: '2px', background: 'rgba(255,255,255,0.1)' }} />
+                        </div>
+                        <p style={{ color: '#64748b', fontSize: '12px', marginBottom: '4px' }}>
+                            Etapa 1 de 2 — Seus dados de contato
+                        </p>
+
                         <input
                             type="text"
-                            placeholder="Seu nome completo"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Seu nome completo *"
+                            value={leadName}
+                            onChange={(e) => setLeadName(e.target.value)}
                             required
                             style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '14px 16px', color: '#fff', fontSize: '15px', outline: 'none' }}
                         />
                         <input
                             type="email"
-                            placeholder="Seu melhor e-mail"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Seu melhor e-mail *"
+                            value={leadEmail}
+                            onChange={(e) => setLeadEmail(e.target.value)}
                             required
                             style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '14px 16px', color: '#fff', fontSize: '15px', outline: 'none' }}
+                        />
+                        <input
+                            type="tel"
+                            placeholder="WhatsApp (DDD + número) *"
+                            value={leadWhatsapp}
+                            onChange={(e) => setLeadWhatsapp(formatWa(e.target.value))}
+                            maxLength={15}
+                            required
+                            style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${leadWhatsapp.replace(/\D/g,'').length >= 10 ? 'rgba(0,229,204,0.35)' : 'rgba(255,255,255,0.1)'}`, borderRadius: '10px', padding: '14px 16px', color: '#fff', fontSize: '15px', outline: 'none' }}
                         />
                         <input
                             type="text"
@@ -344,17 +404,29 @@ export default function EbookPage() {
                             onChange={(e) => setCoupon(e.target.value)}
                             style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '12px 16px', color: '#fff', fontSize: '14px', outline: 'none' }}
                         />
-                        {error && (
+
+                        {leadError && (
                             <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: '10px', padding: '12px 16px', color: '#f87171', fontSize: '14px' }}>
-                                {error}
+                                {leadError}
                             </div>
                         )}
-                        <button type="submit" disabled={loading}
-                            style={{ background: `linear-gradient(135deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '16px', borderRadius: '12px', fontWeight: 800, fontSize: '16px', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, boxShadow: '0 6px 24px rgba(91,138,245,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                            {loading
-                                ? <><span style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} /> Processando...</>
-                                : <>Acessar Agora → R$ {fmtPrice(prices[plan])}</>}
+
+                        {leadSaved && (
+                            <div style={{ background: 'rgba(0,229,204,0.08)', border: '1px solid rgba(0,229,204,0.25)', borderRadius: '10px', padding: '10px 14px', color: '#00e5cc', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                ✅ Dados salvos! Redirecionando para pagamento...
+                            </div>
+                        )}
+
+                        <button type="submit" disabled={leadLoading || leadSaved}
+                            style={{ background: `linear-gradient(135deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '16px', borderRadius: '12px', fontWeight: 800, fontSize: '16px', border: 'none', cursor: (leadLoading || leadSaved) ? 'not-allowed' : 'pointer', opacity: (leadLoading || leadSaved) ? 0.8 : 1, boxShadow: '0 6px 24px rgba(91,138,245,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                            {leadLoading
+                                ? <><span style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} /> Salvando...</>
+                                : <>Continuar para pagamento → R$ {fmtPrice(prices[plan])}</>}
                         </button>
+
+                        <p style={{ color: '#334155', fontSize: '11px', textAlign: 'center', marginTop: '4px' }}>
+                            📱 Seu WhatsApp só será usado para suporte e confirmação do pedido
+                        </p>
                     </form>
 
                     <p style={{ color: '#334155', fontSize: '12px', textAlign: 'center', marginTop: '18px' }}>
