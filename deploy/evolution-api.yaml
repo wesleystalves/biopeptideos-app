@@ -1,0 +1,187 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: evolution-api
+  namespace: runtime-biopeptideos
+  labels:
+    app: evolution-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: evolution-api
+  template:
+    metadata:
+      labels:
+        app: evolution-api
+    spec:
+      containers:
+        - name: evolution-api
+          # Evolution API — sempre usa 'latest' (versão mais atual do Docker Hub)
+          # Versão atual: equivalente a v2.3.7+ — não mudar para tags antigas
+          image: atendai/evolution-api:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            # ── Servidor ──────────────────────────────────────────────────
+            - name: SERVER_TYPE
+              value: "http"
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SERVER_URL
+              value: "https://evolution.peptideosbio.com"
+
+            # ── Autenticação ───────────────────────────────────────────────
+            - name: AUTHENTICATION_TYPE
+              value: "apikey"
+            - name: AUTHENTICATION_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: evolution-secret
+                  key: api-key
+            - name: AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES
+              value: "true"
+
+            # ── Banco de dados PostgreSQL (mesmo Postgres da app, schema separado) ─
+            - name: DATABASE_ENABLED
+              value: "true"
+            - name: DATABASE_PROVIDER
+              value: "postgresql"
+            - name: DATABASE_CONNECTION_URI
+              value: "postgresql://peptideos:peptideos2026@postgres.runtime-biopeptideos.svc.cluster.local:5432/peptideoshealth?schema=evolution"
+            - name: DATABASE_CONNECTION_CLIENT_NAME
+              value: "evolution_api"
+            - name: DATABASE_SAVE_DATA_INSTANCE
+              value: "true"
+            - name: DATABASE_SAVE_DATA_NEW_MESSAGE
+              value: "true"
+            - name: DATABASE_SAVE_MESSAGE_UPDATE
+              value: "true"
+            - name: DATABASE_SAVE_DATA_CONTACTS
+              value: "true"
+            - name: DATABASE_SAVE_DATA_CHATS
+              value: "true"
+            - name: DATABASE_SAVE_DATA_LABELS
+              value: "true"
+            - name: DATABASE_SAVE_DATA_HISTORIC
+              value: "true"
+
+            # ── Cache (Redis desabilitado — usa memória) ───────────────────
+            - name: CACHE_REDIS_ENABLED
+              value: "false"
+            - name: CACHE_LOCAL_ENABLED
+              value: "true"
+
+            # ── Webhook global (aponta para nosso backend) ─────────────────
+            - name: WEBHOOK_GLOBAL_ENABLED
+              value: "false"
+            - name: WEBHOOK_GLOBAL_URL
+              value: "https://api.peptideosbio.com/api/channels/webhook/whatsapp"
+            - name: WEBHOOK_GLOBAL_WEBHOOK_BY_EVENTS
+              value: "true"
+
+            # ── Logs ───────────────────────────────────────────────────────
+            - name: LOG_LEVEL
+              value: "ERROR,WARN,DEBUG,INFO,LOG,VERBOSE,DARK,WEBHOOKS"
+            - name: LOG_COLOR
+              value: "true"
+
+            # ── QRCode ─────────────────────────────────────────────────────
+            - name: QRCODE_LIMIT
+              value: "30"
+            - name: QRCODE_COLOR
+              value: "#175196"
+
+            # ── Instâncias ─────────────────────────────────────────────────
+            - name: DEL_INSTANCE
+              value: "false"
+            - name: LANGUAGE
+              value: "pt-BR"
+
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+          volumeMounts:
+            - name: evolution-data
+              mountPath: /evolution/instances
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+
+      volumes:
+        - name: evolution-data
+          persistentVolumeClaim:
+            claimName: evolution-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: evolution-api
+  namespace: runtime-biopeptideos
+spec:
+  selector:
+    app: evolution-api
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: evolution-pvc
+  namespace: runtime-biopeptideos
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 2Gi
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: evolution-api
+  namespace: runtime-biopeptideos
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  rules:
+    - host: evolution.peptideosbio.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: evolution-api
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - evolution.peptideosbio.com
+      secretName: evolution-api-tls
