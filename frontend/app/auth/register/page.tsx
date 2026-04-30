@@ -10,6 +10,8 @@ const API = process.env.NEXT_PUBLIC_API_URL || "https://api.peptideosbio.com";
 function RegisterInner() {
     const searchParams = useSearchParams();
     const fromEbook = searchParams.get("from") === "ebook";
+    const planParam = searchParams.get("plan") || "basic";
+    const couponParam = searchParams.get("coupon") || "";
 
     const [form, setForm] = useState({ name: "", email: "", whatsapp: "", password: "", confirm: "" });
     const [loading, setLoading] = useState(false);
@@ -75,10 +77,18 @@ function RegisterInner() {
             localStorage.setItem("token", jwt);
             localStorage.setItem("user", JSON.stringify(data.user));
 
-            // Se veio do ebook → vai para página de obrigado (rastreia lead)
-            // Caso contrário → painel
+            // Se veio do ebook → vai para o checkout com dados pré-preenchidos
             if (fromEbook) {
-                window.location.href = "/ebook/obrigado";
+                const whatsappNums = form.whatsapp.replace(/\D/g, "");
+                const params = new URLSearchParams({
+                    plan: planParam,
+                    product: "ebook",
+                    name: form.name,
+                    email: form.email,
+                    whatsapp: whatsappNums,
+                    ...(couponParam ? { coupon: couponParam } : {}),
+                });
+                window.location.href = `/checkout?${params.toString()}`;
             } else {
                 window.location.href = "/painel";
             }

@@ -46,15 +46,9 @@ export default function EbookPage() {
     const [prices, setPrices] = useState<{ basic: number; premium: number }>({ basic: 9.9, premium: 29.9 });
 
     // Step 1: captura de lead
-    const [leadName, setLeadName] = useState('');
-    const [leadEmail, setLeadEmail] = useState('');
-    const [leadWhatsapp, setLeadWhatsapp] = useState('');
     const [coupon, setCoupon] = useState('');
-    const [leadLoading, setLeadLoading] = useState(false);
-    const [leadError, setLeadError] = useState('');
-    const [leadSaved, setLeadSaved] = useState(false);
 
-    // Formatar WhatsApp enquanto digita
+    // Formatar WhatsApp enquanto digita (mantido para uso futuro)
     function formatWa(v: string) {
         const n = v.replace(/\D/g, '');
         if (n.length <= 2) return `(${n}`;
@@ -89,56 +83,17 @@ export default function EbookPage() {
                 }
             } catch { /* ignore */ }
             setIsLoggedIn(true);
-            // pré-preenche dados do usuário logado
-            try {
-                const userData = userStr ? JSON.parse(userStr) : null;
-                if (userData?.email) setLeadEmail(userData.email);
-                if (userData?.name) setLeadName(userData.name);
-                if (userData?.whatsapp) setLeadWhatsapp(formatWa(userData.whatsapp));
-            } catch { }
         }
     }, [router]);
 
-    // Passo 1 — salvar lead e ir para checkout
-    async function handleLeadCapture(e: React.FormEvent) {
-        e.preventDefault();
-        const waDigits = leadWhatsapp.replace(/\D/g, '');
-        if (!leadName.trim() || !leadEmail.trim()) {
-            setLeadError('Nome e email são obrigatórios.');
-            return;
-        }
-        if (waDigits.length < 10) {
-            setLeadError('WhatsApp inválido. Informe DDD + número.');
-            return;
-        }
-        setLeadLoading(true);
-        setLeadError('');
-
-        // Salva lead no backend (fire-and-forget — não bloqueia o fluxo)
-        fetch(`${API}/api/crm/leads/public`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name: leadName,
-                email: leadEmail,
-                whatsapp: waDigits,
-                source: 'ebook_checkout',
-                plan,
-            }),
-        }).catch(() => { /* silencioso — não bloqueia */ });
-
-        setLeadSaved(true);
-
-        // Vai para /checkout com dados pré-preenchidos
+    // Ir para registro — o cadastro é o lead
+    function handleGoToRegister() {
         const params = new URLSearchParams({
+            from: 'ebook',
             plan,
-            product: 'ebook',
-            name: leadName,
-            email: leadEmail,
-            whatsapp: waDigits,
             ...(coupon ? { coupon } : {}),
         });
-        router.push(`/checkout?${params.toString()}`);
+        router.push(`/auth/register?${params.toString()}`);
     }
 
 
@@ -362,41 +317,8 @@ export default function EbookPage() {
                         ))}
                     </div>
 
-                    <form onSubmit={handleLeadCapture} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                        {/* Indicador de etapa */}
-                        <div style={{ display: 'flex', gap: '8px', marginBottom: '4px' }}>
-                            <div style={{ flex: 1, height: '3px', borderRadius: '2px', background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})` }} />
-                            <div style={{ flex: 1, height: '3px', borderRadius: '2px', background: 'rgba(255,255,255,0.1)' }} />
-                        </div>
-                        <p style={{ color: '#64748b', fontSize: '12px', marginBottom: '4px' }}>
-                            Etapa 1 de 2 — Seus dados de contato
-                        </p>
-
-                        <input
-                            type="text"
-                            placeholder="Seu nome completo *"
-                            value={leadName}
-                            onChange={(e) => setLeadName(e.target.value)}
-                            required
-                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '14px 16px', color: '#fff', fontSize: '15px', outline: 'none' }}
-                        />
-                        <input
-                            type="email"
-                            placeholder="Seu melhor e-mail *"
-                            value={leadEmail}
-                            onChange={(e) => setLeadEmail(e.target.value)}
-                            required
-                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '14px 16px', color: '#fff', fontSize: '15px', outline: 'none' }}
-                        />
-                        <input
-                            type="tel"
-                            placeholder="WhatsApp (DDD + número) *"
-                            value={leadWhatsapp}
-                            onChange={(e) => setLeadWhatsapp(formatWa(e.target.value))}
-                            maxLength={15}
-                            required
-                            style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${leadWhatsapp.replace(/\D/g,'').length >= 10 ? 'rgba(0,229,204,0.35)' : 'rgba(255,255,255,0.1)'}`, borderRadius: '10px', padding: '14px 16px', color: '#fff', fontSize: '15px', outline: 'none' }}
-                        />
+                    {/* CTA → Registro (o cadastro é o lead) */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         <input
                             type="text"
                             placeholder="Cupom de desconto (opcional)"
@@ -405,29 +327,23 @@ export default function EbookPage() {
                             style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '12px 16px', color: '#fff', fontSize: '14px', outline: 'none' }}
                         />
 
-                        {leadError && (
-                            <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: '10px', padding: '12px 16px', color: '#f87171', fontSize: '14px' }}>
-                                {leadError}
-                            </div>
-                        )}
-
-                        {leadSaved && (
-                            <div style={{ background: 'rgba(0,229,204,0.08)', border: '1px solid rgba(0,229,204,0.25)', borderRadius: '10px', padding: '10px 14px', color: '#00e5cc', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                ✅ Dados salvos! Redirecionando para pagamento...
-                            </div>
-                        )}
-
-                        <button type="submit" disabled={leadLoading || leadSaved}
-                            style={{ background: `linear-gradient(135deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '16px', borderRadius: '12px', fontWeight: 800, fontSize: '16px', border: 'none', cursor: (leadLoading || leadSaved) ? 'not-allowed' : 'pointer', opacity: (leadLoading || leadSaved) ? 0.8 : 1, boxShadow: '0 6px 24px rgba(91,138,245,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                            {leadLoading
-                                ? <><span style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} /> Salvando...</>
-                                : <>Continuar para pagamento → R$ {fmtPrice(prices[plan])}</>}
+                        <button
+                            onClick={handleGoToRegister}
+                            style={{ background: `linear-gradient(135deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '18px 16px', borderRadius: '12px', fontWeight: 800, fontSize: '17px', border: 'none', cursor: 'pointer', boxShadow: '0 6px 24px rgba(91,138,245,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'opacity 0.2s' }}
+                        >
+                            🚀 Registrar agora e aproveite os benefícios
                         </button>
 
-                        <p style={{ color: '#334155', fontSize: '11px', textAlign: 'center', marginTop: '4px' }}>
-                            📱 Seu WhatsApp só será usado para suporte e confirmação do pedido
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                            <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.08)' }} />
+                            <span style={{ color: '#334155', fontSize: '12px' }}>ou</span>
+                            <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.08)' }} />
+                        </div>
+
+                        <p style={{ color: '#4a6580', fontSize: '12px', textAlign: 'center', margin: 0 }}>
+                            Já tem conta? <Link href="/auth/login" style={{ color: BRAND, textDecoration: 'none' }}>Entrar e comprar</Link>
                         </p>
-                    </form>
+                    </div>
 
                     <p style={{ color: '#334155', fontSize: '12px', textAlign: 'center', marginTop: '18px' }}>
                         🔒 Pagamento seguro via PIX, Boleto ou Cartão
