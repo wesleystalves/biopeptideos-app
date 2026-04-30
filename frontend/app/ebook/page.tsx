@@ -124,9 +124,13 @@ export default function EbookPage() {
                         </>
                     ) : (
                         <>
+                            <Link href="/catalog"
+                                style={{ ...GLASS, color: '#94afc7', padding: '8px 16px', borderRadius: '10px', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}>
+                                Catálogo
+                            </Link>
                             <Link href="/auth/register?from=ebook"
                                 style={{ background: `linear-gradient(135deg, ${BRAND}, ${ACCENT})`, color: '#fff', padding: '9px 20px', borderRadius: '10px', textDecoration: 'none', fontSize: '13px', fontWeight: 700, boxShadow: '0 4px 16px rgba(91,138,245,0.3)' }}>
-                                Criar acesso grátis
+                                Criar acesso
                             </Link>
                             <Link href="/painel"
                                 style={{ ...GLASS, color: '#94afc7', padding: '8px 16px', borderRadius: '10px', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}>
