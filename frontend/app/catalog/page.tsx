@@ -120,8 +120,8 @@ export default function CatalogPage() {
                     </>
                 )}
 
-                {/* Cart FAB — posicionado acima do botão WhatsApp (bottom-24) */}
-                <a href="/cart" className="fixed bottom-24 right-6 w-14 h-14 bg-brand-600 rounded-full flex items-center justify-center shadow-2xl shadow-brand-600/40 hover:bg-brand-500 transition-colors z-40">
+                {/* Cart FAB — acima do WhatsApp (bottom-28 = 112px) */}
+                <a href="/cart" style={{ position: 'fixed', bottom: '116px', right: '24px', zIndex: 9997 }} className="w-14 h-14 bg-brand-600 rounded-full flex items-center justify-center shadow-2xl shadow-brand-600/40 hover:bg-brand-500 transition-colors">
                     <ShoppingCart className="w-6 h-6 text-white" />
                 </a>
             </div>
