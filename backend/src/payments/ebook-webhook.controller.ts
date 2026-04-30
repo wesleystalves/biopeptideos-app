@@ -114,15 +114,21 @@ export class EbookWebhookController {
             }
         }
 
-        // ── 6. Registrar compra ─────────────────────────────────────────────
-        await this.prisma.ebookPurchase.create({
-            data: {
+        // ── 6. Registrar compra (upsert — atualiza pending→paid se já existir) ──────
+        await this.prisma.ebookPurchase.upsert({
+            where: { gatewayId },
+            create: {
                 userId: profile.id,
                 plan,
                 amount,
                 gateway: 'asaas',
                 gatewayId,
                 status: 'paid',
+            },
+            update: {
+                status: 'paid',
+                amount,
+                plan,
             },
         });
 

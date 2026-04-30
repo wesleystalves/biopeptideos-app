@@ -194,6 +194,25 @@ export class EbookCheckoutController {
                 const paymentId = charge.data.id;
                 this.logger.log(`PIX criado: ${paymentId} — R$${finalPrice} (${dto.plan})`);
 
+                // ▒▒ SALVAR PENDING IMEDIATAMENTE — garante histórico mesmo se webhook falhar ▒▒
+                const existingPurchase = await this.prisma.ebookPurchase.findUnique({ where: { gatewayId: paymentId } });
+                if (!existingPurchase) {
+                    const userRecord = await this.prisma.profile.findUnique({ where: { email: dto.email } });
+                    if (userRecord) {
+                        await this.prisma.ebookPurchase.create({
+                            data: {
+                                userId: userRecord.id,
+                                plan: dto.plan,
+                                amount: finalPrice,
+                                gateway: 'asaas',
+                                gatewayId: paymentId,
+                                status: 'pending',
+                            },
+                        });
+                        this.logger.log(`⏳ ebookPurchase pending salvo: ${paymentId}`);
+                    }
+                }
+
                 let pixQrCode = '';
                 let pixQrCodeUrl = '';
                 try {
@@ -262,6 +281,25 @@ export class EbookCheckoutController {
             const paymentId = charge.data.id;
             const status = charge.data.status; // CONFIRMED, PENDING, etc.
             this.logger.log(`Cartão ${billingType} criado: ${paymentId} status=${status} — R$${finalPrice} (${dto.plan})`);
+
+            // ▒▒ SALVAR IMEDIATAMENTE no histórico ▒▒
+            const userForCard = await this.prisma.profile.findUnique({ where: { email: dto.email } });
+            if (userForCard) {
+                const existingCard = await this.prisma.ebookPurchase.findUnique({ where: { gatewayId: paymentId } });
+                if (!existingCard) {
+                    await this.prisma.ebookPurchase.create({
+                        data: {
+                            userId: userForCard.id,
+                            plan: dto.plan,
+                            amount: finalPrice,
+                            gateway: 'asaas',
+                            gatewayId: paymentId,
+                            status: status === 'CONFIRMED' ? 'paid' : 'pending',
+                        },
+                    });
+                    this.logger.log(`✅ ebookPurchase cartão salvo: ${paymentId} (${status})`);
+                }
+            }
 
             if (couponId) await this.couponService.incrementUsage(couponId);
 
