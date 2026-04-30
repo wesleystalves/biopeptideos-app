@@ -14,11 +14,11 @@ import { randomBytes } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
 import { EmailService } from '../email/email.service';
 
-// R$9.90 → plan "basic" (ebook)
-// R$29.90 → plan "premium" (ebook + IA)
-const PLAN_BASIC_AMOUNT = 9.9;
-const PLAN_PREMIUM_AMOUNT = 29.9;
-const PLAN_TOLERANCE = 0.1;
+// R$29.90 → plan "basic" (ebook)
+// R$89.90 → plan "premium" (ebook + IA + protocolos personalizados)
+const PLAN_BASIC_AMOUNT = 29.9;
+const PLAN_PREMIUM_AMOUNT = 89.9;
+const PLAN_TOLERANCE = 0.5;  // tolerancia maior para pagamentos com centavos
 
 @ApiTags('ebook')
 @Controller('payments/webhook/ebook')

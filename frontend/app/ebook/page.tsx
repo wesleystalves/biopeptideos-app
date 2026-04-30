@@ -43,7 +43,7 @@ export default function EbookPage() {
     const [videoMuted, setVideoMuted] = useState(true);
     const [plan, setPlan] = useState<'basic' | 'premium'>('basic');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [prices, setPrices] = useState<{ basic: number; premium: number }>({ basic: 9.9, premium: 29.9 });
+    const [prices, setPrices] = useState<{ basic: number; premium: number }>({ basic: 29.9, premium: 89.9 });
 
     // Step 1: captura de lead
     const [coupon, setCoupon] = useState('');
@@ -306,15 +306,17 @@ export default function EbookPage() {
                                 }}>
                                 {p === 'basic' ? (
                                     <>
-                                        <div style={{ fontWeight: 800, marginBottom: '6px', fontSize: '15px' }}>📘 Ebook</div>
+                                        <div style={{ fontWeight: 800, marginBottom: '4px', fontSize: '15px' }}>📘 Ebook</div>
+                                        <div style={{ color: '#64748b', fontSize: '11px', textDecoration: 'line-through', marginBottom: '2px' }}>De R$ 69,90</div>
                                         <div style={{ background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 900, fontSize: '24px' }}>R$ {fmtPrice(prices.basic)}</div>
                                         <div style={{ color: '#4a6580', fontSize: '12px', marginTop: '6px' }}>Acesso vitalício</div>
                                     </>
                                 ) : (
                                     <>
-                                        <div style={{ fontWeight: 800, marginBottom: '6px', fontSize: '15px' }}>🚀 Premium</div>
+                                        <div style={{ fontWeight: 800, marginBottom: '4px', fontSize: '15px' }}>🚀 Premium</div>
+                                        <div style={{ color: '#64748b', fontSize: '11px', textDecoration: 'line-through', marginBottom: '2px' }}>De R$ 129,90</div>
                                         <div style={{ background: `linear-gradient(90deg, ${BRAND}, ${ACCENT})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 900, fontSize: '24px' }}>R$ {fmtPrice(prices.premium)}</div>
-                                        <div style={{ color: '#4a6580', fontSize: '12px', marginTop: '6px' }}>Ebook + IA + Plataforma</div>
+                                        <div style={{ color: '#4a6580', fontSize: '12px', marginTop: '4px', lineHeight: 1.3 }}>Ebook + IA com protocolos<br/>e análise por biotipo</div>
                                     </>
                                 )}
                             </button>

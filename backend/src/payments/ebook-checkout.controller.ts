@@ -53,11 +53,11 @@ export class EbookCheckoutDto {
 const PLAN_DEFAULTS = {
     basic: {
         name: 'Ebook — O Código Secreto dos Peptídeos',
-        fallbackPrice: parseFloat(process.env.PRICE_BASIC || '9.90'),
+        fallbackPrice: parseFloat(process.env.PRICE_BASIC || '29.90'),
     },
     premium: {
-        name: 'Plano Premium — Ebook + IA + Plataforma BioPeptidios',
-        fallbackPrice: parseFloat(process.env.PRICE_PREMIUM || '29.90'),
+        name: 'Plano Premium — Ebook + IA com Protocolos Personalizados',
+        fallbackPrice: parseFloat(process.env.PRICE_PREMIUM || '89.90'),
     },
 };
 
@@ -99,7 +99,7 @@ export class EbookCheckoutController {
         const prices = await this.getPrices();
         return {
             basic: { price: prices.basic, label: 'Ebook — Acesso vitalício' },
-            premium: { price: prices.premium, label: 'Ebook + IA + Plataforma' },
+            premium: { price: prices.premium, label: 'Ebook + IA com Protocolos Personalizados' },
         };
     }
 

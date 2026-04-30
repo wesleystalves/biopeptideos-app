@@ -7,11 +7,13 @@ import { ShieldCheck, CreditCard, ArrowRight, Loader2 } from "lucide-react";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.peptideosbio.com";
 
-const EBOOK_PRICES: Record<string, number> = { basic: 9.90, premium: 29.90 };
+const EBOOK_PRICES: Record<string, number> = { basic: 29.90, premium: 89.90 };
 const EBOOK_NAMES: Record<string, string> = {
     basic: "📘 Ebook — O Código Secreto dos Peptídeos",
-    premium: "🚀 Plano Premium — Ebook + IA + Plataforma",
+    premium: "🚀 Plano Premium — Ebook + IA com Protocolos Personalizados",
 };
+// Preços de propaganda (riscados) para exibir no resumo
+const EBOOK_ORIGINAL_PRICES: Record<string, number> = { basic: 69.90, premium: 129.90 };
 
 /* ── Máscaras puras em JS ──────────────────────────────────── */
 function maskCPF(value: string) {
@@ -527,10 +529,11 @@ function CheckoutInner() {
                                                         border: `2px solid ${selectedPlan === p ? '#5b8af5' : 'rgba(255,255,255,0.08)'}`,
                                                         background: selectedPlan === p ? 'rgba(91,138,245,0.12)' : 'rgba(255,255,255,0.03)',
                                                         color: '#fff', cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s',
-                                                        fontSize: '12px',
+                                                        fontSize: '11px',
                                                     }}>
-                                                    <div style={{ fontWeight: 700, marginBottom: '2px' }}>{p === 'basic' ? '📘 Ebook' : '🚀 Premium'}</div>
-                                                    <div style={{ color: selectedPlan === p ? '#5b8af5' : '#64748b', fontWeight: 800, fontSize: '15px' }}>R$ {(prices[p] ?? EBOOK_PRICES[p]).toFixed(2).replace('.', ',')}</div>
+                                                    <div style={{ fontWeight: 700, marginBottom: '1px' }}>{p === 'basic' ? '📘 Ebook' : '🚀 Premium'}</div>
+                                                    <div style={{ color: '#64748b', fontSize: '10px', textDecoration: 'line-through' }}>R$ {EBOOK_ORIGINAL_PRICES[p].toFixed(2).replace('.', ',')}</div>
+                                                    <div style={{ color: selectedPlan === p ? '#5b8af5' : '#64748b', fontWeight: 800, fontSize: '14px' }}>R$ {(prices[p] ?? EBOOK_PRICES[p]).toFixed(2).replace('.', ',')}</div>
                                                 </button>
                                             ))}
                                         </div>
