@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
     LayoutDashboard, Users, MessageSquare, Settings, Package,
     ShieldCheck, BarChart3, Zap, LogOut, Bot, ChevronRight,
-    Archive, CreditCard, Menu, X, Tag, ShoppingCart,
+    Archive, CreditCard, Menu, X, Tag, ShoppingCart, BookOpen,
 } from "lucide-react";
 import { clsx } from "clsx";
 
@@ -14,7 +14,8 @@ const navItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/usuarios", label: "Usuários", icon: Users },
     { href: "/admin/produtos", label: "Produtos", icon: Package },
-    { href: "/admin/pedidos", label: "Pedidos", icon: ShoppingCart },
+    { href: "/admin/pedidos", label: "Pedidos Catálogo", icon: ShoppingCart },
+    { href: "/admin/ebook-orders", label: "Vendas Ebook", icon: BookOpen },
     { href: "/admin/coupons", label: "Cupons", icon: Tag },
     { href: "/admin/payments", label: "Pagamentos", icon: CreditCard },
     { href: "/admin/crm", label: "CRM / Leads", icon: BarChart3 },

@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { AdminGuard } from '../auth/admin.guard';
@@ -27,7 +27,32 @@ export class AnalyticsController {
     }
 
     @Get('revenue')
-    revenue() {
-        return this.svc.getRevenueByDay(30);
+    revenue(@Query('days') days?: string) {
+        return this.svc.getRevenueByDay(days ? parseInt(days) : 30);
+    }
+
+    @Get('users-by-day')
+    usersByDay(@Query('days') days?: string) {
+        return this.svc.getUsersByDay(days ? parseInt(days) : 30);
+    }
+
+    @Get('ebook-purchases')
+    ebookPurchases(
+        @Query('page') page?: string,
+        @Query('limit') limit?: string,
+        @Query('status') status?: string,
+        @Query('plan') plan?: string,
+    ) {
+        return this.svc.getEbookPurchases(
+            page ? parseInt(page) : 1,
+            limit ? parseInt(limit) : 50,
+            status,
+            plan,
+        );
+    }
+
+    @Get('plan-distribution')
+    planDistribution() {
+        return this.svc.getPlanDistribution();
     }
 }
