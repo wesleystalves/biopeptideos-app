@@ -12,17 +12,11 @@ export class AIConfigController {
     constructor(private readonly svc: AIConfigService) { }
 
     @Get()
-    getConfig() {
-        return this.svc.getConfig();
-    }
+    getConfig() { return this.svc.getConfig(); }
 
     @Put()
-    updateConfig(@Body() body: any) {
-        return this.svc.updateConfig(body);
-    }
+    updateConfig(@Body() body: any) { return this.svc.updateConfig(body); }
 
     @Post('reset')
-    reset() {
-        return this.svc.resetToDefault();
-    }
+    reset() { return this.svc.resetToDefault(); }
 }
