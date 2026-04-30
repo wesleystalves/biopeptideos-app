@@ -68,6 +68,8 @@ function CheckoutInner() {
     const [paymentMethod, setPaymentMethod] = useState<'pix' | 'credit_card' | 'debit_card'>('pix');
     const [card, setCard] = useState({ number: '', holder: '', expiry: '', cvv: '', postalCode: '', addressNumber: '' });
     const [prices, setPrices] = useState<Record<string, number>>(EBOOK_PRICES);
+    // Plano selecionado — pode ser alterado pelo cliente no checkout
+    const [selectedPlan, setSelectedPlan] = useState<string>(planParam || 'basic');
 
     // Carregar preços editáveis do backend
     useEffect(() => {
@@ -154,7 +156,7 @@ function CheckoutInner() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    plan: planParam,
+                    plan: selectedPlan,
                     email: form.email,
                     name: form.name,
                     cpfCnpj: form.cpf,
@@ -219,9 +221,7 @@ function CheckoutInner() {
         setLoading(true);
         setError("");
         const token = localStorage.getItem("token") || "";
-        const currency = form.country === "BR" ? "BRL" : (cart[0]?.currency || "USD");
-        const gateway = form.country === "BR" ? "asaas" : "stripe";
-        const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+        const subtotal = cart.reduce((acc: number, item: any) => acc + item.price * item.qty, 0);
         try {
             const res = await fetch(`${API}/api/payments/checkout`, {
                 method: "POST",
@@ -229,7 +229,7 @@ function CheckoutInner() {
                 body: JSON.stringify({
                     items: cart, customerName: form.name, customerEmail: form.email,
                     customerPhone: form.phone, cpfCnpj: form.cpf,
-                    countryCode: form.country, currency, gateway, totalAmount: subtotal,
+                    countryCode: "BR", currency: "BRL", gateway: "asaas", totalAmount: subtotal,
                 }),
             });
             if (!res.ok) {
@@ -250,10 +250,10 @@ function CheckoutInner() {
         }
     }
 
-    const cartSubtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
-    const ebookPrice = prices[planParam] ?? EBOOK_PRICES[planParam] ?? 0;
-    const currency = form.country === "BR" ? "BRL" : "USD";
-    const gateway = form.country === "BR" ? "asaas" : "stripe";
+    const cartSubtotal = cart.reduce((acc: number, item: any) => acc + item.price * item.qty, 0);
+    const ebookPrice = prices[selectedPlan] ?? EBOOK_PRICES[selectedPlan] ?? 0;
+    const currency = "BRL";
+    const gateway = "asaas";
 
     const inputStyle: React.CSSProperties = {
         width: "100%", background: "rgba(255,255,255,0.05)",
@@ -492,18 +492,7 @@ function CheckoutInner() {
                                     </div>
                                 )}
 
-                                {/* País */}
-                                <div>
-                                    <label className="text-xs block mb-1.5" style={{ color: "#64748b" }}>País</label>
-                                    <select style={inputStyle} value={form.country} onChange={e => patch("country", e.target.value)}>
-                                        <option value="BR">🇧🇷 Brasil (PIX)</option>
-                                        <option value="US">🇺🇸 Estados Unidos</option>
-                                        <option value="PT">🇵🇹 Portugal</option>
-                                        <option value="AR">🇦🇷 Argentina</option>
-                                        <option value="MX">🇲🇽 México</option>
-                                        <option value="OTHER">🌍 Outro</option>
-                                    </select>
-                                </div>
+                                {/* País removido — fixo Brasil */}
                             </div>
 
                             {/* Gateway info */}
@@ -528,10 +517,28 @@ function CheckoutInner() {
                                 <h2 className="font-semibold text-white">Resumo do pedido</h2>
 
                                 {isEbookFlow ? (
-                                    <div className="flex justify-between text-sm">
-                                        <span style={{ color: "#94a3b8" }}>{EBOOK_NAMES[planParam] || "Ebook"}</span>
-                                        <span className="text-white">{currency} {ebookPrice.toFixed(2)}</span>
-                                    </div>
+                                    <>
+                                        {/* Seletor de plano no resumo */}
+                                        <div style={{ display: 'flex', gap: '8px', marginBottom: '4px' }}>
+                                            {(['basic', 'premium'] as const).map(p => (
+                                                <button key={p} onClick={() => setSelectedPlan(p)}
+                                                    style={{
+                                                        flex: 1, padding: '10px 8px', borderRadius: '10px',
+                                                        border: `2px solid ${selectedPlan === p ? '#5b8af5' : 'rgba(255,255,255,0.08)'}`,
+                                                        background: selectedPlan === p ? 'rgba(91,138,245,0.12)' : 'rgba(255,255,255,0.03)',
+                                                        color: '#fff', cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s',
+                                                        fontSize: '12px',
+                                                    }}>
+                                                    <div style={{ fontWeight: 700, marginBottom: '2px' }}>{p === 'basic' ? '📘 Ebook' : '🚀 Premium'}</div>
+                                                    <div style={{ color: selectedPlan === p ? '#5b8af5' : '#64748b', fontWeight: 800, fontSize: '15px' }}>R$ {(prices[p] ?? EBOOK_PRICES[p]).toFixed(2).replace('.', ',')}</div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                            <span style={{ color: "#94a3b8" }}>{EBOOK_NAMES[selectedPlan] || "Ebook"}</span>
+                                            <span className="text-white">{currency} {ebookPrice.toFixed(2)}</span>
+                                        </div>
+                                    </>
                                 ) : (
                                     cart.map(item => (
                                         <div key={item.id} className="flex justify-between text-sm">
