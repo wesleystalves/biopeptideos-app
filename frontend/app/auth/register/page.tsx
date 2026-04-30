@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Zap, ArrowRight } from "lucide-react";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://api.peptideosbio.com";
 
-export default function RegisterPage() {
+function RegisterInner() {
     const searchParams = useSearchParams();
     const fromEbook = searchParams.get("from") === "ebook";
 
@@ -206,5 +206,13 @@ export default function RegisterPage() {
                 </p>
             </div>
         </div>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center" style={{ background: '#050d1a' }} />}>
+            <RegisterInner />
+        </Suspense>
     );
 }
